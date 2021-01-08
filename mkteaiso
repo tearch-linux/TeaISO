@@ -259,7 +259,7 @@ if __name__ == "__main__":
         show_verbose_profile()
 
     # Prepare & Generate ISO
-    """try:
+    try:
         os.mkdir(work_directory)
         os.mkdir(output_directory)
     except FileExistsError:
@@ -281,6 +281,6 @@ if __name__ == "__main__":
     prepare_squashfs()
     make_isowork()
 
-    # Generate ISO """
+    # Generate ISO
     iso_name = iso_profile["name"] + "-" + date.today().strftime("%d-%m-%Y") + "-" + iso_profile["arch"] + ".iso"
     execute_command("grub-mkrescue {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))
