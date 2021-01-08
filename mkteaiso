@@ -9,11 +9,11 @@ import shutil
 import yaml
 import time
 from datetime import date
-import fileinput    
+import glob
 import pathlib
-import subprocess
 
 VERSION = 0.1
+compression_types = ['gzip', 'xz', 'lzma', 'lzo', 'lz4', 'zstd']
 
 
 # Argument Parser
@@ -28,6 +28,10 @@ def arguments():
     parser.add_argument(
         "-w", "--work",
         help="Work directory of ISOs preparation files.",
+    )
+    parser.add_argument(
+        "-c", "--compression",
+        help="Compression type of squashfs.",
     )
     parser.add_argument(
         "-v", "--verbose",
@@ -54,15 +58,11 @@ def execute_command(command):
     return process
 
 
-def run_chroot(command, show=True):
+def run_chroot(command, path="/dev/stdout"):
     command = command.replace('"', "'").strip()
     target = work_directory + '/' + iso_profile["arch"]
-
-    if(show):
-        return execute_command('chroot {} /bin/sh -c "{}"'.format(target, command))
-    else:
-        return subprocess.call('chroot {} /bin/sh -c "{}"'.format(target, command), shell=True, stdout=subprocess.PIPE)
-
+    
+    return execute_command('chroot {} /bin/sh -c "{}" > {}'.format(target, command, path))
 
 # Read profile arguments
 def read_profile(directory_original):
@@ -167,6 +167,7 @@ def customize_airootfs():
         os.chmod(target + source, 0o755)
 
         run_chroot("/root/" + source)
+    
 
 def set_permissions():
     for name, permission in iso_profile["file_permissions"].items():
@@ -178,14 +179,47 @@ def set_permissions():
 
 
 def make_pkglist():
-    packages = run_chroot("pacman -Qqe", True)
     target = work_directory + "/" + "packages.list"
+    packages = run_chroot("pacman -Qqe", target)
 
-    pathlib.Path(target).touch()
-    f = open(target, "w+")
-    print(packages)
-    f.write(str(packages))
-    f.close()
+
+def cleanup():
+    target = work_directory + "/" + iso_profile["arch"] + "/"
+
+    for pkg in glob.glob(target + "var/lib/pacman/*.tar.*"):
+        os.remove(pkg)
+
+    for db in glob.glob(target + "var/lib/pacman/sync/*"):
+        os.remove(db)
+
+    for log in glob.glob(target + "var/log/*"):
+            execute_command("rm -rf {}".format(log))
+    
+    for tmp in glob.glob(target + "var/tmp/*"):
+            execute_command("rm -rf {}".format(tmp))
+
+
+def prepare_squashfs():
+    source = work_directory + "/" + iso_profile["arch"]
+
+    execute_command("umount -fl -R {}/* &> /dev/null".format(work_directory + "/" + iso_profile["arch"]))
+    execute_command("mksquashfs \"{}\" airootfs.sfs -comp \"{}\" -wildcards".format(source, compression_type))
+
+
+def make_isowork():
+    target = work_directory + "/" + iso_profile["arch"] + "/"
+
+    shutil.copytree(target + "boot", work_directory + "/isowork/live")
+    shutil.move("airootfs.sfs", work_directory + "/isowork/live")
+
+    execute_command("mkdir -p {}".format(work_directory + "/isowork/boot/grub"))
+    execute_command("touch " + work_directory + "/isowork/boot/grub/grub.cfg")
+
+    file = open(work_directory + "/isowork/boot/grub/grub.cfg", "w")
+    file.write("""menuentry "Start {}" --class arch {{
+        linux /live/vmlinuz-linux boot=live live-media-path=/live --
+        initrd /live/initramfs-linux.img
+    }}""".format(iso_profile["name"]))
 
 
 def show_verbose_profile():
@@ -216,28 +250,37 @@ if __name__ == "__main__":
     # Set directories
     output_directory = cmd_line.output or 'output'
     work_directory = cmd_line.work or 'work'
+    compression_type = cmd_line.compression or 'gzip'
 
     iso_profile = read_profile(cmd_line.profile)
+    target = work_directory + "/" + iso_profile["arch"]
 
     if cmd_line.verbose:
         show_verbose_profile()
 
     # Prepare & Generate ISO
-    try:
+    """try:
         os.mkdir(work_directory)
+        os.mkdir(output_directory)
     except FileExistsError:
-        message("error", 'Work directory already exists. Please remove directory!')
+        message("error", 'Work or output directory already exists. Please remove directory!')
 
     make_pacman_conf()
     make_custom_airootfs()
     install_packages()
 
-    target = work_directory + "/" + iso_profile["arch"]
     execute_command("mount -t proc proc {}/proc".format(target))
     execute_command("mount -t devtmpfs devtmpfs {}/dev".format(target))
     execute_command("mount -t sysfs sysfs {}/sys".format(target))
 
-
+    
     customize_airootfs()
     set_permissions()
     make_pkglist()
+    cleanup()
+    prepare_squashfs()
+    make_isowork()
+
+    # Generate ISO """
+    iso_name = iso_profile["name"] + "-" + date.today().strftime("%d-%m-%Y") + "-" + iso_profile["arch"] + ".iso"
+    execute_command("grub-mkrescue {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))
