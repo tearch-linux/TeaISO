@@ -1,0 +1,243 @@
+#!/usr/bin/env python
+#
+# -*- coding: utf-8 -*-
+# TeaISO - ISO generation tool for Arch Linux.
+# License: GPL-3
+import argparse
+import os
+import shutil
+import yaml
+import time
+from datetime import date
+import fileinput    
+import pathlib
+import subprocess
+
+VERSION = 0.1
+
+
+# Argument Parser
+def arguments():
+    description = "ISO creation tool for Arch Linux, v{0}".format(VERSION)
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        "-o", "--output",
+        help="Output directory of ISO.",
+    )
+    parser.add_argument(
+        "-w", "--work",
+        help="Work directory of ISOs preparation files.",
+    )
+    parser.add_argument(
+        "-v", "--verbose",
+        help="Enable detailed verbose output.",
+        action="store_true")
+    parser.add_argument(
+        "-p", "--profile",
+        help="Profile directory for ISO.",
+        required=True
+    )
+
+    return parser.parse_args()
+
+
+def message(message_type, message_text):
+    if message_type == 'info' and cmd_line.verbose is True:
+        print("[mkteaiso] INFO: {}".format(message_text))
+    elif message_type == 'error':
+        exit("[mkteaiso] ERROR: {}".format(message_text))
+
+
+def execute_command(command):
+    process = os.system(command)
+    return process
+
+
+def run_chroot(command, show=True):
+    command = command.replace('"', "'").strip()
+    target = work_directory + '/' + iso_profile["arch"]
+
+    if(show):
+        return execute_command('chroot {} /bin/sh -c "{}"'.format(target, command))
+    else:
+        return subprocess.call('chroot {} /bin/sh -c "{}"'.format(target, command), shell=True, stdout=subprocess.PIPE)
+
+
+# Read profile arguments
+def read_profile(directory_original):
+    message('info', 'Reading profile...')
+
+    directory = os.path.realpath(directory_original) + "/"
+    file_name = directory + "profile.yaml"
+
+    if os.path.exists(file_name):
+        file = open(file_name).read()
+
+        try:
+            contents = yaml.load(file, Loader=yaml.FullLoader)
+
+            name = contents["name"]
+            publisher = contents["publisher"]
+            install_directory = directory + contents["install_directory"]
+            airootfs_directory = directory + contents["airootfs_directory"]
+            arch = contents["arch"]
+            pacman_directory = directory + contents["pacman"]
+
+            all_packages = []
+            for package in contents["packages"]:
+                package_names = open(directory + package).read().split("\n")
+                all_packages.append(package_names)
+            all_packages = sum(all_packages, [])
+
+            file_permissions = {}
+            for file in contents["file_permissions"]:
+                file = file.split("|")
+                file_permissions[file[0]] = file[1]
+
+            customize_airootfs = {}
+            for source in contents["customize_airootfs"]:
+                if os.path.exists(directory + source):
+                    customize_airootfs[source] = directory + source
+                else:
+                    exit("{} doesn't exists!".format(directory + source))
+
+            message('info', 'Done!')
+            return {"name": name, "publisher": publisher,
+                    "install_directory": install_directory, "airootfs_directory": airootfs_directory, "arch": arch,
+                    "pacman_directory": pacman_directory, "all_packages": all_packages,
+                    "file_permissions": file_permissions, "customize_airootfs": customize_airootfs}
+        except TypeError:
+            message('error', 'profile.yaml corrupted. Please, fix it!')
+    else:
+        message('error', 'ERROR: profile.yaml doesn\'t exists in {} directory!'.format(directory))
+
+
+def make_pacman_conf():
+    target = os.path.realpath(work_directory + "/pacman.conf")
+    file = shutil.copyfile(iso_profile["pacman_directory"], target)
+
+    os.chmod(target, 0o775)
+    
+    message("info", "pacman.conf generated successfully!")
+
+
+def make_custom_airootfs():
+    target = work_directory + '/' + iso_profile["arch"]
+
+    shutil.copytree(iso_profile["airootfs_directory"], target)
+
+    os.chmod(target + '/etc/shadow', 0o400) if os.path.exists(target + '/etc/shadow') else None
+    os.chmod(target + '/etc/gshadow', 0o400) if os.path.exists(target + '/etc/gshadow') else None
+
+    # Set permissions of home and root directories
+    if os.path.exists(target + '/etc/passwd'):
+        contents = open(target + '/etc/passwd', "r").read().rstrip().split(':')
+
+        if contents[5].startswith('/') or contents[5] is None:
+            if os.path.exists(target + contents[5]):
+                execute_command("chown -hR -- {}:{} {}".format(contents[2], contents[3], target + contents[5]))
+                execute_command("chmod -f 0750 -- {}".format(target + contents[5]))
+            else:
+                execute_command(
+                    "install -d -m 0750 -o {} -g {} -- {}".format(contents[2], contents[3], target + contents[5]))
+
+    message("info", "Custom airootfs generated successfully!")
+
+
+def install_packages():
+    pacman_conf_directory = work_directory + '/' + "pacman.conf"
+    airootfs_directory = work_directory + '/' + iso_profile["arch"]
+    packages = ''
+    for s in iso_profile["all_packages"]:
+        packages += s + ' '
+
+    command = "pacstrap -C {} -c -i -G -M -- {} {} {}".format(pacman_conf_directory, airootfs_directory, packages, "" if cmd_line.verbose else "&> /dev/null")
+
+    execute_command(command)
+
+
+
+def customize_airootfs():
+    target = work_directory + '/' + iso_profile["arch"] + "/root/"
+    execute_command("mkdir {}".format(target + "customize"))
+
+    for source, file in iso_profile["customize_airootfs"].items():
+        shutil.copyfile(file, target + source)
+        os.chmod(target + source, 0o755)
+
+        run_chroot("/root/" + source)
+
+def set_permissions():
+    for name, permission in iso_profile["file_permissions"].items():
+        permission = permission.split(':')
+        name = work_directory + '/' + iso_profile["arch"] + name
+
+        execute_command("chown -fh -- {}:{} {}".format(permission[0], permission[1], name))
+        execute_command("chmod -f -- {} {}".format(permission[2], name))
+
+
+def make_pkglist():
+    packages = run_chroot("pacman -Qqe", True)
+    target = work_directory + "/" + "packages.list"
+
+    pathlib.Path(target).touch()
+    f = open(target, "w+")
+    print(packages)
+    f.write(str(packages))
+    f.close()
+
+
+def show_verbose_profile():
+    today = date.today()
+    iso_name = iso_profile["name"] + "-" + today.strftime("%d-%m-%Y") + "-" + iso_profile["arch"] + ".iso"
+
+    print("\n[mkteaiso] INFO: mkteaiso configuration settings:")
+    print("[mkteaiso] INFO:                   Profile:   {}".format(iso_profile["name"]))
+    print("[mkteaiso] INFO:             ISO publisher:   {}".format(iso_profile["publisher"]))
+    print("[mkteaiso] INFO:             ISO file name:   {}".format(iso_name))
+    print("[mkteaiso] INFO:        Airootfs directory:   {}".format(iso_profile["airootfs_directory"]))
+    print("[mkteaiso] INFO:         Working directory:   {}".format(work_directory))
+    print("[mkteaiso] INFO:          Output directory:   {}".format(output_directory))
+    print("[mkteaiso] INFO: Pacman configuration file:   {}".format(iso_profile["pacman_directory"]))
+    print("[mkteaiso] INFO:              Architecture:   {} ".format(iso_profile["arch"]))
+    print("[mkteaiso] INFO:                Build date:   {}".format(time.time()))
+    print("[mkteaiso] INFO:          File permissions:   {}".format(iso_profile["file_permissions"]))
+    print("[mkteaiso] INFO:        Customize Airootfs:   {}".format(iso_profile["customize_airootfs"]))
+    print("[mkteaiso] INFO:                  Packages:   {}\n".format(iso_profile["all_packages"]))
+
+
+if __name__ == "__main__":
+    cmd_line = arguments()
+
+    if os.getuid() != 0:
+        exit("[mkteaiso] ERROR: You need to have root privileges to run this script!")
+
+    # Set directories
+    output_directory = cmd_line.output or 'output'
+    work_directory = cmd_line.work or 'work'
+
+    iso_profile = read_profile(cmd_line.profile)
+
+    if cmd_line.verbose:
+        show_verbose_profile()
+
+    # Prepare & Generate ISO
+    try:
+        os.mkdir(work_directory)
+    except FileExistsError:
+        message("error", 'Work directory already exists. Please remove directory!')
+
+    make_pacman_conf()
+    make_custom_airootfs()
+    install_packages()
+
+    target = work_directory + "/" + iso_profile["arch"]
+    execute_command("mount -t proc proc {}/proc".format(target))
+    execute_command("mount -t devtmpfs devtmpfs {}/dev".format(target))
+    execute_command("mount -t sysfs sysfs {}/sys".format(target))
+
+
+    customize_airootfs()
+    set_permissions()
+    make_pkglist()
