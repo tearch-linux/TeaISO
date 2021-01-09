@@ -53,8 +53,10 @@ def message(message_type, message_text):
         exit("[mkteaiso] ERROR: {}".format(message_text))
 
 
-def execute_command(command):
+def execute_command(command,vital=True):
     process = os.system(command)
+    if vital and process!=0:
+        print("Process exited with {}".format(str(process)))
     return process
 
 
