@@ -171,7 +171,7 @@ def customize_airootfs():
         shutil.copyfile(file, target + source)
         os.chmod(target + source, 0o755)
 
-        run_chroot("/root/" + source,vital=False)
+        run_chroot("/root/" + source)
     
 
 def set_permissions():
@@ -207,7 +207,7 @@ def cleanup():
 def prepare_squashfs():
     source = work_directory + "/" + iso_profile["arch"]
 
-    execute_command("umount -fl -R {}/* &> /dev/null".format(work_directory + "/" + iso_profile["arch"]))
+    execute_command("umount -lf -R {}/* &> /dev/null".format(work_directory + "/" + iso_profile["arch"]),False)
     execute_command("mksquashfs \"{}\" airootfs.sfs -comp \"{}\" -wildcards".format(source, compression_type))
 
 
