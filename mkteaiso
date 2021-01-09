@@ -265,7 +265,7 @@ if __name__ == "__main__":
     target = work_directory + "/" + iso_profile["arch"]
 
     # Umount if already mounted. (for easy use rm -rf work output)
-    execute_command("umount -fl -R {}/* &> /dev/null".format(work_directory + "/" + iso_profile["arch"]))
+    execute_command("umount -fl -R {}/* &> /dev/null".format(work_directory + "/" + iso_profile["arch"]),False)
 
 
     if cmd_line.verbose:
