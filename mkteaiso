@@ -255,6 +255,10 @@ if __name__ == "__main__":
     iso_profile = read_profile(cmd_line.profile)
     target = work_directory + "/" + iso_profile["arch"]
 
+    # Umount if already mounted. (for easy use rm -rf work output)
+    execute_command("umount -fl -R {}/* &> /dev/null".format(work_directory + "/" + iso_profile["arch"]))
+
+
     if cmd_line.verbose:
         show_verbose_profile()
 
