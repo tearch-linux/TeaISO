@@ -127,7 +127,7 @@ def make_pacman_conf():
 def make_custom_airootfs():
     target = work_directory + '/' + iso_profile["arch"]
 
-    shutil.copytree(iso_profile["airootfs_directory"], target)
+    execute_command("cp -prf \"{}/*\" \"{}\"".format(iso_profile["airootfs_directory"], target))
 
     os.chmod(target + '/etc/shadow', 0o400) if os.path.exists(target + '/etc/shadow') else None
     os.chmod(target + '/etc/gshadow', 0o400) if os.path.exists(target + '/etc/gshadow') else None
@@ -214,7 +214,7 @@ def make_isowork():
 
     execute_command("mkdir -p {}".format(work_directory + "/isowork/boot/grub"))
     
-    shutil.copytree(target + "boot", work_directory + "/isowork/live")
+    execute_command("cp -prf \"{}/*\" \"{}\"".format(target + "boot", work_directory + "/isowork/live"))
     shutil.move("airootfs.sfs", work_directory + "/isowork/live")
 
     execute_command("touch " + work_directory + "/isowork/boot/grub/grub.cfg")
