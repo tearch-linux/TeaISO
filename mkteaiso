@@ -219,8 +219,10 @@ def make_isowork():
     execute_command("mkdir -p {}".format(work_directory + "/isowork/live"))
     
     execute_command("cp -prf \"{}\"/* \"{}\"/".format(target + "boot", work_directory + "/isowork/live"))
+    
     shutil.move("airootfs.sfs", work_directory + "/isowork/live")
-
+    filesystem_size = execute_command("du -sb {} | cut -f1 > {}/isowork/live/airootfs.size".format(work_directory + "/"+ iso_profile["arch"], work_directory))
+    
     execute_command("touch " + work_directory + "/isowork/boot/grub/grub.cfg")
 
     file = open(work_directory + "/isowork/boot/grub/grub.cfg", "w")
@@ -230,6 +232,7 @@ def make_isowork():
     }}""".format(iso_profile["name"]))
     
     execute_command("md5sum {0}/live/airootfs.sfs > {0}/live/airootfs.md5sum".format(work_directory+"/isowork/"))
+    shutil.copy(work_directory + "/" + "packages.list", work_directory + "/isowork")
 
 
 def show_verbose_profile():

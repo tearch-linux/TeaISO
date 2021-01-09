@@ -51,7 +51,6 @@ man-pages
 mc
 mdadm
 memtest86+
-mkinitcpio-archiso
 mkinitcpio-nfs-utils
 mtools
 nano
@@ -80,7 +79,7 @@ sg3_utils
 smartmontools
 squashfs-tools
 sudo
-syslinux
+grub
 systemd-resolvconf
 tcpdump
 terminus-font
