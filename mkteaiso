@@ -209,10 +209,12 @@ def prepare_squashfs():
 def make_isowork():
     target = work_directory + "/" + iso_profile["arch"] + "/"
 
+
+    execute_command("mkdir -p {}".format(work_directory + "/isowork/boot/grub"))
+    
     shutil.copytree(target + "boot", work_directory + "/isowork/live")
     shutil.move("airootfs.sfs", work_directory + "/isowork/live")
 
-    execute_command("mkdir -p {}".format(work_directory + "/isowork/boot/grub"))
     execute_command("touch " + work_directory + "/isowork/boot/grub/grub.cfg")
 
     file = open(work_directory + "/isowork/boot/grub/grub.cfg", "w")
