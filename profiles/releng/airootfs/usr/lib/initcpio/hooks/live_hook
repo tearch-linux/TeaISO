@@ -55,7 +55,7 @@ run_latehook(){
     if cat /proc/cmdline | grep "boot=live" >/dev/null ; then
         for i in $(cat /proc/cmdline)
         do
-            export $i || true
+            export $i &>/dev/null || true
         done
         if [ "${live_user}" == "" ] ; then
             export live_user="user"
