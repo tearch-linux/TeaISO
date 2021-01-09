@@ -57,6 +57,7 @@ def execute_command(command,vital=True):
     process = os.system(command)
     if vital and process!=0:
         print("Process exited with {}".format(str(process)))
+        exit(process)
     return process
 
 
@@ -127,7 +128,8 @@ def make_pacman_conf():
 def make_custom_airootfs():
     target = work_directory + '/' + iso_profile["arch"]
 
-    execute_command("cp -prf \"{}\"/* \"{}\"".format(iso_profile["airootfs_directory"], target))
+    execute_command("mkdir -p \"{}\"".format(target))
+    execute_command("cp -prf \"{}\"/* \"{}\"/".format(iso_profile["airootfs_directory"], target))
 
     os.chmod(target + '/etc/shadow', 0o400) if os.path.exists(target + '/etc/shadow') else None
     os.chmod(target + '/etc/gshadow', 0o400) if os.path.exists(target + '/etc/gshadow') else None
@@ -213,8 +215,9 @@ def make_isowork():
 
 
     execute_command("mkdir -p {}".format(work_directory + "/isowork/boot/grub"))
+    execute_command("mkdir -p {}".format(work_directory + "/isowork/live"))
     
-    execute_command("cp -prf \"{}\"/* \"{}\"".format(target + "boot", work_directory + "/isowork/live"))
+    execute_command("cp -prf \"{}\"/* \"{}\"/".format(target + "boot", work_directory + "/isowork/live"))
     shutil.move("airootfs.sfs", work_directory + "/isowork/live")
 
     execute_command("touch " + work_directory + "/isowork/boot/grub/grub.cfg")
