@@ -148,7 +148,7 @@ def make_custom_airootfs():
 def install_packages():
     pacman_conf_directory = work_directory + '/' + "pacman.conf"
     airootfs_directory = work_directory + '/' + iso_profile["arch"]
-    packages = 'base mkinitcpio linux'
+    packages = 'base mkinitcpio linux '
     for s in iso_profile["all_packages"]:
         packages += s + ' '
 
