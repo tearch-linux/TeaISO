@@ -160,7 +160,7 @@ def install_packages():
 
 def customize_airootfs():
     target = work_directory + '/' + iso_profile["arch"] + "/root/"
-    execute_command("mkdir {}".format(target + "customize"))
+    execute_command("mkdir -p {}".format(target + "customize"))
 
     for source, file in iso_profile["customize_airootfs"].items():
         shutil.copyfile(file, target + source)
