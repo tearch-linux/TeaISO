@@ -225,7 +225,7 @@ def make_isowork():
         initrd /live/initramfs-linux.img
     }}""".format(iso_profile["name"]))
     
-    execute_command("md5sum {}/live/airootfs.sfs > {}/live/airootfs.md5sum".format(work_directory+"/isowork/"))
+    execute_command("md5sum {0}/live/airootfs.sfs > {0}/live/airootfs.md5sum".format(work_directory+"/isowork/"))
 
 
 def show_verbose_profile():
