@@ -16,6 +16,7 @@ build() {
    add_module "squashfs"
    add_module "hfsplus"
    add_module "sr_mod"
+   add_module "fatfs"
    add_all_modules -f 'nls' '/kernel/fs'
    add_all_modules -f 'overlayfs' '/kernel/fs'
    add_all_modules -f 'squashfs' '/kernel/fs'
