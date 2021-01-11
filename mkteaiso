@@ -227,8 +227,10 @@ def make_isowork():
     execute_command("touch " + work_directory + "/isowork/boot/grub/grub.cfg")
 
     file = open(work_directory + "/isowork/boot/grub/grub.cfg", "w")
+    file.write("insmod all_video\n")
+    file.write("insmod fat\n")
     file.write("""menuentry "Start {}" --class arch {{
-        linux /live/vmlinuz-linux boot=live debug --
+        linux /live/vmlinuz-linux boot=live --
         initrd /live/initramfs-linux.img
     }}""".format(iso_profile["name"]))
     
