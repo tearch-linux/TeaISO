@@ -228,7 +228,7 @@ def make_isowork():
 
     file = open(work_directory + "/isowork/boot/grub/grub.cfg", "w")
     file.write("insmod all_video\n")
-    file.write("insmod fat\n")
+    file.write("insmod part_msdos\n")
     file.write("""menuentry "Start {}" --class arch {{
         linux /live/vmlinuz-linux boot=live --
         initrd /live/initramfs-linux.img
@@ -279,7 +279,7 @@ if __name__ == "__main__":
         show_verbose_profile()
 
     # Prepare & Generate ISO
-    try:
+    """try:
         os.mkdir(work_directory)
         os.mkdir(output_directory)
     except FileExistsError:
@@ -299,8 +299,8 @@ if __name__ == "__main__":
     make_pkglist()
     cleanup()
     prepare_squashfs()
-    make_isowork()
+    make_isowork()"""
 
     # Generate ISO
     iso_name = iso_profile["name"] + "-" + date.today().strftime("%d-%m-%Y") + "-" + iso_profile["arch"] + ".iso"
-    execute_command("grub-mkrescue {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))
+    execute_command("grub-mkrescue --modules=\"part_msdos fat multiboot configfile\" {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))
