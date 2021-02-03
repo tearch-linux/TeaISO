@@ -12,7 +12,7 @@ from datetime import date
 import glob
 from collections import OrderedDict
 
-VERSION = 0.2
+VERSION = 0.3
 compression_types = ['gzip', 'xz', 'lzma', 'lzo', 'lz4', 'zstd']
 
 
@@ -87,6 +87,7 @@ def read_profile(directory_original):
             airootfs_directory = directory + contents["airootfs_directory"]
             arch = contents["arch"]
             pacman_directory = directory + contents["pacman"]
+            grub_cfg = directory + contents["grub_cfg"]
 
             all_packages = []
             for package in contents["packages"]:
@@ -110,7 +111,7 @@ def read_profile(directory_original):
             message('info', 'Done!')
             return {"name": name, "publisher": publisher,
                     "install_directory": install_directory, "airootfs_directory": airootfs_directory, "arch": arch,
-                    "pacman_directory": pacman_directory, "all_packages": all_packages,
+                    "pacman_directory": pacman_directory, "grub_cfg": grub_cfg, "all_packages": all_packages,
                     "file_permissions": file_permissions, "customize_airootfs": customize_airootfs}
         except TypeError:
             message('error', 'profile.yaml corrupted. Please, fix it!')
@@ -119,17 +120,15 @@ def read_profile(directory_original):
 
 
 def make_pacman_conf():
-    target = os.path.realpath(work_directory + "/pacman.conf")
-    file = shutil.copyfile(iso_profile["pacman_directory"], target)
+    target_pacman_conf = os.path.realpath(work_directory + "/pacman.conf")
+    file = shutil.copyfile(iso_profile["pacman_directory"], target_pacman_conf)
 
-    os.chmod(target, 0o775)
+    os.chmod(target_pacman_conf, 0o775)
     
     message("info", "pacman.conf generated successfully!")
 
 
 def make_custom_airootfs():
-    target = work_directory + '/' + iso_profile["arch"]
-
     execute_command("mkdir -p \"{}\"".format(target))
     execute_command("cp -prf \"{}\"/* \"{}\"/".format(iso_profile["airootfs_directory"], target))
 
@@ -155,6 +154,7 @@ def install_packages():
     pacman_conf_directory = work_directory + '/' + "pacman.conf"
     airootfs_directory = work_directory + '/' + iso_profile["arch"]
     packages = 'base mkinitcpio linux '
+
     for s in iso_profile["all_packages"]:
         packages += s + ' '
 
@@ -165,12 +165,12 @@ def install_packages():
 
 
 def customize_airootfs():
-    target = work_directory + '/' + iso_profile["arch"] + "/root/"
-    execute_command("mkdir -p {}".format(target + "customize"))
+    root_directory = target + "/root/"
+    execute_command("mkdir -p {}".format(root_directory + "customize"))
 
     for source, file in iso_profile["customize_airootfs"].items():
-        shutil.copyfile(file, target + source)
-        os.chmod(target + source, 0o755)
+        shutil.copyfile(file, root_directory + source)
+        os.chmod(root_directory + source, 0o755)
 
         run_chroot("/root/" + source)
     
@@ -185,12 +185,14 @@ def set_permissions():
 
 
 def make_pkglist():
-    target = work_directory + "/" + "packages.list"
-    packages = run_chroot("pacman -Qqe", target)
+    packages = run_chroot("pacman -Qqe", work_directory + "/" + "packages.list")
 
 
 def cleanup():
-    target = work_directory + "/" + iso_profile["arch"] + "/"
+    # Copy boot files before, removing initramfs
+    execute_command("mkdir -p {}".format(work_directory + "/isowork/boot/grub"))
+    execute_command("mkdir -p {}".format(work_directory + "/isowork/live"))
+    execute_command("cp -prf \"{}\"/* \"{}\"/".format(target + "/boot", work_directory + "/isowork/live"))
 
     for pkg in glob.glob(target + "var/lib/pacman/*.tar.*"):
         os.remove(pkg)
@@ -204,35 +206,19 @@ def cleanup():
     for tmp in glob.glob(target + "var/tmp/*"):
             execute_command("rm -rf {}".format(tmp))
 
+    os.remove(target + "/boot/initramfs-linux.img")
+
 
 def prepare_squashfs():
-    source = work_directory + "/" + iso_profile["arch"]
-
-    execute_command("umount -lf -R {}/* &> /dev/null".format(work_directory + "/" + iso_profile["arch"]),False)
-    execute_command("mksquashfs \"{}\" airootfs.sfs -comp \"{}\" -wildcards".format(source, compression_type))
+    execute_command("umount -lf -R {}/* &> /dev/null".format(target),False)
+    execute_command("mksquashfs \"{}\" airootfs.sfs -comp \"{}\" -wildcards".format(target, compression_type))
 
 
 def make_isowork():
-    target = work_directory + "/" + iso_profile["arch"] + "/"
-
-
-    execute_command("mkdir -p {}".format(work_directory + "/isowork/boot/grub"))
-    execute_command("mkdir -p {}".format(work_directory + "/isowork/live"))
-    
-    execute_command("cp -prf \"{}\"/* \"{}\"/".format(target + "boot", work_directory + "/isowork/live"))
-    
     shutil.move("airootfs.sfs", work_directory + "/isowork/live")
     filesystem_size = execute_command("du -sb {} | cut -f1 > {}/isowork/live/airootfs.size".format(work_directory + "/"+ iso_profile["arch"], work_directory))
     
-    execute_command("touch " + work_directory + "/isowork/boot/grub/grub.cfg")
-
-    file = open(work_directory + "/isowork/boot/grub/grub.cfg", "w")
-    file.write("insmod all_video\n")
-    file.write("insmod part_msdos\n")
-    file.write("""menuentry "Start {}" --class arch {{
-        linux /live/vmlinuz-linux boot=live --
-        initrd /live/initramfs-linux.img
-    }}""".format(iso_profile["name"]))
+    shutil.copyfile(iso_profile["grub_cfg"], work_directory + "/isowork/boot/grub/grub.cfg");
     
     execute_command("md5sum {0}/live/airootfs.sfs > {0}/live/airootfs.md5sum".format(work_directory+"/isowork/"))
     shutil.copy(work_directory + "/" + "packages.list", work_directory + "/isowork")
@@ -261,7 +247,7 @@ if __name__ == "__main__":
     cmd_line = arguments()
 
     if os.getuid() != 0:
-        exit("[mkteaiso] ERROR: You need to have root privileges to run this script!")
+        message("error", "You need to have root privileges to run this script!")
 
     # Set directories
     output_directory = cmd_line.output or 'output'
@@ -269,6 +255,7 @@ if __name__ == "__main__":
     compression_type = cmd_line.compression or 'gzip'
 
     iso_profile = read_profile(cmd_line.profile)
+    iso_name = iso_profile["name"] + "-" + date.today().strftime("%d-%m-%Y") + "-" + iso_profile["arch"] + ".iso"
     target = work_directory + "/" + iso_profile["arch"]
 
     # Umount if already mounted. (for easy use rm -rf work output)
@@ -279,7 +266,7 @@ if __name__ == "__main__":
         show_verbose_profile()
 
     # Prepare & Generate ISO
-    """try:
+    try:
         os.mkdir(work_directory)
         os.mkdir(output_directory)
     except FileExistsError:
@@ -299,8 +286,9 @@ if __name__ == "__main__":
     make_pkglist()
     cleanup()
     prepare_squashfs()
-    make_isowork()"""
+    make_isowork()
 
     # Generate ISO
-    iso_name = iso_profile["name"] + "-" + date.today().strftime("%d-%m-%Y") + "-" + iso_profile["arch"] + ".iso"
-    execute_command("grub-mkrescue --modules=\"part_msdos fat multiboot configfile\" {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))
+    #TODO: Grub EFI Problem
+    execute_command("cp -r efi {}/isowork".format(work_directory))
+    execute_command("grub-mkrescue {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))

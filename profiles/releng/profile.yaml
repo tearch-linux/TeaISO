@@ -4,6 +4,7 @@ install_directory: arch
 airootfs_directory: airootfs
 arch: x86_64
 pacman: pacman.conf
+grub_cfg: grub.cfg
 packages:
  - packages.x86_64
 file_permissions:
