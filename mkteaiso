@@ -12,7 +12,7 @@ from datetime import date
 import glob
 from collections import OrderedDict
 
-VERSION = 0.3
+VERSION = 0.3.1
 compression_types = ['gzip', 'xz', 'lzma', 'lzo', 'lz4', 'zstd']
 
 
@@ -211,11 +211,10 @@ def cleanup():
 
 def prepare_squashfs():
     execute_command("umount -lf -R {}/* &> /dev/null".format(target),False)
-    execute_command("mksquashfs \"{}\" airootfs.sfs -comp \"{}\" -wildcards".format(target, compression_type))
+    execute_command("mksquashfs \"{}\" {}/airootfs.sfs -comp \"{}\" -wildcards".format(target, work_directory+"/isowork/live", compression_type))
 
 
 def make_isowork():
-    shutil.move("airootfs.sfs", work_directory + "/isowork/live")
     filesystem_size = execute_command("du -sb {} | cut -f1 > {}/isowork/live/airootfs.size".format(work_directory + "/"+ iso_profile["arch"], work_directory))
     
     shutil.copyfile(iso_profile["grub_cfg"], work_directory + "/isowork/boot/grub/grub.cfg");
@@ -290,5 +289,5 @@ if __name__ == "__main__":
 
     # Generate ISO
     #TODO: Grub EFI Problem
-    execute_command("cp -r efi {}/isowork".format(work_directory))
+    execute_command("cp -r /usr/lib/teaiso/efi {}/isowork".format(work_directory))
     execute_command("grub-mkrescue {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))
