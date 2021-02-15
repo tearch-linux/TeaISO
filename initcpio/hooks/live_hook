@@ -71,7 +71,7 @@ run_latehook(){
             chroot /new_root/ sh -c "usermod -aG $i ${live_user}" || true
         done
 
-	    chroot /new_root/ sh -c "groupadd -r autologin && gpasswd -a user autologin && groupadd -r nopasswdlogin &&    gpasswd -a user nopasswdlogin" || true
+	chroot /new_root/ sh -c "groupadd -r autologin && gpasswd -a user autologin && groupadd -r nopasswdlogin && gpasswd -a user nopasswdlogin" || true
         chroot /new_root/ sh -c "echo -ne \"${live_pass}\\n${live_pass}\\n\" | passwd ${live_user}" || true
         chroot /new_root/ sh -c "echo -ne \"${live_pass}\\n${live_pass}\\n\" | passwd" || true
         echo ${live_hostname} > /new_root/etc/hostname || true
