@@ -64,12 +64,14 @@ run_latehook(){
             export live_pass="live"
         fi
         if [ "${live_hostname}" == "" ] ; then
-            export live_hostname="Archlinux"
+            export live_hostname="teaiso"
         fi
         chroot /new_root/ sh -c "useradd -m ${live_user} -s /bin/bash -p UttMT5OhD7chw -U" || true
         for i in log network floppy scanner power rfkill users storage optical audio wheel adm ; do
             chroot /new_root/ sh -c "usermod -aG $i ${live_user}" || true
         done
+
+	    chroot /new_root/ sh -c "groupadd -r autologin && gpasswd -a user autologin && groupadd -r nopasswdlogin &&     gpasswd -a user nopasswdlogin" || true
         chroot /new_root/ sh -c "echo -ne \"${live_pass}\\n${live_pass}\\n\" | passwd ${live_user}" || true
         chroot /new_root/ sh -c "echo -ne \"${live_pass}\\n${live_pass}\\n\" | passwd" || true
         echo ${live_hostname} > /new_root/etc/hostname || true
