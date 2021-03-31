@@ -179,7 +179,7 @@ def customize_airootfs():
         shutil.copyfile(file, root_directory + source)
         os.chmod(root_directory + source, 0o755)
 	
-    run_chroot("/root/customize/" + source)
+        run_chroot("/root/customize/" + source)
              
 
 def set_permissions():
