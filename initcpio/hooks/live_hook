@@ -52,7 +52,7 @@ run_latehook(){
     if ! cat /proc/cmdline | grep "init=" ; then
         export init=/sbin/init
     fi
-    if cat /proc/cmdline | grep "boot=live" >/dev/null ; then
+    if cat /proc/cmdline | grep -E "boot=live|live-config" >/dev/null ; then
         for i in $(cat /proc/cmdline)
         do
             export $i &>/dev/null || true
