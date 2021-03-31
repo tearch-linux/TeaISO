@@ -12,7 +12,7 @@ from datetime import date
 import glob
 from collections import OrderedDict
 
-VERSION = "1.0"
+VERSION = "1.1"
 compression_types = ['gzip', 'xz', 'lzma', 'lzo', 'lz4', 'zstd']
 
 
@@ -67,6 +67,14 @@ def run_chroot(command, path="/dev/stdout",vital=True):
     target = work_directory + '/' + iso_profile["arch"]
     
     return execute_command('chroot {} /bin/sh -c "{}" > {}'.format(target, command, path),vital)
+
+def remove_all_contents(directory):
+	    for path in glob.glob(directory):
+	        if os.path.isfile(path):
+	            os.remove(path)
+	        elif os.path.isdir(path):
+	            shutil.rmtree(path)
+             
 
 # Read profile arguments
 def read_profile(directory_original):
@@ -163,17 +171,16 @@ def install_packages():
     execute_command(command)
 
 
-
 def customize_airootfs():
-    root_directory = target + "/root/"
-    execute_command("mkdir -p {}".format(root_directory + "customize"))
-
-    for source, file in iso_profile["customize_airootfs"].items():
-        execute_command("cp {} {}".format(file, root_directory + source))
-        os.chmod(root_directory + source, 0o755)
-
-        run_chroot("/root/" + source)
-    
+	root_directory = target + "/root/customize/"
+	execute_command("mkdir -p {}".format(root_directory + "customize"))
+	
+	for source, file in iso_profile["customize_airootfs"].items():
+	    shutil.copyfile(file, root_directory + source)
+	    os.chmod(root_directory + source, 0o755)
+	
+	    run_chroot("/root/customize/" + source)
+             
 
 def set_permissions():
     for name, permission in iso_profile["file_permissions"].items():
@@ -194,17 +201,11 @@ def cleanup():
     execute_command("mkdir -p {}".format(work_directory + "/isowork/live"))
     execute_command("cp -prf \"{}\"/* \"{}\"/".format(target + "/boot", work_directory + "/isowork/live"))
 
-    for pkg in glob.glob(target + "var/lib/pacman/*.tar.*"):
-        os.remove(pkg)
-
-    for db in glob.glob(target + "var/lib/pacman/sync/*"):
-	    execute_command("rm -rf {}".format(db))
-
-    for log in glob.glob(target + "var/log/*"):
-            execute_command("rm -rf {}".format(log))
-    
-    for tmp in glob.glob(target + "var/tmp/*"):
-            execute_command("rm -rf {}".format(tmp))
+    remove_all_contents(target + "/var/lib/pacman/local/*")
+    remove_all_contents(target + "/var/lib/pacman/sync/*")
+    remove_all_contents(target + "/var/log/*")
+    remove_all_contents(target + "/var/tmp/*")
+    remove_all_contents(target + "/root/customize/*")
 
     os.remove(target + "/boot/initramfs-linux.img")
 
@@ -248,6 +249,9 @@ if __name__ == "__main__":
     if os.getuid() != 0:
         message("error", "You need to have root privileges to run this script!")
 
+    # Clean env varibles
+    os.environ.clear()
+ 
     # Set directories
     output_directory = cmd_line.output or 'output'
     work_directory = cmd_line.work or 'work'
