@@ -12,7 +12,7 @@ from datetime import date
 import glob
 from collections import OrderedDict
 
-VERSION = "1.1"
+VERSION = "1.1.2"
 compression_types = ['gzip', 'xz', 'lzma', 'lzo', 'lz4', 'zstd']
 
 
@@ -172,7 +172,7 @@ def install_packages():
 
 
 def customize_airootfs():
-	root_directory = target + "/root/customize/"
+    root_directory = target + "/root/customize/"
 	execute_command("mkdir -p {}".format(root_directory + "customize"))
 	
 	for source, file in iso_profile["customize_airootfs"].items():
@@ -201,11 +201,13 @@ def cleanup():
     execute_command("mkdir -p {}".format(work_directory + "/isowork/live"))
     execute_command("cp -prf \"{}\"/* \"{}\"/".format(target + "/boot", work_directory + "/isowork/live"))
 
-    remove_all_contents(target + "/var/lib/pacman/local/*")
     remove_all_contents(target + "/var/lib/pacman/sync/*")
     remove_all_contents(target + "/var/log/*")
     remove_all_contents(target + "/var/tmp/*")
-    remove_all_contents(target + "/root/customize/*")
+    execute_command("find \"{}/var/lib/pacman\" -maxdepth 1 -type f -delete".format(target))
+    shutil.rmtree(target + "/root/customize")
+
+    open(target + "/etc/machine-id", 'w+').close()
 
     os.remove(target + "/boot/initramfs-linux.img")
 
@@ -251,7 +253,7 @@ if __name__ == "__main__":
 
     # Clean env varibles
     os.environ.clear()
- 
+
     # Set directories
     output_directory = cmd_line.output or 'output'
     work_directory = cmd_line.work or 'work'
