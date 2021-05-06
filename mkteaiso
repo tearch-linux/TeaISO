@@ -3,6 +3,9 @@
 # -*- coding: utf-8 -*-
 # TeaISO - ISO generation tool for Arch Linux.
 # License: GPL-3
+
+#TODO: Install GRUB without prebuilt EFI files.
+#TODO: Fix hooks for Ventoy.
 import argparse
 import os
 import shutil
@@ -127,6 +130,22 @@ def read_profile(directory_original):
         message('error', 'ERROR: profile.yaml doesn\'t exists in {} directory!'.format(directory))
 
 
+def create_directories():
+    if not os.path.exists(work_directory):
+        os.mkdir(work_directory)
+        message("info", "Work directory created!")
+    else:
+        message("info", "Work directory already exists!")
+        
+    if not os.path.exists(output_directory):
+        os.mkdir(output_directory)
+        message("info", "Output directory created!")
+    else:
+        message("info", "Output directory already exists!")
+    
+    change_status("create_directories")
+    
+    
 def make_pacman_conf():
     target_pacman_conf = os.path.realpath(work_directory + "/pacman.conf")
     file = shutil.copyfile(iso_profile["pacman_directory"], target_pacman_conf)
@@ -134,6 +153,7 @@ def make_pacman_conf():
     os.chmod(target_pacman_conf, 0o775)
     
     message("info", "pacman.conf generated successfully!")
+    change_status("make_pacman_conf")
 
 
 def make_custom_airootfs():
@@ -156,6 +176,7 @@ def make_custom_airootfs():
                     "install -d -m 0750 -o {} -g {} -- {}".format(contents[2], contents[3], target + contents[5]))
 
     message("info", "Custom airootfs generated successfully!")
+    change_status("make_custom_airootfs")
 
 
 def install_packages():
@@ -166,12 +187,20 @@ def install_packages():
     for s in iso_profile["all_packages"]:
         packages += s + ' '
 
-    command = "pacstrap -C {} -c -i -G -M -- {} {} {}".format(pacman_conf_directory, airootfs_directory, packages, "" if cmd_line.verbose else "&> /dev/null")
+    if cmd_line.verbose:
+        command = "pacstrap -C {} -c -i -G -M -- {} {}".format(pacman_conf_directory, airootfs_directory, packages)
+    else:
+        command = "pacstrap -C {} -c -G -M -- {} {} &> /dev/null".format(pacman_conf_directory, airootfs_directory, packages)
 
     execute_command(command)
+    
+    message("info", "Packages installed to airootfs!")
+    change_status("install_packages")
 
 
 def customize_airootfs():
+    mount_operations("mount")
+    
     root_directory = target + "/root/customize/"
     execute_command("mkdir -p {}".format(root_directory + "customize"))
 	
@@ -180,19 +209,30 @@ def customize_airootfs():
         os.chmod(root_directory + source, 0o755)
 	
         run_chroot("/root/customize/" + source)
-             
+        
+    message("info", "Airootfs customized!")
+    change_status("customize_airootfs")
+         
+
+def make_pkglist():
+    packages = run_chroot("pacman -Qqn", work_directory + "/" + "packages.list")
+    
+    message("info", "Pkglist generated!")
+    change_status("make_pkglist")    
+
 
 def set_permissions():
+    mount_operations("umount")
+    
     for name, permission in iso_profile["file_permissions"].items():
         permission = permission.split(':')
         name = work_directory + '/' + iso_profile["arch"] + name
 
         execute_command("chown -fh -- {}:{} {}".format(permission[0], permission[1], name))
         execute_command("chmod -f -- {} {}".format(permission[2], name))
-
-
-def make_pkglist():
-    packages = run_chroot("pacman -Qqe", work_directory + "/" + "packages.list")
+        
+    message("info", "Permissions set!")
+    change_status("set_permissions")
 
 
 def cleanup():
@@ -210,20 +250,59 @@ def cleanup():
     open(target + "/etc/machine-id", 'w+').close()
 
     os.remove(target + "/boot/initramfs-linux.img")
+    
+    message("info", "Airootfs cleaned!")
+    change_status("cleanup")
 
 
 def prepare_squashfs():
-    execute_command("umount -lf -R {}/* &> /dev/null".format(target),False)
     execute_command("mksquashfs \"{}\" {}/airootfs.sfs -comp \"{}\" -wildcards".format(target, work_directory+"/isowork/live", compression_type))
+
+    message("info", "Squashfs prepared!")
+    change_status("prepare_squashfs")
 
 
 def make_isowork():
-    filesystem_size = execute_command("du -sb {} | cut -f1 > {}/isowork/live/airootfs.size".format(work_directory + "/"+ iso_profile["arch"], work_directory))
+    execute_command("du -sb {} | cut -f1 > {}/isowork/live/airootfs.size".format(target, work_directory))
     
     shutil.copyfile(iso_profile["grub_cfg"], work_directory + "/isowork/boot/grub/grub.cfg");
     
     execute_command("md5sum {0}/live/airootfs.sfs > {0}/live/airootfs.md5sum".format(work_directory+"/isowork/"))
     shutil.copy(work_directory + "/" + "packages.list", work_directory + "/isowork")
+    
+    message("info", "Isowork generated!")
+    change_status("make_isowork")
+
+
+def generate_iso():
+    execute_command("cp -prf --no-preserve=ownership /usr/lib/teaiso/efi {}/isowork".format(work_directory))
+    execute_command("grub-mkrescue {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))
+    
+    message("info", "ISO generated!")
+    change_status("generate_iso")
+    
+
+def change_status(name):
+    open(work_directory + "/" + name, 'a').close()
+
+
+def check_status(name):
+    if os.path.exists(work_directory):
+        if not name in os.listdir(work_directory + "/"):
+            return 1
+    else:
+        return 1
+    
+
+def mount_operations(type):
+    if type == "mount":
+        execute_command("mount -t proc proc {}/proc".format(target))
+        execute_command("mount -t devtmpfs devtmpfs {}/dev".format(target))
+        execute_command("mount -t sysfs sysfs {}/sys".format(target))
+    elif type == "umount":
+        execute_command("umount -fl -R {}/* &> /dev/null".format(target),False)
+    else:
+        message("error", "Please select true type for mount operations!")
 
 
 def show_verbose_profile():
@@ -264,35 +343,20 @@ if __name__ == "__main__":
     target = work_directory + "/" + iso_profile["arch"]
 
     # Umount if already mounted. (for easy use rm -rf work output)
-    execute_command("umount -fl -R {}/* &> /dev/null".format(work_directory + "/" + iso_profile["arch"]),False)
-
+    mount_operations("umount")
 
     if cmd_line.verbose:
         show_verbose_profile()
 
     # Prepare & Generate ISO
-    try:
-        os.mkdir(work_directory)
-        os.mkdir(output_directory)
-    except FileExistsError:
-        message("error", 'Work or output directory already exists. Please remove directory!')
-
-    make_pacman_conf()
-    make_custom_airootfs()
-    install_packages()
-
-    execute_command("mount -t proc proc {}/proc".format(target))
-    execute_command("mount -t devtmpfs devtmpfs {}/dev".format(target))
-    execute_command("mount -t sysfs sysfs {}/sys".format(target))
-
-    customize_airootfs()
-    set_permissions()
-    make_pkglist()
-    cleanup()
-    prepare_squashfs()
-    make_isowork()
-
-    # Generate ISO
-    #TODO: Grub EFI Problem
-    execute_command("cp -prf --no-preserve=ownership /usr/lib/teaiso/efi {}/isowork".format(work_directory))
-    execute_command("grub-mkrescue {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))
+    steps = ["create_directories", "make_pacman_conf", "make_custom_airootfs", "install_packages", "customize_airootfs", 
+             "make_pkglist", "set_permissions", "cleanup", "prepare_squashfs", "make_isowork"]
+    
+    for step in steps:
+        if check_status(step):
+            eval(step + "()")
+        
+    if check_status("generate_iso"):
+        generate_iso()
+    else:
+        message("error", 'ISO already created! If you want re-create ISO, you should remove work and output directories!')
