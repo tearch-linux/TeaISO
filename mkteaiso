@@ -138,7 +138,7 @@ def make_pacman_conf():
 
 def make_custom_airootfs():
     execute_command("mkdir -p \"{}\"".format(target))
-    execute_command("cp -prf \"{}\"/* \"{}\"/".format(iso_profile["airootfs_directory"], target))
+    execute_command("cp -prf --no-preserve=ownership \"{}\"/* \"{}\"/".format(iso_profile["airootfs_directory"], target))
 
     os.chmod(target + '/etc/shadow', 0o400) if os.path.exists(target + '/etc/shadow') else None
     os.chmod(target + '/etc/gshadow', 0o400) if os.path.exists(target + '/etc/gshadow') else None
@@ -294,5 +294,5 @@ if __name__ == "__main__":
 
     # Generate ISO
     #TODO: Grub EFI Problem
-    execute_command("cp -r /usr/lib/teaiso/efi {}/isowork".format(work_directory))
+    execute_command("cp -prf --no-preserve=ownership /usr/lib/teaiso/efi {}/isowork".format(work_directory))
     execute_command("grub-mkrescue {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))
