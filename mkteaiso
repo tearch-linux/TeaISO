@@ -7,16 +7,19 @@
 #TODO: Fix hooks for Ventoy.
 import argparse
 import os
+import sys
 import shutil
 import yaml
 import time
+import logging
 from datetime import date, datetime
 import glob
 from collections import OrderedDict
 
 VERSION = "1.1.2"
 compression_types = ['gzip', 'xz', 'lzma', 'lzo', 'lz4', 'zstd']
-
+logging.basicConfig(handlers=[logging.FileHandler("/var/log/teaiso.log"), logging.StreamHandler()],
+                    format='%(asctime)s [mkteaiso] %(levelname)s: %(message)s', datefmt='%d/%m/%y %H:%M:%S')
 
 # Argument Parser
 def arguments():
@@ -48,19 +51,12 @@ def arguments():
     return parser.parse_args()
 
 
-def message(message_type, message_text):
-    if message_type == 'info' and cmd_line.verbose is True:
-        print("[mkteaiso] INFO: {}".format(message_text))
-    elif message_type == 'error':
-        exit("[mkteaiso] ERROR: {}".format(message_text))
-
-
 def execute_command(command,vital=True):
     process = os.system(command)
     if vital and process!=0:
-        print("-> "+command)
-        print("Process exited with {}".format(str(process)))
-        exit(process)
+        logging.error("-> "+command)
+        logging.error("Process exited with {}".format(str(process)))
+        sys.exit(process)
     return process
 
 
@@ -80,7 +76,7 @@ def remove_all_contents(directory):
 
 # Read profile arguments
 def read_profile(directory_original):
-    message('info', 'Reading profile...')
+    logging.info('Reading profile...')
 
     directory = os.path.realpath(directory_original) + "/"
     file_name = directory + "profile.yaml"
@@ -119,29 +115,31 @@ def read_profile(directory_original):
                 else:
                     exit("{} doesn't exists!".format(directory + source))
 
-            message('info', 'Done!')
+            logging.info('Done!')
             return {"name": name, "publisher": publisher, "label": label,
                     "application_id": application_id, "airootfs_directory": airootfs_directory, "arch": arch,
                     "pacman_directory": pacman_directory, "grub_cfg": grub_cfg, "all_packages": all_packages,
                     "file_permissions": file_permissions, "customize_airootfs": customize_airootfs}
         except TypeError:
-            message('error', 'profile.yaml corrupted. Please, fix it!')
+            logging.error('profile.yaml corrupted. Please, fix it!')
+            sys.exit(1)
     else:
-        message('error', 'ERROR: profile.yaml doesn\'t exists in {} directory!'.format(directory))
+        logging.error('profile.yaml doesn\'t exists in {} directory!'.format(directory))
+        sys.exit(1)
 
 
 def create_directories():
     if not os.path.exists(work_directory):
         os.mkdir(work_directory)
-        message("info", "Work directory created!")
+        logging.info("Work directory created!")
     else:
-        message("info", "Work directory already exists!")
+        logging.info("Work directory already exists!")
         
     if not os.path.exists(output_directory):
         os.mkdir(output_directory)
-        message("info", "Output directory created!")
+        logging.info("Output directory created!")
     else:
-        message("info", "Output directory already exists!")
+        logging.info("Output directory already exists!")
     
     change_status("create_directories")
     
@@ -152,7 +150,7 @@ def make_pacman_conf():
 
     os.chmod(target_pacman_conf, 0o775)
     
-    message("info", "pacman.conf generated successfully!")
+    logging.info("pacman.conf generated successfully!")
     change_status("make_pacman_conf")
 
 
@@ -175,7 +173,7 @@ def make_custom_airootfs():
                 execute_command(
                     "install -d -m 0750 -o {} -g {} -- {}".format(contents[2], contents[3], target + contents[5]))
 
-    message("info", "Custom airootfs generated successfully!")
+    logging.info("Custom airootfs generated successfully!")
     change_status("make_custom_airootfs")
 
 
@@ -194,7 +192,7 @@ def install_packages():
 
     execute_command(command)
     
-    message("info", "Packages installed to airootfs!")
+    logging.info("Packages installed to airootfs!")
     change_status("install_packages")
 
 
@@ -210,14 +208,14 @@ def customize_airootfs():
 	
         run_chroot("/root/customize/" + source)
         
-    message("info", "Airootfs customized!")
+    logging.info("Airootfs customized!")
     change_status("customize_airootfs")
          
 
 def make_pkglist():
     packages = run_chroot("pacman -Qqn", work_directory + "/" + "packages.list")
     
-    message("info", "Pkglist generated!")
+    logging.info("Pkglist generated!")
     change_status("make_pkglist")    
 
 
@@ -231,7 +229,7 @@ def set_permissions():
         execute_command("chown -fh -- {}:{} {}".format(permission[0], permission[1], name))
         execute_command("chmod -f -- {} {}".format(permission[2], name))
         
-    message("info", "Permissions set!")
+    logging.info("Permissions set!")
     change_status("set_permissions")
 
 
@@ -251,14 +249,14 @@ def cleanup():
 
     os.remove(target + "/boot/initramfs-linux.img")
     
-    message("info", "Airootfs cleaned!")
+    logging.info("Airootfs cleaned!")
     change_status("cleanup")
 
 
 def prepare_squashfs():
     execute_command("mksquashfs \"{}\" {}/airootfs.sfs -comp \"{}\" -wildcards".format(target, work_directory+"/isowork/live", compression_type))
 
-    message("info", "Squashfs prepared!")
+    logging.info("Squashfs prepared!")
     change_status("prepare_squashfs")
 
 
@@ -270,7 +268,7 @@ def make_isowork():
     execute_command("md5sum {0}/live/airootfs.sfs > {0}/live/airootfs.md5sum".format(work_directory+"/isowork/"))
     shutil.copy(work_directory + "/" + "packages.list", work_directory + "/isowork")
     
-    message("info", "Isowork generated!")
+    logging.info("Isowork generated!")
     change_status("make_isowork")
 
 
@@ -331,7 +329,7 @@ def generate_iso():
                 -o {6} \
                 {5}/isowork/""".format(modification_date, iso_profile["label"], iso_profile["application_id"], iso_profile["publisher"], VERSION, work_directory, output_directory + "/" + iso_name))
     
-    message("info", "ISO generated!")
+    logging.info("ISO generated!")
     change_status("generate_iso")
     
 
@@ -355,35 +353,37 @@ def mount_operations(type):
     elif type == "umount":
         execute_command("umount -fl -R {}/* &> /dev/null".format(target),False)
     else:
-        message("error", "Please select true type for mount operations!")
+        logging.error("Please select true type for mount operations!")
+        sys.exit(1)
 
 
 def show_verbose_profile():
     today = date.today()
     iso_name = iso_profile["name"] + "-" + today.strftime("%d-%m-%Y") + "-" + iso_profile["arch"] + ".iso"
 
-    print("\n[mkteaiso] INFO: mkteaiso configuration settings:")
-    print("[mkteaiso] INFO:                   Profile:   {}".format(iso_profile["name"]))
-    print("[mkteaiso] INFO:                     Label:   {}".format(iso_profile["label"]))
-    print("[mkteaiso] INFO:            Application ID:   {}".format(iso_profile["application_id"]))
-    print("[mkteaiso] INFO:             ISO publisher:   {}".format(iso_profile["publisher"]))
-    print("[mkteaiso] INFO:             ISO file name:   {}".format(iso_name))
-    print("[mkteaiso] INFO:        Airootfs directory:   {}".format(iso_profile["airootfs_directory"]))
-    print("[mkteaiso] INFO:         Working directory:   {}".format(work_directory))
-    print("[mkteaiso] INFO:          Output directory:   {}".format(output_directory))
-    print("[mkteaiso] INFO: Pacman configuration file:   {}".format(iso_profile["pacman_directory"]))
-    print("[mkteaiso] INFO:              Architecture:   {} ".format(iso_profile["arch"]))
-    print("[mkteaiso] INFO:                Build date:   {}".format(time.time()))
-    print("[mkteaiso] INFO:          File permissions:   {}".format(iso_profile["file_permissions"]))
-    print("[mkteaiso] INFO:        Customize Airootfs:   {}".format(iso_profile["customize_airootfs"]))
-    print("[mkteaiso] INFO:                  Packages:   {}\n".format(iso_profile["all_packages"]))
+    logging.info("mkteaiso configuration settings:")
+    logging.info("                  Profile:   {}".format(iso_profile["name"]))
+    logging.info("                    Label:   {}".format(iso_profile["label"]))
+    logging.info("           Application ID:   {}".format(iso_profile["application_id"]))
+    logging.info("            ISO publisher:   {}".format(iso_profile["publisher"]))
+    logging.info("            ISO file name:   {}".format(iso_name))
+    logging.info("       Airootfs directory:   {}".format(iso_profile["airootfs_directory"]))
+    logging.info("        Working directory:   {}".format(work_directory))
+    logging.info("         Output directory:   {}".format(output_directory))
+    logging.info("Pacman configuration file:   {}".format(iso_profile["pacman_directory"]))
+    logging.info("             Architecture:   {} ".format(iso_profile["arch"]))
+    logging.info("               Build date:   {}".format(time.time()))
+    logging.info("         File permissions:   {}".format(iso_profile["file_permissions"]))
+    logging.info("       Customize Airootfs:   {}".format(iso_profile["customize_airootfs"]))
+    logging.info("                 Packages:   {}\n".format(iso_profile["all_packages"]))
 
 
 if __name__ == "__main__":
     cmd_line = arguments()
 
     if os.getuid() != 0:
-        message("error", "You need to have root privileges to run this script!")
+        logging.error("You need to have root privileges to run this script!")
+        sys.exit(1)
 
     # Clean env varibles
     os.environ.clear()
@@ -402,6 +402,7 @@ if __name__ == "__main__":
     mount_operations("umount")
 
     if cmd_line.verbose:
+        logging.getLogger().setLevel(logging.INFO)
         show_verbose_profile()
 
     # Prepare & Generate ISO
@@ -415,4 +416,5 @@ if __name__ == "__main__":
     if check_status("generate_iso"):
         generate_iso()
     else:
-        message("error", 'ISO already created! If you want re-create ISO, you should remove work and output directories!')
+        logging.error('ISO already created! If you want re-create ISO, you should remove work and output directories!')
+        sys.exit(1)
