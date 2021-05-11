@@ -1,5 +1,6 @@
 alsa-utils
 amd-ucode
+archinstall
 arch-install-scripts
 b43-fwcutter
 base
@@ -29,8 +30,8 @@ gnu-netcat
 gpart
 gpm
 gptfdisk
+grub
 grml-zsh-config
-haveged
 hdparm
 intel-ucode
 ipw2100-fw
@@ -40,6 +41,9 @@ iwd
 jfsutils
 kitty-terminfo
 lftp
+libfido2
+libusb-compat
+linux
 linux-atm
 linux-firmware
 livecd-sounds
@@ -51,7 +55,10 @@ man-pages
 mc
 mdadm
 memtest86+
+mkinitcpio
+mkinitcpio-teaiso
 mkinitcpio-nfs-utils
+modemmanager
 mtools
 nano
 nbd
@@ -67,6 +74,7 @@ openvpn
 partclone
 parted
 partimage
+pcsclite
 ppp
 pptpclient
 reflector
@@ -77,17 +85,20 @@ rxvt-unicode-terminfo
 sdparm
 sg3_utils
 smartmontools
+sof-firmware
 squashfs-tools
 sudo
-grub
 systemd-resolvconf
+tearch-keyring
 tcpdump
 terminus-font
 termite-terminfo
 testdisk
 tmux
+tpm2-tss
 udftools
 usb_modeswitch
+usbmuxd
 usbutils
 vim
 vpnc

@@ -4,14 +4,13 @@
 # TeaISO - ISO generation tool for Arch Linux.
 # License: GPL-3
 
-#TODO: Install GRUB without prebuilt EFI files.
 #TODO: Fix hooks for Ventoy.
 import argparse
 import os
 import shutil
 import yaml
 import time
-from datetime import date
+from datetime import date, datetime
 import glob
 from collections import OrderedDict
 
@@ -94,7 +93,8 @@ def read_profile(directory_original):
 
             name = contents["name"]
             publisher = contents["publisher"]
-            install_directory = directory + contents["install_directory"]
+            label = contents["label"]
+            application_id = contents["application_id"]
             airootfs_directory = directory + contents["airootfs_directory"]
             arch = contents["arch"]
             pacman_directory = directory + contents["pacman"]
@@ -120,8 +120,8 @@ def read_profile(directory_original):
                     exit("{} doesn't exists!".format(directory + source))
 
             message('info', 'Done!')
-            return {"name": name, "publisher": publisher,
-                    "install_directory": install_directory, "airootfs_directory": airootfs_directory, "arch": arch,
+            return {"name": name, "publisher": publisher, "label": label,
+                    "application_id": application_id, "airootfs_directory": airootfs_directory, "arch": arch,
                     "pacman_directory": pacman_directory, "grub_cfg": grub_cfg, "all_packages": all_packages,
                     "file_permissions": file_permissions, "customize_airootfs": customize_airootfs}
         except TypeError:
@@ -182,7 +182,7 @@ def make_custom_airootfs():
 def install_packages():
     pacman_conf_directory = work_directory + '/' + "pacman.conf"
     airootfs_directory = work_directory + '/' + iso_profile["arch"]
-    packages = 'base mkinitcpio linux '
+    packages = 'base mkinitcpio linux grub '
 
     for s in iso_profile["all_packages"]:
         packages += s + ' '
@@ -239,7 +239,7 @@ def cleanup():
     # Copy boot files before, removing initramfs
     execute_command("mkdir -p {}".format(work_directory + "/isowork/boot/grub"))
     execute_command("mkdir -p {}".format(work_directory + "/isowork/live"))
-    execute_command("cp -prf \"{}\"/* \"{}\"/".format(target + "/boot", work_directory + "/isowork/live"))
+    execute_command("cp -prf \"{}\"/* \"{}\"/".format(target + "/boot", work_directory + "/isowork/boot"))
 
     remove_all_contents(target + "/var/lib/pacman/sync/*")
     remove_all_contents(target + "/var/log/*")
@@ -265,7 +265,7 @@ def prepare_squashfs():
 def make_isowork():
     execute_command("du -sb {} | cut -f1 > {}/isowork/live/airootfs.size".format(target, work_directory))
     
-    shutil.copyfile(iso_profile["grub_cfg"], work_directory + "/isowork/boot/grub/grub.cfg");
+    shutil.copyfile(iso_profile["grub_cfg"], work_directory + "/isowork/boot/grub/grub.cfg")
     
     execute_command("md5sum {0}/live/airootfs.sfs > {0}/live/airootfs.md5sum".format(work_directory+"/isowork/"))
     shutil.copy(work_directory + "/" + "packages.list", work_directory + "/isowork")
@@ -275,8 +275,61 @@ def make_isowork():
 
 
 def generate_iso():
-    execute_command("cp -prf --no-preserve=ownership /usr/lib/teaiso/efi {}/isowork".format(work_directory))
-    execute_command("grub-mkrescue {}/isowork -o {}".format(work_directory, output_directory + "/" + iso_name))
+    # Create Directories
+    execute_command("mkdir -p {}/isowork/EFI/boot".format(work_directory))
+    execute_command("mkdir -p {}/efiboot".format(work_directory))
+
+    # Copy Necessary Directories
+    execute_command("cp -r {}/usr/lib/grub/i386-pc/ {}/isowork/boot/grub/".format(target, work_directory))
+    execute_command("cp -r {}/usr/lib/grub/i386-efi/ {}/isowork/boot/grub/".format(target, work_directory))
+    execute_command("cp -r {}/usr/lib/grub/x86_64-efi/ {}/isowork/boot/grub/".format(target, work_directory))
+    execute_command("cp -r {}/usr/share/grub/themes/ {}/isowork/boot/grub/".format(target, work_directory))
+
+    # Generate Bootloaders
+    execute_command("grub-mkimage -d {0}/isowork/boot/grub/i386-pc/ -o {0}/isowork/boot/grub/i386-pc/core.img -O i386-pc -p /boot/grub biosdisk iso9660".format(work_directory))
+    execute_command("cat {0}/isowork/boot/grub/i386-pc/cdboot.img {0}/isowork/boot/grub/i386-pc/core.img > {0}/isowork/boot/grub/i386-pc/eltorito.img".format(work_directory))
+    execute_command("grub-mkimage -d {0}/isowork/boot/grub/x86_64-efi/ -o {0}/isowork/EFI/boot/bootx64.efi -O x86_64-efi -p /boot/grub iso9660".format(work_directory))
+    execute_command("grub-mkimage -d {0}/isowork/boot/grub/i386-efi/ -o {0}/isowork/EFI/boot/bootia32.efi -O i386-efi -p /boot/grub iso9660".format(work_directory))
+
+    # Generate efi.img
+    execute_command("truncate -s 4M {}/isowork/efi.img".format(work_directory))
+    execute_command("mkfs.fat -n TEAISO_EFI {}/isowork/efi.img &>/dev/null".format(work_directory))
+    execute_command("mount -o loop {0}/isowork/efi.img {0}/efiboot".format(work_directory))
+    execute_command("mkdir -p {}/efiboot/EFI/boot".format(work_directory))
+    execute_command("grub-mkimage -d {0}/isowork/boot/grub/x86_64-efi/ -o {0}/efiboot/EFI/boot/bootx64.efi -O x86_64-efi -p /boot/grub iso9660".format(work_directory))
+    execute_command("grub-mkimage -d {0}/isowork/boot/grub/i386-efi/ -o {0}/efiboot/EFI/boot/bootia32.efi -O i386-efi -p /boot/grub iso9660".format(work_directory))
+    execute_command("umount -fl {}/efiboot".format(work_directory))
+
+    # Miscellaneous
+    execute_command("grub-editenv {}/isowork/boot/grub/grubenv set menu_show_once=1".format(work_directory))
+
+    # Xorriso
+    modification_date = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-00").replace("-", "")
+
+    execute_command("""xorriso -as mkisofs \
+                --modification-date={0} \
+                --protective-msdos-label \
+                -volid "{1}" \
+                -appid "{2}" \
+                -publisher "{3}" \
+                -preparer "Prepared by TeaISO v{4}" \
+                -r -graft-points -no-pad \
+                --sort-weight 0 / \
+                --sort-weight 1 /boot \
+                --grub2-mbr {5}/isowork/boot/grub/i386-pc/boot_hybrid.img \
+                -iso_mbr_part_type 0x00 \
+                -partition_offset 16 \
+                -b boot/grub/i386-pc/eltorito.img \
+                -c boot.catalog \
+                -no-emul-boot -boot-load-size 4 -boot-info-table --grub2-boot-info \
+                -eltorito-alt-boot \
+                -append_partition 2 0xef {5}/isowork/efi.img \
+                -e --interval:appended_partition_2:all:: \
+                -no-emul-boot \
+                -full-iso9660-filenames \
+                -iso-level 3 -rock -joliet \
+                -o {6} \
+                {5}/isowork/""".format(modification_date, iso_profile["label"], iso_profile["application_id"], iso_profile["publisher"], VERSION, work_directory, output_directory + "/" + iso_name))
     
     message("info", "ISO generated!")
     change_status("generate_iso")
@@ -311,6 +364,8 @@ def show_verbose_profile():
 
     print("\n[mkteaiso] INFO: mkteaiso configuration settings:")
     print("[mkteaiso] INFO:                   Profile:   {}".format(iso_profile["name"]))
+    print("[mkteaiso] INFO:                     Label:   {}".format(iso_profile["label"]))
+    print("[mkteaiso] INFO:            Application ID:   {}".format(iso_profile["application_id"]))
     print("[mkteaiso] INFO:             ISO publisher:   {}".format(iso_profile["publisher"]))
     print("[mkteaiso] INFO:             ISO file name:   {}".format(iso_name))
     print("[mkteaiso] INFO:        Airootfs directory:   {}".format(iso_profile["airootfs_directory"]))
@@ -334,13 +389,14 @@ if __name__ == "__main__":
     os.environ.clear()
 
     # Set directories
-    output_directory = cmd_line.output or 'output'
-    work_directory = cmd_line.work or 'work'
+    output_directory = os.path.realpath(cmd_line.output or 'output')
+    work_directory = os.path.realpath(cmd_line.work or 'work')
+
     compression_type = cmd_line.compression or 'gzip'
 
     iso_profile = read_profile(cmd_line.profile)
     iso_name = iso_profile["name"] + "-" + date.today().strftime("%d-%m-%Y") + "-" + iso_profile["arch"] + ".iso"
-    target = work_directory + "/" + iso_profile["arch"]
+    target = os.path.realpath(work_directory + "/" + iso_profile["arch"])
 
     # Umount if already mounted. (for easy use rm -rf work output)
     mount_operations("umount")
