@@ -60,6 +60,6 @@ The profile structure is kept as simple as possible. You need this things for cr
  - grub.cfg file
  - pacman.conf
  - packages file
- - profile.yaml
+ - profile.yaml [example](https://gitlab.com/tearch-linux/applications-and-tools/teaiso/-/blob/master/example-profile.yaml)
 
 **Note:** You can look at profiles by this links: [TeaISO example profiles](https://gitlab.com/tearch-linux/applications-and-tools/teaiso/-/tree/master/profiles), [TeArch ISO profiles](https://gitlab.com/tearch-linux/configs/tearch-iso-profiles).
