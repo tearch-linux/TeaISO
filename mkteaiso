@@ -120,7 +120,7 @@ def read_profile(directory_original):
                     "application_id": application_id, "airootfs_directory": airootfs_directory, "arch": arch,
                     "pacman_directory": pacman_directory, "grub_cfg": grub_cfg, "all_packages": all_packages,
                     "file_permissions": file_permissions, "customize_airootfs": customize_airootfs}
-        except TypeError:
+        except (TypeError, KeyError):
             logging.error('profile.yaml corrupted. Please, fix it!')
             sys.exit(1)
     else:
