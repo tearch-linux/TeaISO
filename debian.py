@@ -39,12 +39,12 @@ def make_pkglist():
 def install_packages():
     pacman_conf_directory = work_directory + '/' + "pacman.conf"
     airootfs_directory = work_directory + '/' + iso_profile["arch"]
-    packages = 'live-boot live-config initramfs-tools linux-image-amd64 grub-pc-bin grub-efi '
+    packages = 'live-boot live-config initramfs-tools grub-pc-bin grub-efi grub-efi-ia32-bin '
 
     for s in iso_profile["all_packages"]:
         packages += s + ' '
 
-    command = "chroot {} apt install {}".format(airootfs_directory, packages)
+    command = "chroot {} apt install -yq {}".format(airootfs_directory, packages)
     execute_command(command)
     
     logging.info("Packages installed to airootfs!")
