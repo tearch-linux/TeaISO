@@ -1,4 +1,5 @@
 name: archlinux
+distro: archlinux
 publisher: Arch Linux <https://archlinux.org>
 label: ARCH_TEAISO
 application_id: Arch Linux Live/Rescue Media

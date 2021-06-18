@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # -*- coding: utf-8 -*-
 # TeaISO - ISO generation tool for Arch Linux.
@@ -15,6 +15,13 @@ import logging
 from datetime import date, datetime
 import glob
 from collections import OrderedDict
+
+sys.path.insert(0,"/usr/lib/teaiso")
+
+
+if os.getuid() != 0:
+    logging.error("You need to have root privileges to run this script!")
+    sys.exit(1)
 
 VERSION = "1.1.2"
 compression_types = ['gzip', 'xz', 'lzma', 'lzo', 'lz4', 'zstd']
@@ -88,12 +95,16 @@ def read_profile(directory_original):
             contents = yaml.load(file, Loader=yaml.FullLoader)
 
             name = contents["name"]
+            distro = contents["distro"]
             publisher = contents["publisher"]
             label = contents["label"]
             application_id = contents["application_id"]
             airootfs_directory = directory + contents["airootfs_directory"]
             arch = contents["arch"]
-            pacman_directory = directory + contents["pacman"]
+            if distro == 'archlinux':
+                pacman_directory = directory + contents["pacman"]
+            else:
+                pacman_directory = None
             grub_cfg = directory + contents["grub_cfg"]
 
             all_packages = []
@@ -119,7 +130,7 @@ def read_profile(directory_original):
             return {"name": name, "publisher": publisher, "label": label,
                     "application_id": application_id, "airootfs_directory": airootfs_directory, "arch": arch,
                     "pacman_directory": pacman_directory, "grub_cfg": grub_cfg, "all_packages": all_packages,
-                    "file_permissions": file_permissions, "customize_airootfs": customize_airootfs}
+                    "file_permissions": file_permissions, "customize_airootfs": customize_airootfs, "distro": distro}
         except (TypeError, KeyError):
             logging.error('profile.yaml corrupted. Please, fix it!')
             sys.exit(1)
@@ -143,15 +154,6 @@ def create_directories():
     
     change_status("create_directories")
     
-    
-def make_pacman_conf():
-    target_pacman_conf = os.path.realpath(work_directory + "/pacman.conf")
-    file = shutil.copyfile(iso_profile["pacman_directory"], target_pacman_conf)
-
-    os.chmod(target_pacman_conf, 0o775)
-    
-    logging.info("pacman.conf generated successfully!")
-    change_status("make_pacman_conf")
 
 
 def make_custom_airootfs():
@@ -177,23 +179,6 @@ def make_custom_airootfs():
     change_status("make_custom_airootfs")
 
 
-def install_packages():
-    pacman_conf_directory = work_directory + '/' + "pacman.conf"
-    airootfs_directory = work_directory + '/' + iso_profile["arch"]
-    packages = 'base mkinitcpio linux grub '
-
-    for s in iso_profile["all_packages"]:
-        packages += s + ' '
-
-    if cmd_line.verbose:
-        command = "pacstrap -C {} -c -i -G -M -- {} {}".format(pacman_conf_directory, airootfs_directory, packages)
-    else:
-        command = "pacstrap -C {} -c -G -M -- {} {} &> /dev/null".format(pacman_conf_directory, airootfs_directory, packages)
-
-    execute_command(command)
-    
-    logging.info("Packages installed to airootfs!")
-    change_status("install_packages")
 
 
 def customize_airootfs():
@@ -212,11 +197,6 @@ def customize_airootfs():
     change_status("customize_airootfs")
          
 
-def make_pkglist():
-    packages = run_chroot("pacman -Qqn", work_directory + "/" + "packages.list")
-    
-    logging.info("Pkglist generated!")
-    change_status("make_pkglist")    
 
 
 def set_permissions():
@@ -242,12 +222,12 @@ def cleanup():
     remove_all_contents(target + "/var/lib/pacman/sync/*")
     remove_all_contents(target + "/var/log/*")
     remove_all_contents(target + "/var/tmp/*")
-    execute_command("find \"{}/var/lib/pacman\" -maxdepth 1 -type f -delete".format(target))
-    shutil.rmtree(target + "/root/customize")
+    execute_command("find \"{}/var/lib/pacman\" -maxdepth 1 -type f -delete".format(target),False)
+    execute_command("find \"{}/var/cache/apt/archives\" -maxdepth 1 -type f -delete".format(target),False)
+    if os.path.exists(target + "/root/customize"):
+        shutil.rmtree(target + "/root/customize")
 
     open(target + "/etc/machine-id", 'w+').close()
-
-    os.remove(target + "/boot/initramfs-linux.img")
     
     logging.info("Airootfs cleaned!")
     change_status("cleanup")
@@ -260,16 +240,6 @@ def prepare_squashfs():
     change_status("prepare_squashfs")
 
 
-def make_isowork():
-    execute_command("du -sb {} | cut -f1 > {}/isowork/live/airootfs.size".format(target, work_directory))
-    
-    shutil.copyfile(iso_profile["grub_cfg"], work_directory + "/isowork/boot/grub/grub.cfg")
-    
-    execute_command("md5sum {0}/live/airootfs.sfs > {0}/live/airootfs.md5sum".format(work_directory+"/isowork/"))
-    shutil.copy(work_directory + "/" + "packages.list", work_directory + "/isowork")
-    
-    logging.info("Isowork generated!")
-    change_status("make_isowork")
 
 
 def generate_iso():
@@ -278,24 +248,24 @@ def generate_iso():
     execute_command("mkdir -p {}/efiboot".format(work_directory))
 
     # Copy Necessary Directories
-    execute_command("cp -r {}/usr/lib/grub/i386-pc/ {}/isowork/boot/grub/".format(target, work_directory))
-    execute_command("cp -r {}/usr/lib/grub/i386-efi/ {}/isowork/boot/grub/".format(target, work_directory))
-    execute_command("cp -r {}/usr/lib/grub/x86_64-efi/ {}/isowork/boot/grub/".format(target, work_directory))
-    execute_command("cp -r {}/usr/share/grub/themes/ {}/isowork/boot/grub/".format(target, work_directory))
+    execute_command("cp -r {}/usr/lib/grub/i386-pc/ {}/isowork/boot/grub/".format(target, work_directory),False)
+    execute_command("cp -r {}/usr/lib/grub/i386-efi/ {}/isowork/boot/grub/".format(target, work_directory),False)
+    execute_command("cp -r {}/usr/lib/grub/x86_64-efi/ {}/isowork/boot/grub/".format(target, work_directory),False)
+    execute_command("cp -r {}/usr/share/grub/themes/ {}/isowork/boot/grub/".format(target, work_directory),False)
 
     # Generate Bootloaders
-    execute_command("grub-mkimage -d {0}/isowork/boot/grub/i386-pc/ -o {0}/isowork/boot/grub/i386-pc/core.img -O i386-pc -p /boot/grub biosdisk iso9660".format(work_directory))
-    execute_command("cat {0}/isowork/boot/grub/i386-pc/cdboot.img {0}/isowork/boot/grub/i386-pc/core.img > {0}/isowork/boot/grub/i386-pc/eltorito.img".format(work_directory))
-    execute_command("grub-mkimage -d {0}/isowork/boot/grub/x86_64-efi/ -o {0}/isowork/EFI/boot/bootx64.efi -O x86_64-efi -p /boot/grub iso9660".format(work_directory))
-    execute_command("grub-mkimage -d {0}/isowork/boot/grub/i386-efi/ -o {0}/isowork/EFI/boot/bootia32.efi -O i386-efi -p /boot/grub iso9660".format(work_directory))
+    execute_command("grub-mkimage -d {0}/isowork/boot/grub/i386-pc/ -o {0}/isowork/boot/grub/i386-pc/core.img -O i386-pc -p /boot/grub biosdisk iso9660".format(work_directory),False)
+    execute_command("cat {0}/isowork/boot/grub/i386-pc/cdboot.img {0}/isowork/boot/grub/i386-pc/core.img > {0}/isowork/boot/grub/i386-pc/eltorito.img".format(work_directory),False)
+    execute_command("grub-mkimage -d {0}/isowork/boot/grub/x86_64-efi/ -o {0}/isowork/EFI/boot/bootx64.efi -O x86_64-efi -p /boot/grub iso9660".format(work_directory),False)
+    execute_command("grub-mkimage -d {0}/isowork/boot/grub/i386-efi/ -o {0}/isowork/EFI/boot/bootia32.efi -O i386-efi -p /boot/grub iso9660".format(work_directory),False)
 
     # Generate efi.img
     execute_command("truncate -s 4M {}/isowork/efi.img".format(work_directory))
     execute_command("mkfs.fat -n TEAISO_EFI {}/isowork/efi.img &>/dev/null".format(work_directory))
     execute_command("mount -o loop {0}/isowork/efi.img {0}/efiboot".format(work_directory))
     execute_command("mkdir -p {}/efiboot/EFI/boot".format(work_directory))
-    execute_command("grub-mkimage -d {0}/isowork/boot/grub/x86_64-efi/ -o {0}/efiboot/EFI/boot/bootx64.efi -O x86_64-efi -p /boot/grub iso9660".format(work_directory))
-    execute_command("grub-mkimage -d {0}/isowork/boot/grub/i386-efi/ -o {0}/efiboot/EFI/boot/bootia32.efi -O i386-efi -p /boot/grub iso9660".format(work_directory))
+    execute_command("grub-mkimage -d {0}/isowork/boot/grub/x86_64-efi/ -o {0}/efiboot/EFI/boot/bootx64.efi -O x86_64-efi -p /boot/grub iso9660".format(work_directory),False)
+    execute_command("grub-mkimage -d {0}/isowork/boot/grub/i386-efi/ -o {0}/efiboot/EFI/boot/bootia32.efi -O i386-efi -p /boot/grub iso9660".format(work_directory),False)
     execute_command("umount -fl {}/efiboot".format(work_directory))
 
     # Miscellaneous
@@ -379,14 +349,12 @@ def show_verbose_profile():
 
 
 if __name__ == "__main__":
+
+
     cmd_line = arguments()
-
-    if os.getuid() != 0:
-        logging.error("You need to have root privileges to run this script!")
-        sys.exit(1)
-
     # Clean env varibles
     os.environ.clear()
+
 
     # Set directories
     output_directory = os.path.realpath(cmd_line.output or 'output')
@@ -398,6 +366,15 @@ if __name__ == "__main__":
     iso_name = iso_profile["name"] + "-" + date.today().strftime("%d-%m-%Y") + "-" + iso_profile["arch"] + ".iso"
     target = os.path.realpath(work_directory + "/" + iso_profile["arch"])
 
+    if iso_profile["distro"] == 'debian':
+        import debian as system
+    elif iso_profile["distro"] == 'archlinux':
+        import archlinux as system
+    else:
+        logging.error("Unsupported distro type detected")
+        sys.exit(1)
+
+
     # Umount if already mounted. (for easy use rm -rf work output)
     mount_operations("umount")
 
@@ -405,9 +382,12 @@ if __name__ == "__main__":
         logging.getLogger().setLevel(logging.INFO)
         show_verbose_profile()
 
+    system.work_directory = work_directory
+    system.iso_profile = iso_profile
+
     # Prepare & Generate ISO
-    steps = ["create_directories", "make_pacman_conf", "make_custom_airootfs", "install_packages", "customize_airootfs", 
-             "make_pkglist", "set_permissions", "cleanup", "prepare_squashfs", "make_isowork"]
+    steps = ["create_directories", "system.make_pkg_conf", "make_custom_airootfs", "system.install_packages", "customize_airootfs", 
+             "system.make_pkglist", "set_permissions", "cleanup", "prepare_squashfs", "system.make_isowork"]
     
     for step in steps:
         if check_status(step):

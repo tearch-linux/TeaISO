@@ -1,8 +1,8 @@
-name: archlinux
-distro: archlinux
-publisher: Arch Linux <https://archlinux.org>
-label: ARCH_TEAISO
-application_id: Arch Linux Live/Rescue Media
+name: debian
+distro: debian
+publisher: Debian <https://debian.org>
+label: DEBIAN_TEAISO
+application_id: Debian Live/Rescue Media
 airootfs_directory: airootfs
 arch: x86_64
 pacman: pacman.conf
