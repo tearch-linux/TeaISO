@@ -3,7 +3,9 @@ work_directory = None
 airootfs_directory = None
 
 def make_pkg_conf():
-    airootfs_directory = work_directory + '/' + iso_profile["arch"]   
+    airootfs_directory = work_directory + '/' + iso_profile["arch"]
+    if os.path.exists(airootfs_directory+'/etc/shadow'):
+        return
     execute_command('debootstrap --no-merged-usr stable '+airootfs_directory)
     logging.info("apt.conf generated successfully!")
     change_status("make_apt_conf")
@@ -37,7 +39,6 @@ def make_pkglist():
 
 
 def install_packages():
-    pacman_conf_directory = work_directory + '/' + "pacman.conf"
     airootfs_directory = work_directory + '/' + iso_profile["arch"]
     packages = 'live-boot live-config initramfs-tools grub-pc-bin grub-efi grub-efi-ia32-bin '
 

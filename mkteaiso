@@ -234,6 +234,7 @@ def cleanup():
 
 
 def prepare_squashfs():
+    mount_operations("umount")
     execute_command("mksquashfs \"{}\" {}/airootfs.sfs -comp \"{}\" -wildcards".format(target, work_directory+"/isowork/live", compression_type))
 
     logging.info("Squashfs prepared!")
@@ -315,13 +316,14 @@ def check_status(name):
         return 1
     
 
-def mount_operations(type):
+def mount_operations(type="mount"):
     if type == "mount":
-        execute_command("mount -t proc proc {}/proc".format(target))
-        execute_command("mount -t devtmpfs devtmpfs {}/dev".format(target))
-        execute_command("mount -t sysfs sysfs {}/sys".format(target))
+        for dir in ["dev", "sys", "proc", "run", "dev/pts"]:
+            execute_command("mount --bind /{0} {1}/{0}".format(dir,target))
     elif type == "umount":
-        execute_command("umount -fl -R {}/* &> /dev/null".format(target),False)
+        for dir in ["dev", "sys", "proc", "run", "dev/pts"]:
+            while 0 == os.system("umount -lf -R {1}/{0}".format(dir,target)):
+                True
     else:
         logging.error("Please select true type for mount operations!")
         sys.exit(1)
@@ -385,8 +387,9 @@ if __name__ == "__main__":
     system.work_directory = work_directory
     system.iso_profile = iso_profile
 
+
     # Prepare & Generate ISO
-    steps = ["create_directories", "system.make_pkg_conf", "make_custom_airootfs", "system.install_packages", "customize_airootfs", 
+    steps = ["create_directories" ,"system.make_pkg_conf", "mount_operations", "make_custom_airootfs", "system.install_packages", "customize_airootfs", 
              "system.make_pkglist", "set_permissions", "cleanup", "prepare_squashfs", "system.make_isowork"]
     
     for step in steps:
