@@ -3,8 +3,6 @@ work_directory = None
 airootfs_directory = None
 
 def make_pkg_conf():
-    """This action is not required for debian. Using dummy function""" 
-    return
     airootfs_directory = work_directory + '/' + iso_profile["arch"]   
     execute_command('debootstrap --no-merged-usr stable '+airootfs_directory)
     logging.info("apt.conf generated successfully!")
