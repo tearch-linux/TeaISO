@@ -7,10 +7,10 @@ airootfs_directory: airootfs
 arch: x86_64
 pacman: pacman.conf
 grub_cfg: grub.cfg
+#compression_options: -comp gzip
 packages:
  - packages.x86_64
 file_permissions:
  - /etc/shadow|0:0:400
-
-customize_airootfs:
- - customize-airootfs.sh
+#customize_airootfs:
+# - customize-airootfs.sh
