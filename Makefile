@@ -9,7 +9,8 @@ install:
 	install -m 755  mkteaiso $(DESTDIR)/usr/bin/ # Copy app
 	cp -prvf profiles $(DESTDIR)/usr/lib/teaiso
 	install -m 755  debian.py $(DESTDIR)/usr/lib/teaiso # Copy debian
-	install -m 755  archlinux.py $(DESTDIR)/usr/lib/teaiso # Copy debian
+	install -m 755  archlinux.py $(DESTDIR)/usr/lib/teaiso # Copy archlinux
+	install -m 755  utils.py $(DESTDIR)/usr/lib/teaiso # Copy debian
 
 install-hooks:
 	mkdir -p $(DESTDIR)/usr/lib/ || true

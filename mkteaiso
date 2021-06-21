@@ -14,10 +14,9 @@ import yaml
 import time
 import logging
 from datetime import date, datetime
-from utils import execute_command, run_chroot, remove_all_contents, change_status, check_status, mount_operations
 from collections import OrderedDict
-
 sys.path.insert(0, "/usr/lib/teaiso")
+from utils import execute_command, run_chroot, remove_all_contents, change_status, check_status, mount_operations
 
 if os.getuid() != 0:
     logging.error("You need to have root privileges to run this script!")
@@ -184,7 +183,7 @@ def customize_airootfs():
             shutil.copyfile(file, root_directory + source)
             os.chmod(root_directory + source, 0o755)
 
-            # run_chroot(work_directory, iso_profile, "/root/customize/" + source)
+            run_chroot(work_directory, iso_profile, "/root/customize/" + source)
         logging.info("Airootfs customized!")
     else:
         logging.warning('Customize airootfs not found. Skipping!')
@@ -213,7 +212,7 @@ def cleanup():
     # Copy boot files before, removing initramfs
     execute_command("mkdir -p {}".format(work_directory + "/isowork/boot/grub"))
     execute_command("mkdir -p {}".format(work_directory + "/isowork/live"))
-    execute_command("cp -prf \"{}/*\" \"{}/\"".format(target + "/boot", work_directory + "/isowork/boot"))
+    execute_command("cp -prf {}/* \"{}/\"".format(target + "/boot", work_directory + "/isowork/boot"))
 
     remove_all_contents(target + "/var/lib/pacman/sync/*")
     remove_all_contents(target + "/var/log/*")
