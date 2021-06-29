@@ -3,8 +3,10 @@ import sys
 import shutil
 import logging
 import glob
-
-logging.basicConfig(handlers=[logging.FileHandler("/var/log/teaiso.log"), logging.StreamHandler()],
+logfile="/var/log/teaiso.log"
+if os.getuid() != 0:
+	logfile=os.environ["HOME"]+"/.local/teaiso.log"
+logging.basicConfig(handlers=[logging.FileHandler(logfile), logging.StreamHandler()],
                     format='%(asctime)s [mkteaiso] %(levelname)s: %(message)s', datefmt='%d/%m/%y %H:%M:%S')
 
 def execute_command(command, vital=True):
