@@ -54,6 +54,10 @@ def arguments():
         help="Enable detailed verbose output.",
         action="store_true")
     parser.add_argument(
+        "-s", "--checksum",
+        help="Generate MD5 and SHA1 checksums of ISO.",
+        action="store_true")
+    parser.add_argument(
         "-c", "--clean",
         help="Clean work directory after the ISO generation.",
         action="store_true")
@@ -337,6 +341,11 @@ def generate_iso():
                 {5}/isowork/""".format(modification_date, iso_profile["label"], iso_profile["application_id"],
                                        iso_profile["publisher"], VERSION, work_directory,
                                        output_directory + "/" + iso_name))
+    
+    if cmd_line.checksum:
+        os.chdir(output_directory + "/")
+        execute_command("md5sum {} > {}".format(iso_name, iso_name + ".md5sum"))
+        execute_command("sha1sum {} > {}".format(iso_name, iso_name + ".sha1sum"))
 
     logging.info("ISO generated!")
     change_status(work_directory, "generate_iso")
