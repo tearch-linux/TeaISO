@@ -38,7 +38,7 @@ def install_packages(cmd_line):
     change_status(work_directory, "system.install_packages")
 
 
-def make_isowork():
+def make_isowork(cmd_line, compression_tool="squashfs"):
     airootfs_directory = work_directory + '/' + iso_profile["arch"]
     execute_command("du -sb {} | cut -f1 > {}/isowork/live/filesystem.size".format(airootfs_directory, work_directory))
 
