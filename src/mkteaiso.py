@@ -95,6 +95,9 @@ def read_profile(directory_original):
         contents["airootfs_directory"] = directory + contents["airootfs_directory"]
         contents["pacman"] = contents["pacman"]
         contents["grub_cfg"] = directory + contents["grub_cfg"]
+        
+        if "iso_merge" in contents:
+            contents["iso_merge"] = directory + contents["iso_merge"]
 
         packages = []
         for package in contents["packages"]:
@@ -303,6 +306,10 @@ def generate_iso():
 
     # Xorriso
     modification_date = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-00").replace("-", "")
+    
+    # Copy merge directory if exists
+    if "iso_merge" in iso_profile:
+        execute_command("cp -rvn \"{}\"/* \"{}\"/".format(iso_profile["iso_merge"], work_directory + "/isowork"))
 
     execute_command("""xorriso -as mkisofs \
                 --modification-date={0} \
@@ -355,6 +362,8 @@ def show_verbose_profile():
         iso_profile["file_permissions"] if 'file_permissions' in iso_profile else 'N/A'))
     logging.info("       Customize Airootfs:   {}".format(
         iso_profile["customize_airootfs"] if 'customize_airootfs' in iso_profile else 'N/A'))
+    logging.info("      ISO Merge Directory:   {}".format(
+        iso_profile["iso_merge"] if 'iso_merge' in iso_profile else 'N/A'))
     logging.info("                 Packages:   {}".format(iso_profile["packages"]))
     logging.info("         Compression Tool:   {}".format(compression_tool))
     logging.info("      Compression Options:   '{}'\n".format(compression_options))
