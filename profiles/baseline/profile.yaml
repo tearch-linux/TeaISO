@@ -7,7 +7,6 @@ airootfs_directory: airootfs
 arch: x86_64
 pacman: pacman.conf
 grub_cfg: grub.cfg
-#compression_options: -comp gzip
 packages:
  - packages.x86_64
 file_permissions:

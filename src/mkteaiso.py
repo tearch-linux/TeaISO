@@ -17,24 +17,24 @@ from datetime import date, datetime
 from collections import OrderedDict
 
 #portable and normal mode 
-if os.path.exists("../Makefile"):
-   sys.path.insert(0, "../distro")
+if os.path.exists("./Makefile"):
+   sys.path.insert(0, "./distro")
 else:
     sys.path.insert(0, "/usr/lib/teaiso")
     sys.path.insert(0, "/usr/lib/teaiso/distro")
-    
-from utils import execute_command, run_chroot, remove_all_contents, change_status, check_status, mount_operations
 
 if os.getuid() != 0:
-    logging.error("You need to have root privileges to run this script!")
+    print("You need to have root privileges to run this script!")
     sys.exit(1)
-print(os.getuid())
-VERSION = "1.1.2"
-compression_options = "-comp gzip"
-
+    
+from utils import execute_command, run_chroot, remove_all_contents, change_status, check_status, mount_operations
 logging.basicConfig(handlers=[logging.FileHandler("/var/log/teaiso.log"), logging.StreamHandler()],
                     format='%(asctime)s [mkteaiso] %(levelname)s: %(message)s', datefmt='%d/%m/%y %H:%M:%S')
 
+VERSION = "1.1.2"
+compression_tool = "squashfs"
+compression_options = "-comp gzip"
+compression_options_erofs = "-zlz4hc,12"
 
 # Argument Parser
 def arguments():
@@ -80,7 +80,7 @@ def validate_profile(contents):
 
 # Read profile arguments
 def read_profile(directory_original):
-    global compression_options
+    global compression_options, compression_tool
     logging.info('Reading profile...')
 
     directory = os.path.realpath(directory_original) + "/"
@@ -125,6 +125,16 @@ def read_profile(directory_original):
         else:
             logging.warning(
                 'Compression options not found! Using \'{}\' as default!'.format(compression_options))
+            
+        if 'compression_tool' in contents:
+            compression_tool = contents['compression_tool']
+            del contents['compression_tool']
+            
+            if compression_tool == "erofs" and compression_options == "-comp gzip":
+                compression_options = compression_options_erofs
+        else:
+            logging.warning(
+                'Compression tool not found! Using \'{}\' as default!'.format(compression_tool))
 
         if contents['distro'] == 'archlinux':
             contents['pacman'] = directory + contents["pacman"]
@@ -235,14 +245,19 @@ def cleanup():
     change_status(work_directory, "cleanup")
 
 
-def prepare_squashfs():
+def prepare_airootfs():
     mount_operations(target, "umount")
-    execute_command(
-        "mksquashfs \"{}\" {}/airootfs.sfs -wildcards {}".format(target, work_directory + "/isowork/live",
-                                                                 compression_options))
-
-    logging.info("Squashfs prepared!")
-    change_status(work_directory, "prepare_squashfs")
+    
+    if compression_tool == "squashfs":
+        execute_command("mksquashfs \"{}\" {}/airootfs.sfs -wildcards {}".format(target, work_directory + "/isowork/live", compression_options))
+    elif compression_tool == "erofs":
+        execute_command("mkfs.erofs -U {} {} -- {}/airootfs.erofs \"{}\"".format("be96d150-e7ae-11eb-aa18-e4f89c93375d", compression_options, work_directory + "/isowork/live", target))
+    else:
+        logging.error('Valid compression tool not found in profile.yaml. Please check your profile!')
+        sys.exit(1)
+        
+    logging.info("Airootfs prepared!")
+    change_status(work_directory, "prepare_airootfs")
 
 
 def generate_iso():
@@ -341,6 +356,7 @@ def show_verbose_profile():
     logging.info("       Customize Airootfs:   {}".format(
         iso_profile["customize_airootfs"] if 'customize_airootfs' in iso_profile else 'N/A'))
     logging.info("                 Packages:   {}".format(iso_profile["packages"]))
+    logging.info("         Compression Tool:   {}".format(compression_tool))
     logging.info("      Compression Options:   '{}'\n".format(compression_options))
 
 
@@ -379,7 +395,7 @@ if __name__ == "__main__":
     # Prepare & Generate ISO
     steps = ["create_directories()", "system.make_pkg_conf()", "make_custom_airootfs()",
              "system.install_packages(cmd_line)", "customize_airootfs()", "system.make_pkglist()", "set_permissions()",
-             "cleanup()", "prepare_squashfs()", "system.make_isowork()"]
+             "cleanup()", "prepare_airootfs()", "system.make_isowork(compression_tool)"]
 
     for step in steps:
         if check_status(work_directory, step.split('(')[0]):

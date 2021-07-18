@@ -38,13 +38,17 @@ def install_packages(cmd_line):
     change_status(work_directory, "system.install_packages")
 
 
-def make_isowork():
+def make_isowork(compression_tool="squashfs"):
     airootfs_directory = work_directory + '/' + iso_profile["arch"]
     execute_command("du -sb {} | cut -f1 > {}/isowork/live/airootfs.size".format(airootfs_directory, work_directory))
 
     shutil.copyfile(iso_profile["grub_cfg"], work_directory + "/isowork/boot/grub/grub.cfg")
 
-    execute_command("md5sum {0}/live/airootfs.sfs > {0}/live/airootfs.md5sum".format(work_directory + "/isowork/"))
+    if compression_tool == "squashfs":
+        execute_command("md5sum {0}/live/airootfs.sfs > {0}live/airootfs.md5sum".format(work_directory + "/isowork/"))
+    elif compression_tool == "erofs":
+        execute_command("md5sum {0}/live/airootfs.erofs > {0}live/airootfs.md5sum".format(work_directory + "/isowork/"))
+        
     shutil.copy(work_directory + "/packages.list", work_directory + "/isowork")
 
     logging.info("Isowork generated!")
