@@ -58,6 +58,9 @@ def arguments():
         help="Generate MD5 and SHA1 checksums of ISO.",
         action="store_true")
     parser.add_argument(
+        "-g", "--gpg",
+        help="Set GPG key to signing rootfs image.")
+    parser.add_argument(
         "-c", "--clean",
         help="Clean work directory after the ISO generation.",
         action="store_true")
@@ -413,7 +416,7 @@ if __name__ == "__main__":
     # Prepare & Generate ISO
     steps = ["create_directories()", "system.make_pkg_conf()", "make_custom_airootfs()",
              "system.install_packages(cmd_line)", "customize_airootfs()", "system.make_pkglist()", "set_permissions()",
-             "cleanup()", "prepare_airootfs()", "system.make_isowork(compression_tool)"]
+             "cleanup()", "prepare_airootfs()", "system.make_isowork(cmd_line, compression_tool)"]
 
     for step in steps:
         if check_status(work_directory, step.split('(')[0]):

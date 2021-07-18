@@ -1,5 +1,5 @@
 import os, shutil, logging
-from utils import execute_command, run_chroot, change_status
+from utils import execute_command, run_chroot, change_status, sign_rootfs
 
 work_directory = None
 airootfs_directory = None
@@ -38,7 +38,7 @@ def install_packages(cmd_line):
     change_status(work_directory, "system.install_packages")
 
 
-def make_isowork(compression_tool="squashfs"):
+def make_isowork(cmd_line, compression_tool="squashfs"):
     airootfs_directory = work_directory + '/' + iso_profile["arch"]
     execute_command("du -sb {} | cut -f1 > {}/isowork/live/airootfs.size".format(airootfs_directory, work_directory))
 
@@ -46,8 +46,10 @@ def make_isowork(compression_tool="squashfs"):
 
     if compression_tool == "squashfs":
         execute_command("md5sum {0}/live/airootfs.sfs > {0}live/airootfs.md5sum".format(work_directory + "/isowork/"))
+        sign_rootfs(work_directory + "/isowork/live/airootfs.sfs", cmd_line)
     elif compression_tool == "erofs":
         execute_command("md5sum {0}/live/airootfs.erofs > {0}live/airootfs.md5sum".format(work_directory + "/isowork/"))
+        sign_rootfs(work_directory + "/isowork/live/airootfs.erofs", cmd_line)
         
     shutil.copy(work_directory + "/packages.list", work_directory + "/isowork")
 

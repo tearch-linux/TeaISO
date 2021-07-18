@@ -55,3 +55,7 @@ def mount_operations(target, type="mount"):
     else:
         logging.error("Please select true type for mount operations!")
         sys.exit(1)
+
+def sign_rootfs(input, cmd_line):
+    if cmd_line.gpg:
+        execute_command("gpg --output {0}.sig --detach-sign --default-key \"{1}\" {0}".format(input, cmd_line.gpg))
