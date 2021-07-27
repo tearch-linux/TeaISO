@@ -1,5 +1,6 @@
 import yaml
 import os
+from utils import err
 profile=None
 def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml"):
     global profile
@@ -13,18 +14,22 @@ def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml"):
         except BaseException:
             contents = yaml.load(file.read())
     profile=contents
-    validate_profile()
+    validation = validate_profile()
+    
+    if not validation[0]:
+       err("Key not defined in profile:\n -> {}".format(validation[1])) 
+    
     return profile
 
 def validate_profile():
     global profile
     required_keys = ['name', 'publisher', 'label', 'application_id', 'airootfs_directory', 'arch', 'grub_cfg', 'packages', 'distro']
-    
+
     for key in required_keys:
         if key not in profile:
             return None, key
         
-    return True
+    return [True]
 
 def get(key,default=""):
     if key in profile:

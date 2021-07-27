@@ -22,7 +22,22 @@ common.profile=common.parse_profile(settings.profile+"/profile.yaml")
 
 # distro settings
 distro.workdir = settings.workdir
-distro.type=common.profile["distro"]
+print(common.profile)
+distro.type=common.get("distro")
+
 distro.set("arch",common.get("arch"))
-distro.set("codename",common.get("codename"))
+
+for file in common.get("packages"):
+    file = settings.profile + "/" + file
+    
+    if not os.path.exists(file):
+        inf("Packages file not exists:\n -> {}".format(file))
+    
+    packages = []
+    with open(file, "r") as f:
+        for line in f.read().split("\n"):
+            if not line.startswith("#"):
+                packages.append(line.strip())
+distro.set("packages", "(" + ' '.join(packages) + ")")
+
 distro.create_rootfs()
