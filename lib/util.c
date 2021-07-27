@@ -57,6 +57,4 @@ char* get_argument_value(char* arg, char* val){
     }
     ret[strlen(arg)-strlen(val)]='\0';
   return ret;
-}/*
-int main(){
-}*/
+}
