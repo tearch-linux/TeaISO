@@ -3,10 +3,18 @@ from ctypes import CDLL, c_int, c_char_p
 libteaiso=CDLL("libteaiso.so")
 libteaiso.run.argtypes = [c_char_p]
 libteaiso.run.restype=c_int
+
 libteaiso.get_argument_value.argtypes = [c_char_p,c_char_p]
 libteaiso.get_argument_value.restype = c_char_p
+
 libteaiso.colorize.argtypes = [c_char_p,c_char_p]
 libteaiso.colorize.restype = c_char_p
+
+libteaiso.set_rootfs.argtypes= [c_char_p]
+libteaiso.out.argtypes= [c_char_p]
+libteaiso.err.argtypes= [c_char_p]
+libteaiso.warn.argtypes= [c_char_p]
+libteaiso.inf.argtypes= [c_char_p]
 
 def run(cmd):
     return libteaiso.run(cmd.encode("utf-8"))
@@ -27,3 +35,6 @@ def get_argument_value(arg,var):
 
 def colorize(msg,num):
     return libteaiso.colorize(msg.encode("utf-8"),str(num).encode("utf-8")).decode("utf-8")
+
+def set_rootfs(rootfs):
+    libteaiso.set_rootfs(rootfs.encode("utf-8"))
