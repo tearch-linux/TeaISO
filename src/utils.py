@@ -16,6 +16,8 @@ libteaiso.err.argtypes= [c_char_p]
 libteaiso.warn.argtypes= [c_char_p]
 libteaiso.inf.argtypes= [c_char_p]
 
+libteaiso.restype = c_int
+
 def run(cmd):
     return libteaiso.run(cmd.encode("utf-8"))
 def err(msg):   
@@ -39,3 +41,6 @@ def colorize(msg,num):
 
 def set_rootfs(rootfs):
     libteaiso.set_rootfs(rootfs.encode("utf-8"))
+
+def is_root():
+    libteaiso.is_root() == 1
