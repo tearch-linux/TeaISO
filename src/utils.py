@@ -1,61 +1,29 @@
-import os
-import sys
-import shutil
-import logging
-import glob
-logfile="/var/log/teaiso.log"
-if os.getuid() != 0:
-	logfile=os.environ["HOME"]+"/.local/teaiso.log"
-logging.basicConfig(handlers=[logging.FileHandler(logfile), logging.StreamHandler()],
-                    format='%(asctime)s [mkteaiso] %(levelname)s: %(message)s', datefmt='%d/%m/%y %H:%M:%S')
+import subprocess
+from ctypes import CDLL, c_int, c_char_p
+libteaiso=CDLL("libteaiso.so")
+libteaiso.run.argtypes = [c_char_p]
+libteaiso.run.restype=c_int
+libteaiso.get_argument_value.argtypes = [c_char_p,c_char_p]
+libteaiso.get_argument_value.restype = c_char_p
+libteaiso.colorize.argtypes = [c_char_p,c_char_p]
+libteaiso.colorize.restype = c_char_p
 
-def execute_command(command, vital=True):
-    process = os.system(command)
-    if vital and process != 0:
-        logging.error("-> " + command)
-        logging.error("Process exited with {}".format(str(process)))
-        sys.exit(process)
-    return process
+def run(cmd):
+    return libteaiso.run(cmd.encode("utf-8"))
+def err(msg):   
+    libteaiso.err(msg.encode("utf-8"))
 
+def out(msg,colorize=True):   
+    libteaiso.out(msg.encode("utf-8"))
 
-def run_chroot(work_directory, iso_profile, command, path="/dev/stdout", vital=True):
-    command = command.replace('"', "'").strip()
-    target = work_directory + '/' + iso_profile["arch"]
-    return execute_command('chroot {} /bin/sh -c "{}" > {}'.format(target, command, path), vital)
+def warn(msg,colorize=True):
+    libteaiso.err(warn.encode("utf-8"))
 
+def inf(msg,colorize=True):
+    libteaiso.inf(msg.encode("utf-8"))
 
-def remove_all_contents(directory):
-    for path in glob.glob(directory):
-        if os.path.isfile(path):
-            os.remove(path)
-        elif os.path.isdir(path):
-            shutil.rmtree(path)
+def get_argument_value(arg,var):
+    return libteaiso.get_argument_value(arg.encode("utf-8"),var.encode("utf-8")).decode("utf-8")
 
-
-def change_status(work_directory, name):
-    open(work_directory + "/" + name, 'a').close()
-
-
-def check_status(work_directory, name):
-    if os.path.exists(work_directory):
-        if not name in os.listdir(work_directory + "/"):
-            return 1
-    else:
-        return 1
-
-
-def mount_operations(target, type="mount"):
-    if type == "mount":
-        for dir in ["dev", "sys", "proc", "run", "dev/pts"]:
-            execute_command("mount --bind /{0} {1}/{0}".format(dir, target))
-    elif type == "umount":
-        for dir in ["dev", "sys", "proc", "run", "dev/pts"]:
-            while 0 == os.system("umount -lf -R {1}/{0}".format(dir, target)):
-                True
-    else:
-        logging.error("Please select true type for mount operations!")
-        sys.exit(1)
-
-def sign_rootfs(input, cmd_line):
-    if cmd_line.gpg:
-        execute_command("gpg --output {0}.sig --detach-sign --default-key \"{1}\" {0}".format(input, cmd_line.gpg))
+def colorize(msg,num):
+    return libteaiso.colorize(msg.encode("utf-8"),str(num).encode("utf-8")).decode("utf-8")

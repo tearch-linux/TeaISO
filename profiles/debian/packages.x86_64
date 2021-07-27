@@ -1,9 +1,0 @@
-linux-image-amd64
-linux-headers-amd64
-live-boot
-live-config
-initramfs-tools
-grub-pc-bin
-grub-efi
-grub-efi-ia32-bin
-nano
