@@ -4,9 +4,13 @@
 #include <unistd.h>
 
 char rootfs[1024];
+int nocolor = 0;
 // run command 
 void set_rootfs(char* dir){
     strcpy(rootfs,dir);
+}
+void disable_color(){
+  nocolor = 1;
 }
 int run(char* cmd){
   char* ncmd;
@@ -30,19 +34,41 @@ int run(char* cmd){
 }
 // logging
 void err(char* msg){
-  fprintf(stderr,"\x1b[31;1m%s\x1b[;0m\n",msg);
+  if(nocolor){
+      fprintf(stderr,"Error: %s",msg);
+  }else{
+      fprintf(stderr,"\x1b[31;1mError: %s\x1b[;0m\n",msg);
+  }
+}
+void dbg(char* msg){
+  if(nocolor){
+      fprintf(stderr,"Debug: %s",msg);
+  }else{
+      fprintf(stderr,"\x1b[36;1mDebug:%s\x1b[;0m\n",msg);
+  }
 }
 void inf(char* msg){
-  fprintf(stdout,"\x1b[34;1m%s\x1b[;0m\n",msg);
+  if(nocolor){
+      fprintf(stdout,"%s\n",msg);
+  }else{
+      fprintf(stdout,"\x1b[33;1m%s\x1b[;0m\n",msg);
+  }
 }
 void out(char* msg){
   fprintf(stdout,"%s\n",msg);
 }
 void warn(char* msg){
-  fprintf(stderr,"\x1b[32;1m%s\x1b[;0m\n",msg);
+  if(nocolor){
+      fprintf(stderr,"Warning: %s",msg);
+  }else{
+      fprintf(stderr,"\x1b[32;1mWarning: %s\x1b[;0m\n",msg);
+  }
 }
 
 char* colorize(char* msg, char* num){
+    if(nocolor){
+        return msg;
+    }
     char* ret = malloc(strlen(msg)*(sizeof(char)+13));
     strcpy(ret,"\x1b[");
     strcat(ret,num);

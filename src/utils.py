@@ -1,4 +1,4 @@
-import subprocess
+from subprocess import getoutput
 from ctypes import CDLL, c_int, c_char_p
 libteaiso=CDLL("libteaiso.so")
 libteaiso.run.argtypes = [c_char_p]
@@ -19,28 +19,35 @@ libteaiso.inf.argtypes= [c_char_p]
 libteaiso.restype = c_int
 
 def run(cmd):
-    return libteaiso.run(cmd.encode("utf-8"))
-def err(msg):   
-    libteaiso.err(msg.encode("utf-8"))
+    return libteaiso.run(str(cmd).encode("utf-8"))
+
+def err(msg,colorize=True):
+    libteaiso.err(str(msg).encode("utf-8"))
     exit(1)
 
 def out(msg,colorize=True):   
-    libteaiso.out(msg.encode("utf-8"))
+    libteaiso.out(str(msg).encode("utf-8"))
 
 def warn(msg,colorize=True):
-    libteaiso.err(warn.encode("utf-8"))
+    libteaiso.err(str(msg).encode("utf-8"))
+    
+def dbg(msg,colorize=True):
+    libteaiso.dbg(str(msg).encode("utf-8"))
 
 def inf(msg,colorize=True):
-    libteaiso.inf(msg.encode("utf-8"))
+    libteaiso.inf(str(msg).encode("utf-8"))
 
 def get_argument_value(arg,var):
     return libteaiso.get_argument_value(arg.encode("utf-8"),var.encode("utf-8")).decode("utf-8")
 
 def colorize(msg,num):
-    return libteaiso.colorize(msg.encode("utf-8"),str(num).encode("utf-8")).decode("utf-8")
+    return libteaiso.colorize(str(msg).encode("utf-8"),str(num).encode("utf-8")).decode("utf-8")
 
 def set_rootfs(rootfs):
     libteaiso.set_rootfs(rootfs.encode("utf-8"))
 
-def is_root():
-    libteaiso.is_root() == 1
+def disable_color():
+    libteaiso.disable_color()
+    
+def is_root(): 
+    return libteaiso.is_root() == 1

@@ -16,31 +16,40 @@ for i in sys.argv:
         settings.workdir = get_argument_value(i,"workdir")
     elif i.startswith("profile="):
         settings.profile = get_argument_value(i,"profile")
+    elif i == "debug":
+        settings.debug=True
+    elif i == "nocolor": 
+        disable_color()
 
 settings.check()
 settings.show()
 
 # load profile
+inf("Loading profile: "+ settings.profile+"/profile.yaml")
 common.profile=common.parse_profile(settings.profile+"/profile.yaml")
 
 # distro settings
 distro.workdir = settings.workdir
-print(common.profile)
 distro.type=common.get("distro")
+inf("Creating workdir for: "+distro.type)
 
+if settings.debug:
+    dbg("Profile content:\n"+str(common.profile))
+
+# distro options
 distro.set("arch",common.get("arch"))
-
-for file in common.get("packages"):
-    file = settings.profile + "/" + file
-    
-    if not os.path.exists(file):
-        inf("Packages file not exists:\n -> {}".format(file))
-    
-    packages = []
-    with open(file, "r") as f:
-        for line in f.read().split("\n"):
-            if not line.startswith("#"):
-                packages.append(line.strip())
+distro.set("distro",common.get("distro"))
+packages=common.get_package_list(common,settings)
 distro.set("packages", "(" + ' '.join(packages) + ")")
+
+
+# rootfs settings
+distro.set("rootfs",distro.workdir+"/airootfs")
+distro.set("codename",common.get("codename","stable")) # for debian
+distro.set("repository",common.get("repository")) # for debian
+set_rootfs(distro.workdir+"/airootfs")
+
+if settings.debug:
+    dbg("Distro options:\n"+getoutput("cat "+distro.workdir+"/options.sh"))
 
 distro.create_rootfs()

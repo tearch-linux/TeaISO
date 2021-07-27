@@ -35,3 +35,17 @@ def get(key,default=""):
     if key in profile:
         return profile[key]
     return default
+
+def get_package_list(common,settings):
+    for file in common.get("packages"):
+        file = settings.profile + "/" + file
+    
+        if not os.path.exists(file):
+            warn("Packages file not exists:\n -> {}".format(file))
+    
+        packages = []
+        with open(file, "r") as f:
+            for line in f.read().split("\n"):
+                if not line.startswith("#"):
+                    packages.append(line.strip())
+    return packages
