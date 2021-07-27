@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 char rootfs[1024];
 // run command 
@@ -57,4 +58,8 @@ char* get_argument_value(char* arg, char* val){
     }
     ret[strlen(arg)-strlen(val)]='\0';
   return ret;
+}
+
+int is_root(){
+  return 0 == getuid();
 }

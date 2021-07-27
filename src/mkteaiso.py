@@ -3,6 +3,9 @@ import sys, os
 import settings
 import common, distro
 
+if not is_root():
+    err("You must be root!")
+
 # argument parse
 for i in sys.argv:
     if i.startswith("--"):
