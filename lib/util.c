@@ -2,17 +2,26 @@
 #include <stdio.h>
 #include <string.h>
 
+char rootfs[1024];
 // run command 
+void set_rootfs(char* dir){
+    strcpy(rootfs,dir);
+}
 int run(char* cmd){
   char* ncmd;
   if (strlen(cmd)<1){
     return 0;
   }if(strstr(cmd,"chroot||")){
-      ncmd = malloc(strlen(cmd)*(sizeof(char)+1));
+      char* mcmd = malloc(strlen(cmd)*(sizeof(char)+8+strlen(rootfs)));
       for(int i=8;i<strlen(cmd);i++){
-        ncmd[i-8]=cmd[i];
+        mcmd[i-8]=cmd[i];
       }
-      ncmd[strlen(cmd)-7]='\0';
+      mcmd[strlen(cmd)-7]='\0';
+      ncmd = malloc(sizeof(char)*(strlen(cmd)+strlen(rootfs)+13));
+      strcpy(ncmd,"chroot ");
+      strcat(ncmd,rootfs);
+      strcat(ncmd," ");
+      strcat(ncmd,mcmd);
   }else{
     ncmd = cmd;
   }
@@ -50,5 +59,4 @@ char* get_argument_value(char* arg, char* val){
   return ret;
 }/*
 int main(){
-  out(colorize(colorize("out=aa","32"),"1"));
 }*/
