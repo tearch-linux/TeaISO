@@ -20,6 +20,7 @@ def run(cmd):
     return libteaiso.run(cmd.encode("utf-8"))
 def err(msg):   
     libteaiso.err(msg.encode("utf-8"))
+    exit(1)
 
 def out(msg,colorize=True):   
     libteaiso.out(msg.encode("utf-8"))
