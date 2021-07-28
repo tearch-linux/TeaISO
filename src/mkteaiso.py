@@ -72,11 +72,12 @@ if settings.debug:
     dbg("Distro options:\n"+getoutput("cat "+distro.workdir+"/options.sh"))
 
 # airootfs creation (stage 0)
-distro.tools_init()
 if distro.get_stage() <= 0:
+    distro.tools_init()
     distro.create_rootfs()
     distro.set_stage(0)
-    
+else:
+    inf("Using build stage: {}".format(colorize(distro.get_stage(),0)))    
 distro.mount_operations(settings.rootfs)
 
 # install packages (stage 1)
@@ -87,7 +88,7 @@ if distro.get_stage() < 1:
 # merge with airootfs directory (stage 2)
 if distro.get_stage() < 2:
     inf("Copy airootfs")
-    run("cp -prfv {} {}".format(settings.profile+"/airootfs",settings.rootfs))
+    run("cp -prfv {}/* {}".format(settings.profile+"/airootfs",settings.rootfs))
     distro.set_stage(2)
 
 # customize airootfs (stage 3)
@@ -102,3 +103,10 @@ if distro.get_stage() < 3:
     distro.set_stage(3)
 
 distro.unmount_operations(settings.rootfs)
+
+if distro.get_stage() < 4:
+    common.create_squashfs(settings)
+    common.create_isowork(settings)
+    distro.generate_isowork()
+    distro.set_stage(4)
+common.create_iso(settings)

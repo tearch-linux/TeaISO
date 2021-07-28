@@ -25,3 +25,9 @@ create_rootfs(){
 install_packages(){
     run_in_chroot pacman -Sy ${packages[@]} --noconfirm
 }
+
+generate_isowork(){
+    if [[ -f "$profile/grub.cfg" ]] ; then
+        cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
+    fi
+}

@@ -24,3 +24,11 @@ create_rootfs(){
 install_packages(){
     run_in_chroot apt install -yq ${packages[@]}
 }
+
+generate_isowork(){
+    if [[ -f "$profile/grub.cfg" ]] ; then
+        cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
+    fi
+    mkdir -p isowork/live/ || true
+    mv filesqstem.squashfs isowork/live/
+}

@@ -23,6 +23,9 @@ def tools_init():
 
 def install_packages():
     run_function("install_packages")
+    
+def generate_isowork():
+    run_function("generate_isowork")
 
 def mount_operations(rootfs):
     for dir in ["dev", "sys", "proc"]:
