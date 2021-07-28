@@ -17,7 +17,10 @@ tools_init(){
 }
 
 create_rootfs(){
-    run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude=usrmerge --extractor=ar "$codename" "$rootfs" "$repository"
+    if ! run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude=usrmerge --extractor=ar "$codename" "$rootfs" "$repository" ; then
+        cat $rootfs/debootstrap/debootstrap.log
+        exit 1
+    fi
     run_in_chroot apt install live-boot live-config -yq
 }
 
