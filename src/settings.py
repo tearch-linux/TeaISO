@@ -5,7 +5,8 @@ from colors import *
 output="/var/teaiso/output"
 workdir="/var/teaiso/work"
 teaiso="/usr/lib/teaiso"
-profile="baseline"
+profile="profiles/baseline"
+rootfs=None
 debug=False
 def show():
     out("{}\t: {}".format(colorize("Output directory",green),output))
@@ -17,7 +18,7 @@ def check():
         os.makedirs(output)
     if os.path.exists(workdir):
         inf("Clearing old work directory")
-        os.system("rm -rf {}".format(workdir))
+        os.system("rm -rfv {}".format(workdir))
     os.makedirs(workdir)
     if not os.path.exists(profile) and not os.path.exists(teaiso+"/profiles/"+profile):
         err("Profile directory not exists:\n -> {}".format(profile))

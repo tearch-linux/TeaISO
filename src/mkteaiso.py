@@ -2,7 +2,7 @@ from utils import *
 import sys, os
 import settings
 import common, distro
-
+nocheck=False
 if not is_root():
     err("You must be root!")
 
@@ -23,26 +23,31 @@ for i in sys.argv:
     elif i == "simulate":
         warn("Simulation mode enabled.")
         set_simulation()
+    elif i == "nocheck":
+        nocheck = True
 
 if os.path.exists("../Makefile") and os.path.exists("../mkteaiso"):
     settings.teaiso = os.getcwd()
 
 os.chdir(settings.teaiso)
-settings.check()
+if not nocheck:
+    settings.check()
 settings.show()
 
 
 # load profile
 inf("Loading profile: "+ settings.profile+"/profile.yaml")
 common.profile=common.parse_profile(settings.profile+"/profile.yaml")
+if common.profile == None:
+    err("Cannot load profile: profile.yaml is not valid")
 
+if settings.debug:
+    dbg("Profile content:\n"+str(common.profile))
+    
 # distro settings
 distro.workdir = settings.workdir
 distro.type=common.get("distro")
 inf("Creating workdir for: "+distro.type)
-
-if settings.debug:
-    dbg("Profile content:\n"+str(common.profile))
 
 # distro options
 distro.set("arch",common.get("arch"))
@@ -55,13 +60,35 @@ distro.set("packages", "(" + ' '.join(packages) + ")")
 
 
 # rootfs settings
-distro.set("rootfs",distro.workdir+"/airootfs")
+settings.rootfs = distro.workdir+"/airootfs"
+distro.set("rootfs",settings.rootfs)
 distro.set("codename",common.get("codename","stable")) # for debian
 distro.set("repository",common.get("repository")) # for debian
-set_rootfs(distro.workdir+"/airootfs")
+set_rootfs(settings.rootfs)
 
 if settings.debug:
     dbg("Distro options:\n"+getoutput("cat "+distro.workdir+"/options.sh"))
 
+# airootfs creation (stage 0)
 distro.tools_init()
-distro.create_rootfs()
+if distro.get_stage() <= 0:
+    distro.create_rootfs()
+    distro.set_stage(0)
+    
+distro.mount_operations(settings.rootfs)
+
+# install packages (stage 1)
+if distro.get_stage() < 1:
+    distro.install_packages()
+    distro.set_stage(1)
+    
+# customize airootfs (stage 2)
+if distro.get_stage() < 2:
+    inf("Customizing airootfs")
+    for i in common.get("customize_airootfs",[]):
+        run("chmod +x "+settings.profile+"/"+i)
+        inf("==> Running: {}".format(colorize(i,0)))
+        run(settings.profile+"/"+i)
+    distro.set_stage(2)
+
+distro.unmount_operations(settings.rootfs)

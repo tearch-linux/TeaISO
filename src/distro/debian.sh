@@ -17,6 +17,9 @@ tools_init(){
 
 create_rootfs(){
     run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude=usrmerge --extractor=ar "$codename" "$rootfs" "$repository"
-    run_in_chroot apt install live-boot live-config
+    run_in_chroot apt install live-boot live-config -yq
 }
 
+install_packages(){
+    run_in_chroot apt install -yq ${packages[@]}
+}
