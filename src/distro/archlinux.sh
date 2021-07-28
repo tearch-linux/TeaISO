@@ -20,6 +20,7 @@ create_rootfs(){
     fi
     run_in_chroot pacman-key --init
     run_in_chroot pacman -Syyu --noconfirm
+    run_in_chroot pacman -Sy archiso --noconfirm
 }
 
 install_packages(){
@@ -30,4 +31,12 @@ generate_isowork(){
     if [[ -f "$profile/grub.cfg" ]] ; then
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
     fi
+    mkdir -p isowork/arch/$arch || true
+    mv filesystem.squashfs isowork/arch/$arch/airootfs.sfs
+    ls isowork/boot/ | grep "vmlinuz" | while read line ; do
+        echo "menuentry Archlinux --class arch {" >> isowork/boot/grub/grub.cfg
+        echo "  linux /boot/$line archisobasedir=arch archisolabel=$label" >> isowork/boot/grub/grub.cfg
+        echo "  initrd /boot/$(echo $line | sed s/vmlinuz/initrd.img/g)" >> isowork/boot/grub/grub.cfg
+        echo "}" >> isowork/boot/grub/grub.cfg
+    done
 }
