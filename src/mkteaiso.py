@@ -32,6 +32,8 @@ if os.path.exists("../Makefile") and os.path.exists("../mkteaiso"):
 os.chdir(settings.teaiso)
 if not nocheck:
     settings.check()
+else:
+    warn("Settings checking skipped")
 settings.show()
 
 

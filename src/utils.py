@@ -16,7 +16,7 @@ libteaiso.err.argtypes= [c_char_p]
 libteaiso.warn.argtypes= [c_char_p]
 libteaiso.inf.argtypes= [c_char_p]
 
-libteaiso.restype = c_int
+libteaiso.is_root.restype = c_int
 simulation=False
 
 def run(cmd):
