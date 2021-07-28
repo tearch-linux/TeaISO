@@ -38,6 +38,7 @@ settings.show()
 
 
 # load profile
+settings.profile = getoutput("realpath "+settings.profile)
 inf("Loading profile: "+ settings.profile+"/profile.yaml")
 common.profile=common.parse_profile(settings.profile+"/profile.yaml")
 if common.profile == None:
@@ -49,13 +50,12 @@ if settings.debug:
 # distro settings
 distro.workdir = settings.workdir
 distro.type=common.get("distro")
-inf("Creating workdir for: "+distro.type)
 
 # distro options
 distro.set("arch",common.get("arch"))
 distro.set("distro",common.get("distro"))
 distro.set("teaiso",settings.teaiso)
-distro.set("profile",getoutput("realpath "+settings.profile))
+distro.set("profile",settings.profile)
 distro.teaiso=settings.teaiso
 packages=common.get_package_list(common,settings)
 distro.set("packages", "(" + ' '.join(packages) + ")")
@@ -83,14 +83,22 @@ distro.mount_operations(settings.rootfs)
 if distro.get_stage() < 1:
     distro.install_packages()
     distro.set_stage(1)
-    
-# customize airootfs (stage 2)
+
+# merge with airootfs directory (stage 2)
 if distro.get_stage() < 2:
+    inf("Copy airootfs")
+    run("cp -prfv {} {}".format(settings.profile+"/airootfs",settings.rootfs))
+    distro.set_stage(2)
+
+# customize airootfs (stage 3)
+if distro.get_stage() < 3:
     inf("Customizing airootfs")
+    os.chdir(settings.workdir)
     for i in common.get("customize_airootfs",[]):
         run("chmod +x "+settings.profile+"/"+i)
         inf("==> Running: {}".format(colorize(i,0)))
         run(settings.profile+"/"+i)
-    distro.set_stage(2)
+    os.chdir(settings.teaiso)
+    distro.set_stage(3)
 
 distro.unmount_operations(settings.rootfs)

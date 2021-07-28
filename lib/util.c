@@ -37,30 +37,35 @@ char* colorize(char* msg, char* num){
     if(nocolor){
         return msg;
     }
-    char* ret = malloc(strlen(msg)*(sizeof(char)+13));
+    char* ret = malloc((strlen(msg)+strlen(num))*(sizeof(char)+13));
     strcpy(ret,"\x1b[");
     strcat(ret,num);
     strcat(ret,"m");
     strcat(ret,msg);
-    strcat(ret,"\x1b[;0m");
+    strcat(ret,"\x1b[0m");
     return ret;
 }
 
 // logging
 void err(char* msg){
-      fprintf(stderr,colorize("Error: %s\n","31;1"),msg);
+     fprintf(stderr,colorize("Error: %s","31;1"),msg);
+     fputc('\n',stderr);
 }
 void dbg(char* msg){
-      fprintf(stderr,colorize("Debug: %s\n","35"),msg);
+     fprintf(stderr,colorize("Debug: %s","35"),msg);
+     fputc('\n',stderr);
 }
 void inf(char* msg){
-  fprintf(stdout,colorize("%s\n","36"),msg);
+    fprintf(stdout,colorize("%s","36"),msg);
+    fputc('\n',stdout);
 }
 void out(char* msg){
-  fprintf(stdout,"%s\n",msg);
+    fprintf(stdout,msg);
+    fputc('\n',stdout);
 }
 void warn(char* msg){
-  fprintf(stderr,colorize("Warning: %s\n","33"),msg);
+    fprintf(stderr,colorize("Warning: %s","33"),msg);
+    fputc('\n',stderr);
 }
 
 char* get_argument_value(char* arg, char* val){
