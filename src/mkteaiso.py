@@ -56,7 +56,7 @@ distro.set("arch",common.get("arch"))
 distro.set("distro",common.get("distro"))
 distro.set("teaiso",settings.teaiso)
 distro.set("profile",settings.profile)
-distro.set("label".common.get("label"))
+distro.set("label",common.get("label"))
 distro.teaiso=settings.teaiso
 packages=common.get_package_list(common,settings)
 distro.set("packages", "(" + ' '.join(packages) + ")")
