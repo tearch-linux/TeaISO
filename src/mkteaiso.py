@@ -20,9 +20,17 @@ for i in sys.argv:
         settings.debug=True
     elif i == "nocolor": 
         disable_color()
+    elif i == "simulate":
+        warn("Simulation mode enabled.")
+        set_simulation()
 
+if os.path.exists("../Makefile") and os.path.exists("../mkteaiso"):
+    settings.teaiso = os.getcwd()
+
+os.chdir(settings.teaiso)
 settings.check()
 settings.show()
+
 
 # load profile
 inf("Loading profile: "+ settings.profile+"/profile.yaml")
@@ -39,6 +47,8 @@ if settings.debug:
 # distro options
 distro.set("arch",common.get("arch"))
 distro.set("distro",common.get("distro"))
+distro.set("teaiso",settings.teaiso)
+distro.teaiso=settings.teaiso
 packages=common.get_package_list(common,settings)
 distro.set("packages", "(" + ' '.join(packages) + ")")
 
@@ -52,4 +62,5 @@ set_rootfs(distro.workdir+"/airootfs")
 if settings.debug:
     dbg("Distro options:\n"+getoutput("cat "+distro.workdir+"/options.sh"))
 
+distro.tools_init()
 distro.create_rootfs()

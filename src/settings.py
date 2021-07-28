@@ -1,10 +1,11 @@
 import os
-from utils import out, err, colorize, run
+from utils import out, err, inf, colorize, run
 from colors import *
 
 output="/var/teaiso/output"
 workdir="/var/teaiso/work"
-profile="/usr/lib/teaiso/profiles/baseline"
+teaiso="/usr/lib/teaiso"
+profile="baseline"
 debug=False
 def show():
     out("{}\t: {}".format(colorize("Output directory",green),output))
@@ -15,7 +16,8 @@ def check():
     if not os.path.exists(output):
         os.makedirs(output)
     if os.path.exists(workdir):
-        run("rm -rf {}".format(workdir))
+        inf("Clearing old work directory")
+        os.system("rm -rf {}".format(workdir))
     os.makedirs(workdir)
-    if not os.path.exists(profile):
+    if not os.path.exists(profile) and not os.path.exists(teaiso+"/profiles/"+profile):
         err("Profile directory not exists:\n -> {}".format(profile))

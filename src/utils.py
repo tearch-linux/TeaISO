@@ -17,8 +17,11 @@ libteaiso.warn.argtypes= [c_char_p]
 libteaiso.inf.argtypes= [c_char_p]
 
 libteaiso.restype = c_int
+simulation=False
 
 def run(cmd):
+    if simulation:
+        return 0;
     return libteaiso.run(str(cmd).encode("utf-8"))
 
 def err(msg,colorize=True):
@@ -29,7 +32,7 @@ def out(msg,colorize=True):
     libteaiso.out(str(msg).encode("utf-8"))
 
 def warn(msg,colorize=True):
-    libteaiso.err(str(msg).encode("utf-8"))
+    libteaiso.warn(str(msg).encode("utf-8"))
     
 def dbg(msg,colorize=True):
     libteaiso.dbg(str(msg).encode("utf-8"))
@@ -51,3 +54,7 @@ def disable_color():
     
 def is_root(): 
     return libteaiso.is_root() == 1
+
+def set_simulation():
+    global simulation
+    simulation = True

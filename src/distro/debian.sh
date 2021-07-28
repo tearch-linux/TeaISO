@@ -6,6 +6,15 @@ get_arch(){
 }
 
 # required
+tools_init(){
+    if ! which debootstrap &>/dev/null ; then
+        wget -c "https://salsa.debian.org/installer-team/debootstrap/-/archive/master/debootstrap-master.zip" -O debootstrap.zip
+        unzip debootstrap.zip
+        cd debootstrap-master
+        make && make install
+    fi
+}
+
 create_rootfs(){
     run debootstrap --arch=$(get_arch $arch) "$codename" "$rootfs" "$repository"
 }

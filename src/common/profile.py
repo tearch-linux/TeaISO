@@ -2,8 +2,10 @@ import yaml
 import os
 from utils import err
 profile=None
-def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml"):
+def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml",teaiso="/usr/lib/teaiso"):
     global profile
+    if os.path.exists(teaiso+"/profiles/"+file):
+        file = teaiso+"/profiles/"+file
     if not os.path.exists(file):
         return None
     
