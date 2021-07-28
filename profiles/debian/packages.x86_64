@@ -1,0 +1,4 @@
+grub-pc-bin
+grub-efi
+linux-image-amd64
+ssh

@@ -48,6 +48,7 @@ if settings.debug:
 distro.set("arch",common.get("arch"))
 distro.set("distro",common.get("distro"))
 distro.set("teaiso",settings.teaiso)
+distro.set("profile",getoutput("realpath "+settings.profile))
 distro.teaiso=settings.teaiso
 packages=common.get_package_list(common,settings)
 distro.set("packages", "(" + ' '.join(packages) + ")")

@@ -4,7 +4,7 @@ get_arch(){
     [[ "$1" == "i686" ]] && echo i386
     [[ "$1" == "aarch64" ]] && echo arm64
 }
-
+export DEBIAN_FRONTEND=noninteractive
 # required
 tools_init(){
     if ! which debootstrap &>/dev/null ; then
@@ -16,6 +16,7 @@ tools_init(){
 }
 
 create_rootfs(){
-    run debootstrap --arch=$(get_arch $arch) "$codename" "$rootfs" "$repository"
+    run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude=usrmerge --extractor=ar "$codename" "$rootfs" "$repository"
+    run_in_chroot apt install live-boot live-config
 }
 

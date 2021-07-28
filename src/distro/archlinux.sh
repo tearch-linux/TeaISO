@@ -6,6 +6,11 @@ tools_init(){
     fi
 }
 create_rootfs(){
-    arch-bootstrap -a "$arch" -r "$repository" "$rootfs"
+    run arch-bootstrap -a "$arch" -r "$repository" "$rootfs"
+    if [[ -f "$profile/pacman.conf" ]] ; then
+        run install "$profile/pacman.conf" "$rootfs/etc/pacman.conf"
+    fi
+    run_in_chroot pacman-key --init
+    run_in_chroot pacman -Syyu --noconfirm
 }
 
