@@ -7,7 +7,8 @@ write_repo(){
 
 # required
 tools_init(){
-    if ! which /usr/bin/arch-bootstrap &>/dev/null ; then
+    if ! which arch-bootstrap &>/dev/null ; then
+        echo "Installing arch-bootstrap script"
         wget -c "https://raw.githubusercontent.com/tokland/arch-bootstrap/master/arch-bootstrap.sh" -O arch-bootstrap.sh
         install arch-bootstrap.sh /usr/bin/arch-bootstrap
     fi

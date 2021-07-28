@@ -8,6 +8,7 @@ export DEBIAN_FRONTEND=noninteractive
 # required
 tools_init(){
     if ! which debootstrap &>/dev/null ; then
+        echo "Installing debootstrap script"
         wget -c "https://salsa.debian.org/installer-team/debootstrap/-/archive/master/debootstrap-master.zip" -O debootstrap.zip
         unzip debootstrap.zip
         cd debootstrap-master
