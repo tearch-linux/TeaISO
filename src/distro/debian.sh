@@ -31,7 +31,15 @@ install_packages(){
 generate_isowork(){
     if [[ -f "$profile/grub.cfg" ]] ; then
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
+    else
+        echo "insmod all_video" > isowork/boot/grub/grub.cfg
     fi
     mkdir -p isowork/live/ || true
-    mv filesqstem.squashfs isowork/live/
+    mv filesystem.squashfs isowork/live/
+    ls isowork/boot/ | grep "vmlinuz" | while read line ; do
+        echo "menuentry Debian --class debian {" >> isowork/boot/grub/grub.cfg
+        echo "  linux /boot/$line boot=live" >> isowork/boot/grub/grub.cfg
+        echo "  initrd /boot/$(echo $line | sed s/vmlinuz/initrd.img/g)" >> isowork/boot/grub/grub.cfg
+        echo "}" >> isowork/boot/grub/grub.cfg
+    done
 }

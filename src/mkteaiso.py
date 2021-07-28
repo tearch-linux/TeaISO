@@ -56,6 +56,7 @@ distro.set("arch",common.get("arch"))
 distro.set("distro",common.get("distro"))
 distro.set("teaiso",settings.teaiso)
 distro.set("profile",settings.profile)
+distro.set("label".common.get("label"))
 distro.teaiso=settings.teaiso
 packages=common.get_package_list(common,settings)
 distro.set("packages", "(" + ' '.join(packages) + ")")
@@ -88,7 +89,8 @@ if distro.get_stage() < 1:
 # merge with airootfs directory (stage 2)
 if distro.get_stage() < 2:
     inf("Copy airootfs")
-    run("cp -prfv {}/* {}".format(settings.profile+"/airootfs",settings.rootfs))
+    if os.path.exists(settings.profile+"/"+common.get("airootfs_directory"))
+        run("cp -prfv {}/* {}".format(settings.profile+"/"+common.get("airootfs_directory"),settings.rootfs))
     distro.set_stage(2)
 
 # customize airootfs (stage 3)
