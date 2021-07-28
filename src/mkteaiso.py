@@ -89,7 +89,7 @@ if distro.get_stage() < 1:
 # merge with airootfs directory (stage 2)
 if distro.get_stage() < 2:
     inf("Copy airootfs")
-    if os.path.exists(settings.profile+"/"+common.get("airootfs_directory"))
+    if os.path.exists(settings.profile+"/"+common.get("airootfs_directory")):
         run("cp -prfv {}/* {}".format(settings.profile+"/"+common.get("airootfs_directory"),settings.rootfs))
     distro.set_stage(2)
 
