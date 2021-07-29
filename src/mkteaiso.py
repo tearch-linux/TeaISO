@@ -97,6 +97,7 @@ if common.get_stage() <= 0:
     os.chdir(settings.teaiso)
 else:
     inf("Using build stage: {}".format(colorize(distro.get_stage(),0)))    
+
 common.mount_operations(settings.rootfs)
 
 # install packages (stage 1)

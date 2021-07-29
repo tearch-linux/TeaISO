@@ -1,4 +1,4 @@
-from utils import run
+from utils import run, inf
 def mount_operations(rootfs):
     for dir in ["dev", "sys", "proc", "run"]:
         run("mount --bind /{0} /{1}/{0}".format(dir,rootfs))
