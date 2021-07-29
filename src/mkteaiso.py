@@ -2,21 +2,20 @@ from utils import *
 import sys, os
 import settings
 import common, distro
+from help import help_message
 nocheck=False
-if not is_root():
-    err("You must be root!")
 
 # argument parse
-for i in sys.argv:
+for i in sys.argv[1:]:
     if i.startswith("--"):
         i=i[2:]
-    if i.startswith("output="):
-        settings.output = get_argument_value(i,"output")
-    elif i.startswith("workdir="):
-        settings.workdir = get_argument_value(i,"workdir")
-    elif i.startswith("profile="):
-        settings.profile = get_argument_value(i,"profile")
-    elif i == "debug":
+        if i.startswith("output="):
+            settings.output = get_argument_value(i,"output")
+        elif i.startswith("workdir="):
+            settings.workdir = get_argument_value(i,"workdir")
+        elif i.startswith("profile="):
+            settings.profile = get_argument_value(i,"profile")
+    if i == "debug":
         settings.debug=True
     elif i == "nocolor": 
         disable_color()
@@ -25,12 +24,18 @@ for i in sys.argv:
         set_simulation()
     elif i == "nocheck":
         nocheck = True
+    else:
+        help_message()
 
 if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
     settings.teaiso = os.getcwd()+"/src"
 
 
 sys.path.insert(0,settings.teaiso)
+
+
+if not is_root():
+    err("You must be root!")
 
 os.environ.clear()
 os.environ["PATH"]="/bin:/sbin:/usr/bin:/usr/sbin"
