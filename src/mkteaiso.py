@@ -24,7 +24,7 @@ for i in sys.argv[1:]:
         set_simulation()
     elif i == "nocheck":
         nocheck = True
-    else:
+    elif i == "help":
         help_message()
 
 if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
