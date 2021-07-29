@@ -38,3 +38,7 @@ generate_isowork(){
     echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg
     echo "}" >> isowork/boot/grub/grub.cfg
 }
+
+clear_rootfs(){
+    find $rootfs/var/log/ -type f | xargs rm -f
+}

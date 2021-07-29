@@ -30,6 +30,10 @@ if os.path.exists("../Makefile") and os.path.exists("../mkteaiso"):
     settings.teaiso = os.getcwd()
 
 os.chdir(settings.teaiso)
+
+os.environ.clear()
+os.environ["PATH"]="/bin:/sbin:/usr/bin:/usr/sbin"
+
 if not nocheck:
     settings.check()
 else:
@@ -48,53 +52,52 @@ if settings.debug:
     dbg("Profile content:\n"+str(common.profile))
     
 # distro settings
-distro.workdir = settings.workdir
-distro.type=common.get("distro")
+distro.set("workdir",settings.workdir)
 
 # distro options
+distro.set("name",common.get("name"))
 distro.set("arch",common.get("arch"))
 distro.set("distro",common.get("distro"))
 distro.set("teaiso",settings.teaiso)
 distro.set("profile",settings.profile)
 distro.set("label",common.get("label"))
-distro.teaiso=settings.teaiso
 packages=common.get_package_list(common,settings)
 distro.set("packages", "(" + ' '.join(packages) + ")")
 
 
 # rootfs settings
-settings.rootfs = distro.workdir+"/airootfs"
+settings.rootfs = settings.workdir+"/airootfs"
 distro.set("rootfs",settings.rootfs)
 distro.set("codename",common.get("codename","stable")) # for debian
 distro.set("repository",common.get("repository")) # for debian
 set_rootfs(settings.rootfs)
 
 if settings.debug:
-    dbg("Distro options:\n"+getoutput("cat "+distro.workdir+"/options.sh"))
+    dbg("Distro options:\n"+getoutput("cat "+settings.workdir+"/options.sh"))
 
 # airootfs creation (stage 0)
-if distro.get_stage() <= 0:
+if common.get_stage() <= 0:
     distro.tools_init()
     distro.create_rootfs()
-    distro.set_stage(0)
+    common.set_stage(0)
 else:
     inf("Using build stage: {}".format(colorize(distro.get_stage(),0)))    
-distro.mount_operations(settings.rootfs)
+common.mount_operations(settings.rootfs)
 
 # install packages (stage 1)
-if distro.get_stage() < 1:
+if common.get_stage() < 1:
     distro.install_packages()
-    distro.set_stage(1)
+    common.set_stage(1)
 
 # merge with airootfs directory (stage 2)
-if distro.get_stage() < 2:
+if common.get_stage() < 2:
     inf("Copy airootfs")
     if os.path.exists(settings.profile+"/"+common.get("airootfs_directory")):
         run("cp -prfv {}/* {}".format(settings.profile+"/"+common.get("airootfs_directory"),settings.rootfs))
-    distro.set_stage(2)
+    common.set_stage(2)
 
 # customize airootfs (stage 3)
-if distro.get_stage() < 3:
+if common.get_stage() < 3:
     inf("Customizing airootfs")
     os.chdir(settings.workdir)
     for i in common.get("customize_airootfs",[]):
@@ -102,13 +105,14 @@ if distro.get_stage() < 3:
         inf("==> Running: {}".format(colorize(i,0)))
         run(settings.profile+"/"+i)
     os.chdir(settings.teaiso)
-    distro.set_stage(3)
+    common.set_stage(3)
 
-distro.unmount_operations(settings.rootfs)
+common.unmount_operations(settings.rootfs)
 
-if distro.get_stage() < 4:
+if common.get_stage() < 4:
+    distro.clear_rootfs()
     common.create_squashfs(settings)
     common.create_isowork(settings)
     distro.generate_isowork()
-    distro.set_stage(4)
+    common.set_stage(4)
 common.create_iso(settings)

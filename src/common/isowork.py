@@ -63,7 +63,7 @@ def create_iso(settings):
                 -o {6} \
                 {5}/isowork/""".format(modification_date, get("label"), get("application_id"),
                                        get("publisher"), "2.0", settings.workdir,
-                                       settings.output + "/a.iso"))
+                                       settings.output + "/{}-{}-{}.iso".format(get("name"),get("arch"),modification_date)))
 
 
 

@@ -43,3 +43,10 @@ generate_isowork(){
         echo "}" >> isowork/boot/grub/grub.cfg
     done
 }
+
+clear_rootfs(){
+    run_in_chroot apt clean
+    run_in_chroot apt autoremove
+    rm -rf $rootfs/var/lib/apt/lists
+    find $rootfs/var/log/ -type f | xargs rm -f
+}
