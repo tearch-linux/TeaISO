@@ -25,7 +25,7 @@ def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml",teaiso="/
 
 def validate_profile():
     global profile
-    required_keys = ['name', 'publisher', 'label', 'application_id', 'airootfs_directory', 'arch', 'grub_cfg', 'packages', 'distro']
+    required_keys = ['name', 'publisher', 'label', 'application_id', 'arch', 'grub_cfg', 'packages', 'distro']
 
     for key in required_keys:
         if key not in profile:
