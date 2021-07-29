@@ -5,6 +5,8 @@ get_arch(){
     [[ "$1" == "aarch64" ]] && echo arm64
 }
 export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NONINTERACTIVE_SEEN=true
+
 # required
 tools_init(){
     if ! which debootstrap &>/dev/null ; then
@@ -26,7 +28,7 @@ create_rootfs(){
 
 install_packages(){
     run_in_chroot apt update -yq
-    run_in_chroot apt install -yq ${packages[@]}
+    run_in_chroot apt install -yq -o Dpkg::Options::="--force-confnew" ${packages[@]}
 }
 
 generate_isowork(){
