@@ -81,6 +81,7 @@ set_rootfs(settings.rootfs)
 if settings.debug:
     dbg("Distro options:\n"+getoutput("cat "+settings.workdir+"/options.sh"))
 
+
 # airootfs creation (stage 0)
 if common.get_stage() <= 0:
     distro.tools_init()
@@ -88,10 +89,12 @@ if common.get_stage() <= 0:
     common.set_stage(0)
     if os.path.exists(settings.profile+"/"+common.get("airootfs_directory_pre")):
         run("cp -prfv {}/* {}".format(settings.profile+"/"+common.get("airootfs_directory_pre"),settings.rootfs))
+    os.chdir(settings.workdir)
     for i in common.get("customize_airootfs_pre",[]):
         run("chmod +x "+settings.profile+"/"+i)
         inf("==> Running: {}".format(colorize(i,0)))
         run(settings.profile+"/"+i)
+    os.chdir(settings.teaiso)
 else:
     inf("Using build stage: {}".format(colorize(distro.get_stage(),0)))    
 common.mount_operations(settings.rootfs)
