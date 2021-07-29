@@ -25,6 +25,7 @@ create_rootfs(){
 }
 
 install_packages(){
+    run_in_chroot apt update -yq
     run_in_chroot apt install -yq ${packages[@]}
 }
 
