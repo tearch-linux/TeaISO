@@ -26,10 +26,11 @@ for i in sys.argv:
     elif i == "nocheck":
         nocheck = True
 
-if os.path.exists("../Makefile") and os.path.exists("../mkteaiso"):
-    settings.teaiso = os.getcwd()
+if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
+    settings.teaiso = os.getcwd()+"/src"
 
-os.chdir(settings.teaiso)
+
+sys.path.insert(0,settings.teaiso)
 
 os.environ.clear()
 os.environ["PATH"]="/bin:/sbin:/usr/bin:/usr/sbin"
