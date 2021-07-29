@@ -86,6 +86,8 @@ if common.get_stage() <= 0:
     distro.tools_init()
     distro.create_rootfs()
     common.set_stage(0)
+    if os.path.exists(settings.profile+"/"+common.get("airootfs_directory_pre")):
+        run("cp -prfv {}/* {}".format(settings.profile+"/"+common.get("airootfs_directory_pre"),settings.rootfs))
 else:
     inf("Using build stage: {}".format(colorize(distro.get_stage(),0)))    
 common.mount_operations(settings.rootfs)
