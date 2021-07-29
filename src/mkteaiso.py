@@ -87,7 +87,7 @@ if common.get_stage() <= 0:
     distro.tools_init()
     distro.create_rootfs()
     common.set_stage(0)
-    if os.path.exists(settings.profile+"/"+common.get("airootfs_directory_pre")):
+    if os.path.exists(settings.profile+"/"+common.get("airootfs_directory_pre")) and len(common.get("airootfs_directory_pre"))>0:
         run("cp -prfv {}/* {}".format(settings.profile+"/"+common.get("airootfs_directory_pre"),settings.rootfs))
     os.chdir(settings.workdir)
     for i in common.get("customize_airootfs_pre",[]):
@@ -108,7 +108,7 @@ if common.get_stage() < 1:
 # merge with airootfs directory (stage 2)
 if common.get_stage() < 2:
     inf("Copy airootfs")
-    if os.path.exists(settings.profile+"/"+common.get("airootfs_directory")):
+    if os.path.exists(settings.profile+"/"+common.get("airootfs_directory")) and len(common.get("airootfs_directory"))>0:
         run("cp -prfv {}/* {}".format(settings.profile+"/"+common.get("airootfs_directory"),settings.rootfs))
     common.set_stage(2)
 

@@ -22,7 +22,7 @@ simulation=False
 def run(cmd):
     if simulation:
         return 0;
-    inf("==> Running:{}".format(str(cmd)))
+    inf("=> Executing: {}".format(colorize(str(cmd),0)))
     return libteaiso.run(str(cmd).encode("utf-8"))
 
 def err(msg,colorize=True):
