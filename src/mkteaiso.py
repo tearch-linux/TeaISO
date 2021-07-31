@@ -6,7 +6,7 @@ import common
 import distro
 from help import help_message
 nocheck = False
-
+os.umask(18) # set umask as 022
 # argument parse
 for i in sys.argv[1:]:
     if i.startswith("--"):
