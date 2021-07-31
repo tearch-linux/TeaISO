@@ -2,6 +2,7 @@ import os
 from utils import getoutput, run, inf
 from datetime import date, datetime
 from common import get
+import shutil
 
 
 def create_isowork(settings):
@@ -9,6 +10,8 @@ def create_isowork(settings):
         os.makedirs("{}/isowork/boot/grub".format(settings.workdir))
     for i in os.listdir("{}/boot".format(settings.rootfs)):
         run("cp -pf {}/boot/{} {}/isowork/boot".format(settings.rootfs,i,settings.workdir))
+    
+    shutil.copyfile(settings.workdir + "/packages.list", settings.workdir + "/isowork/packages.list")
 
 
 def create_iso(settings):

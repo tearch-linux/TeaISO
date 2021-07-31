@@ -15,6 +15,10 @@ install_packages(){
     run_in_chroot inary it -y ${packages[@]}
 }
 
+make_pkglist() {
+    chroot "$rootfs" inary li >  ${workdir}/packages.list
+}
+
 generate_isowork(){
     if [[ -f "$profile/grub.cfg" ]] ; then
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
@@ -28,7 +32,7 @@ generate_isowork(){
         echo "  initrd /boot/initrd.img-$line" >> isowork/boot/grub/grub.cfg
         echo "}" >> isowork/boot/grub/grub.cfg
     done
-}
+},2
 
 clear_rootfs(){
     find "$rootfs/var/log/" -type f | xargs rm -f

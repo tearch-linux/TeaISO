@@ -27,6 +27,10 @@ install_packages(){
     run_in_chroot pacman -Sy ${packages[@]} --noconfirm
 }
 
+make_pkglist() {
+    chroot "$rootfs" pacman -Qqn >  ${workdir}/packages.list
+}
+
 generate_isowork(){
     if [[ -f "$profile/grub.cfg" ]] ; then
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg

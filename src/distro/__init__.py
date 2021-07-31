@@ -27,6 +27,9 @@ def tools_init():
 
 def install_packages():
     run_function("install_packages")
+    
+def make_pkglist():
+    run_function("make_pkglist")
 
 def clear_rootfs():
     run_function("clear_rootfs")

@@ -31,6 +31,10 @@ install_packages(){
     run_in_chroot apt install -yq -o Dpkg::Options::="--force-confnew" ${packages[@]}
 }
 
+make_pkglist() {
+    chroot "$rootfs" apt list --installed >  ${workdir}/packages.list
+}
+
 generate_isowork(){
     if [[ -f "$profile/grub.cfg" ]] ; then
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg

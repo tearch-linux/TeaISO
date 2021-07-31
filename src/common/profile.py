@@ -15,6 +15,14 @@ def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml",teaiso="/
             contents = yaml.load(file.read(), Loader=yaml.FullLoader)
         except BaseException:
             contents = yaml.load(file.read())
+            
+    if 'file_permissions' in contents:
+            file_permissions = {}
+            for file in contents["file_permissions"]:
+                file = file.split("|")
+                file_permissions[file[0]] = file[1]
+            contents["file_permissions"] = file_permissions
+        
     profile=contents
     validation = validate_profile()
     
