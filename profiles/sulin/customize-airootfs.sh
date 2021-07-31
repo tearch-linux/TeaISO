@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-
-echo "Nothing to do!"
+echo -e "live\nlive\n" | chroot airootfs passwd
