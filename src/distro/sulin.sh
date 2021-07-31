@@ -8,11 +8,15 @@ tools_init(){
 }
 create_rootfs(){
     run sulinstrapt "$rootfs"
-    run_in_chroot inary it initrd openrc openrc-tmpfiles linux linux-firmware -y
+    run_in_chroot inary it initrd openrc openrc-tmpfiles -y
 }
 
 install_packages(){
     run_in_chroot inary it -y ${packages[@]}
+}
+
+make_pkglist() {
+    chroot "$rootfs" inary li >  ${workdir}/packages.list
 }
 
 generate_isowork(){
@@ -20,13 +24,15 @@ generate_isowork(){
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
     fi
     mv filesystem.squashfs isowork/main.sfs
-    ls isowork/boot/ | grep "linux" | while read line ; do
+    ls "$rootfs/kernel/modules/" | while read line ; do
+        chroot "$rootfs" update-initrd KERNELVER="$line"
+        cp "$rootfs/kernel/boot/initrd.img-$line" isowork/boot/
         echo "menuentry SulinOS --class sulin {" >> isowork/boot/grub/grub.cfg
-        echo "  linux /boot/$line boot=live" >> isowork/boot/grub/grub.cfg
-        echo "  initrd /boot/$(echo $line | sed s/linux/initrd.img/g)" >> isowork/boot/grub/grub.cfg
+        echo "  linux /boot/linux-$line boot=live" >> isowork/boot/grub/grub.cfg
+        echo "  initrd /boot/initrd.img-$line" >> isowork/boot/grub/grub.cfg
         echo "}" >> isowork/boot/grub/grub.cfg
     done
-}
+},2
 
 clear_rootfs(){
     find $rootfs/var/log/ -type f | xargs rm -f

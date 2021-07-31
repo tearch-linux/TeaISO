@@ -18,7 +18,7 @@ def check():
         os.makedirs(output)
     if os.path.exists(workdir):
         inf("Clearing old work directory")
-        os.system("rm -rfv {}".format(workdir))
+        os.system("rm -rf {}".format(workdir))
     os.makedirs(workdir)
     if not os.path.exists(profile) and not os.path.exists(teaiso+"/profiles/"+profile):
         err("Profile directory not exists:\n -> {}".format(profile))
