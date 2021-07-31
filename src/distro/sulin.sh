@@ -20,7 +20,7 @@ generate_isowork(){
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
     fi
     mv filesystem.squashfs isowork/main.sfs
-    ls "$rootfs/kernel/lib/modules/" | while read line ; do
+    ls "$rootfs/kernel/modules/" | while read line ; do
         chroot "$rootfs" update-initrd KERNELVER="$line"
         cp "$rootfs/kernel/boot/initrd.img-$line" isowork/boot/
         echo "menuentry SulinOS --class sulin {" >> isowork/boot/grub/grub.cfg
