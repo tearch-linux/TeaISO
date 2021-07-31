@@ -31,5 +31,7 @@ generate_isowork(){
 }
 
 clear_rootfs(){
-    find $rootfs/var/log/ -type f | xargs rm -f
+    find "$rootfs/var/log/" -type f | xargs rm -f
+    chroot "$rootfs" inary dc
+    chroot "$rootfs" inary hs -r
 }
