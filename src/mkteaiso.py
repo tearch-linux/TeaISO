@@ -17,17 +17,18 @@ for i in sys.argv[1:]:
             settings.workdir = get_argument_value(i, "workdir")
         elif i.startswith("profile="):
             settings.profile = get_argument_value(i, "profile")
-    if i == "debug":
-        settings.debug = True
-    elif i == "nocolor":
-        disable_color()
-    elif i == "simulate":
-        warn("Simulation mode enabled.")
-        set_simulation()
-    elif i == "nocheck":
-        nocheck = True
-    elif i == "help":
-        help_message()
+        
+        elif i == "debug":
+            settings.debug = True
+        elif i == "nocolor":
+            disable_color()
+        elif i == "simulate":
+            warn("Simulation mode enabled.")
+            set_simulation()
+        elif i == "nocheck":
+            nocheck = True
+        elif i == "help":
+            help_message()
     else:
         err("usage: mkteaiso [options]\nmkteaiso: error: argument --help: ignored explicit argument '{}'".format(i))
 
