@@ -32,7 +32,7 @@ generate_isowork(){
         echo "  initrd /boot/initrd.img-$line" >> isowork/boot/grub/grub.cfg
         echo "}" >> isowork/boot/grub/grub.cfg
     done
-},2
+}
 
 clear_rootfs(){
     find "$rootfs/var/log/" -type f | xargs rm -f
