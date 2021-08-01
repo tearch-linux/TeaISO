@@ -2,4 +2,4 @@
 if [[ -f Makefile && -f src/mkteaiso.py ]] ; then
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(realpath ./lib)
 fi
-exec python3 src/mkteaiso.py $*
+exec python3 src/mkteaiso.py $* |& tee /var/log/teaiso.log
