@@ -36,7 +36,6 @@ if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
 
 sys.path.insert(0, settings.teaiso)
 
-
 if not is_root():
     err("You must be root!")
 
@@ -74,6 +73,7 @@ if settings.debug:
 
 # distro settings
 distro.set("workdir", settings.workdir)
+os.chdir(settings.profile)
 
 # distro options
 packages = common.get_package_list(common, settings)
