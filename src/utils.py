@@ -19,12 +19,12 @@ libteaiso.inf.argtypes= [c_char_p]
 libteaiso.is_root.restype = c_int
 simulation=False
 
-def run(cmd):
+def run(cmd,vital=True):
     if simulation:
         return 0;
     inf("=> Executing: {}".format(colorize(str(cmd),0)))
     i = libteaiso.run(str(cmd).encode("utf-8"))
-    if i != 0:
+    if i != 0 and vital:
         err("Failed to run command:{}".format(cmd))
     return i
 

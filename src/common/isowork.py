@@ -9,7 +9,8 @@ def create_isowork(settings):
     if not os.path.exists("{}/isowork/boot/grub".format(settings.workdir)):
         os.makedirs("{}/isowork/boot/grub".format(settings.workdir))
     for i in os.listdir("{}/boot".format(settings.rootfs)):
-        run("cp -pf {}/boot/{} {}/isowork/boot".format(settings.rootfs,i,settings.workdir))
+        if os.path.isfile("{}/boot/{}".format(settings.rootfs,i)):
+            run("cp -pf {}/boot/{} {}/isowork/boot".format(settings.rootfs,i,settings.workdir))
     
     shutil.copyfile(settings.workdir + "/packages.list", settings.workdir + "/isowork/packages.list")
 
@@ -19,16 +20,16 @@ def create_iso(settings):
     os.makedirs("{}/isowork/EFI/boot".format(settings.workdir))
 
     # Copy Necessary Directories
-    run("cp -r {}/usr/lib/grub/i386-pc/ {}/isowork/boot/grub/".format(settings.rootfs, settings.workdir))
-    run("cp -r {}/usr/lib/grub/i386-efi/ {}/isowork/boot/grub/".format(settings.rootfs, settings.workdir))
-    run("cp -r {}/usr/lib/grub/x86_64-efi/ {}/isowork/boot/grub/".format(settings.rootfs, settings.workdir))
-    run("cp -r {}/usr/share/grub/themes/ {}/isowork/boot/grub/".format(settings.rootfs, settings.workdir))
+    run("cp -r {}/usr/lib/grub/i386-pc/ {}/isowork/boot/grub/".format(settings.rootfs, settings.workdir),vital=False)
+    run("cp -r {}/usr/lib/grub/i386-efi/ {}/isowork/boot/grub/".format(settings.rootfs, settings.workdir),vital=False)
+    run("cp -r {}/usr/lib/grub/x86_64-efi/ {}/isowork/boot/grub/".format(settings.rootfs, settings.workdir),vital=False)
+    run("cp -r {}/usr/share/grub/themes/ {}/isowork/boot/grub/".format(settings.rootfs, settings.workdir),vital=False)
 
     # Generate Bootloaders
-    run("grub-mkimage -d {0}/isowork/boot/grub/i386-pc/ -o {0}/isowork/boot/grub/i386-pc/core.img -O i386-pc -p /boot/grub biosdisk iso9660".format(settings.workdir))
-    run("cat {0}/isowork/boot/grub/i386-pc/cdboot.img {0}/isowork/boot/grub/i386-pc/core.img > {0}/isowork/boot/grub/i386-pc/eltorito.img".format(settings.workdir))
-    run("grub-mkimage -d {0}/isowork/boot/grub/x86_64-efi/ -o {0}/isowork/EFI/boot/bootx64.efi -O x86_64-efi -p /boot/grub iso9660".format(settings.workdir))
-    run("grub-mkimage -d {0}/isowork/boot/grub/i386-efi/ -o {0}/isowork/EFI/boot/bootia32.efi -O i386-efi -p /boot/grub iso9660".format(settings.workdir))
+    run("grub-mkimage -d {0}/isowork/boot/grub/i386-pc/ -o {0}/isowork/boot/grub/i386-pc/core.img -O i386-pc -p /boot/grub biosdisk iso9660".format(settings.workdir),vital=False)
+    run("cat {0}/isowork/boot/grub/i386-pc/cdboot.img {0}/isowork/boot/grub/i386-pc/core.img > {0}/isowork/boot/grub/i386-pc/eltorito.img".format(settings.workdir),vital=False)
+    run("grub-mkimage -d {0}/isowork/boot/grub/x86_64-efi/ -o {0}/isowork/EFI/boot/bootx64.efi -O x86_64-efi -p /boot/grub iso9660".format(settings.workdir),vital=False)
+    run("grub-mkimage -d {0}/isowork/boot/grub/i386-efi/ -o {0}/isowork/EFI/boot/bootia32.efi -O i386-efi -p /boot/grub iso9660".format(settings.workdir),vital=False)
 
     # Generate efi.img
     run("truncate -s 4M {}/isowork/efi.img".format(settings.workdir))

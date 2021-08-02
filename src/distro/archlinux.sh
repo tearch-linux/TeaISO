@@ -21,7 +21,7 @@ create_rootfs(){
     run_in_chroot pacman-key --init
     run_in_chroot pacman-key --populate archlinux
     run_in_chroot pacman -Syyu --noconfirm
-    run_in_chroot pacman -Sy archiso --noconfirm
+    run_in_chroot pacman -Sy archiso grub arch-install-scripts --noconfirm
 }
 
 install_packages(){

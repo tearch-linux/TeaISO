@@ -106,7 +106,7 @@ if common.get_stage() <= 0:
         run(settings.profile+"/"+i)
     os.chdir(settings.teaiso)
 else:
-    inf("Using build stage: {}".format(colorize(distro.get_stage(), 0)))
+    inf("Using build stage: {}".format(colorize(common.get_stage(), 0)))
 
 common.mount_operations(settings.rootfs)
 
