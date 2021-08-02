@@ -1,12 +1,5 @@
 source "$teaiso"/distro/archlinux.sh
 
-create_rootfs(){
-    run arch-bootstrap -a "$arch" $(write_repo) "$rootfs"
-    if [[ -f "$pacman" ]] ; then
-        run install "$pacman" "$rootfs/etc/pacman.conf"
-    fi
-}
-
 populate_rootfs(){
     wget https://gitlab.com/tearch-linux/configs/tearch-mirrorlist/-/raw/master/tearch-mirrorlist -O "$rootfs/etc/pacman.d/tearch-mirrorlist"
     run_in_chroot pacman-key --init
