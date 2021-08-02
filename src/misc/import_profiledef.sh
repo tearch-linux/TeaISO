@@ -10,6 +10,7 @@ echo "pacman: ${pacman_conf}"
 echo "packages:"
 echo " - packages.x86_64"
 echo "grub_cfg: grub.cfg"
+echo "airootfs_directory_pre: airootfs"
 for dir in echo "${!file_permissions[@]}" ; do
     echo " - $dir|${file_permissions[$dir]}"
 done
