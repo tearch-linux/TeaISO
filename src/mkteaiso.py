@@ -121,6 +121,7 @@ common.mount_operations(settings.rootfs)
 
 # install packages (stage 1)
 if common.get_stage() < 1:
+    distro.populate_rootfs()
     distro.install_packages()
     common.set_stage(1)
 

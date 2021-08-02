@@ -8,6 +8,9 @@ create_rootfs(){
         cat $rootfs/debootstrap/debootstrap.log
         exit 1
     fi
+}
+
+populate_rootfs(){
     run_in_chroot apt install casper -yq
 }
 

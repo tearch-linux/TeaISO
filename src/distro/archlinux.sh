@@ -18,6 +18,9 @@ create_rootfs(){
     if [[ -f "$pacman" ]] ; then
         run install "$pacman" "$rootfs/etc/pacman.conf"
     fi
+}
+
+populate_rootfs(){
     run_in_chroot pacman-key --init
     run_in_chroot pacman-key --populate archlinux
     run_in_chroot pacman -Syyu --noconfirm || true

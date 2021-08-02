@@ -22,6 +22,8 @@ def run_function(func):
 def create_rootfs():
     run_function("create_rootfs")
     
+def populate_rootfs():
+    run_function("populate_chroot")
 def tools_init():
     run_function("tools_init")
 

@@ -8,6 +8,9 @@ tools_init(){
 }
 create_rootfs(){
     run sulinstrapt "$rootfs"
+}
+
+populate_chroot(){
     run_in_chroot inary it initrd openrc openrc-tmpfiles -y
 }
 
