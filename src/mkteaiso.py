@@ -8,30 +8,27 @@ from help import help_message
 nocheck = False
 os.umask(18) # set umask as 022
 # argument parse
-for i in sys.argv[1:]:
-    if i.startswith("--"):
-        i = i[2:]
-        if i.startswith("output="):
-            settings.output = get_argument_value(i, "output")
-        elif i.startswith("workdir="):
-            settings.workdir = get_argument_value(i, "workdir")
-        elif i.startswith("profile="):
-            settings.profile = get_argument_value(i, "profile")
-        
-        elif i == "debug":
-            settings.debug = True
-        elif i == "nocolor":
-            disable_color()
-        elif i == "simulate":
-            warn("Simulation mode enabled.")
-            set_simulation()
-        elif i == "nocheck":
-            nocheck = True
-        elif i == "help":
-            help_message()
-    else:
-        err("usage: mkteaiso [options]\nmkteaiso: error: argument --help: ignored explicit argument '{}'".format(i))
 
+
+for i in sys.argv[1:]:
+    if common.is_arg(i,"output"):
+        settings.output = common.get_value(i)
+    elif common.is_arg(i,"work"):
+        settings.workdir = common.get_value(i)
+    elif common.is_arg(i,"profile"):
+        settings.profile =common.get_value(i)
+        
+    elif common.is_arg(i,"debug"):
+        settings.debug = True
+    elif i == "--nocolor":
+        disable_color()
+    elif i == "--simulate":
+        warn("Simulation mode enabled.")
+        set_simulation()
+    elif i == "--nocheck":
+        nocheck = True
+    elif common.is_arg(i,"help"):
+        help_message()
 
 if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
     settings.teaiso = os.getcwd()+"/src"
