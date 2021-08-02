@@ -15,8 +15,8 @@ tools_init(){
 }
 create_rootfs(){
     run arch-bootstrap -a "$arch" $(write_repo) "$rootfs"
-    if [[ -f "$profile/pacman.conf" ]] ; then
-        run install "$profile/pacman.conf" "$rootfs/etc/pacman.conf"
+    if [[ -f "$pacman" ]] ; then
+        run install "$pacman" "$rootfs/etc/pacman.conf"
     fi
     run_in_chroot pacman-key --init
     run_in_chroot pacman-key --populate archlinux

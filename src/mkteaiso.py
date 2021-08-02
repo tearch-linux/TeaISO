@@ -47,6 +47,13 @@ if os.path.exists(settings.teaiso+"/profiles/"+settings.profile):
     settings.profile = settings.teaiso+"/profiles/"+settings.profile
 settings.profile = getoutput("realpath "+settings.profile)
 
+
+# rootfs settings
+settings.rootfs = settings.workdir+"/airootfs"
+set_rootfs(settings.rootfs)
+common.unmount_operations(settings.rootfs)
+
+
 if not nocheck:
     settings.check()
 else:
@@ -75,19 +82,18 @@ distro.set("name", common.get("name"))
 distro.set("arch", common.get("arch"))
 distro.set("distro", common.get("distro"))
 distro.set("label", common.get("label"))
+pacman = common.get("pacman")
+if os.path.exists(pacman):
+    distro.set("pacman", getoutput("realpath \"{}\"".format(pacman)))
 distro.set("teaiso", settings.teaiso)
 distro.set("profile", settings.profile)
 distro.set("packages", "(" + ' '.join(packages) + ")")
 
 
-# rootfs settings
-settings.rootfs = settings.workdir+"/airootfs"
-
 distro.set("rootfs", settings.rootfs)
 distro.set("workdir", settings.workdir)
 distro.set("codename", common.get("codename", "stable"))  # for debian
 distro.set("repository", common.get("repository"))  # for debian
-set_rootfs(settings.rootfs)
 
 if settings.debug:
     dbg("Distro options:\n"+getoutput("cat "+settings.workdir+"/options.sh"))

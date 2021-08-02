@@ -5,6 +5,6 @@ def mount_operations(rootfs):
 
 def unmount_operations(rootfs):
     for dir in ["dev/pts", "dev", "sys", "proc", "run"]:
-        while 0 == run("umount -lf -R /{}/{} 2>/dev/null".format(rootfs,dir),vital=False):
+        while 0 == run("umount -lf -R /{}/{}".format(rootfs,dir),vital=False):
             True
 
