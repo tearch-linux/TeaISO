@@ -23,7 +23,7 @@ def create_rootfs():
     run_function("create_rootfs")
     
 def populate_rootfs():
-    run_function("populate_chroot")
+    run_function("populate_rootfs")
 def tools_init():
     run_function("tools_init")
 
