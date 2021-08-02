@@ -1,3 +1,4 @@
+from utils import inf
 import os
 def get_stage():
     workdir = os.environ["workdir"]
@@ -9,5 +10,6 @@ def get_stage():
 
 def set_stage(stage):
     workdir = os.environ["workdir"]
+    inf("Stage:{} done.".format(stage))
     with open("{}/stage".format(workdir),"w") as f:
         return f.write(str(stage))
