@@ -52,6 +52,8 @@ settings.show()
 
 # load profile
 settings.profile = getoutput("realpath "+settings.profile)
+if os.path.exists(settings.profile+"/profiledef.sh"):
+    run("cd \"{}\" ; bash -ec \"{}/misc/import_profiledef.sh\" > \"{}\"".format(settings.profile, settings.teaiso, settings.profile+"/profile.yaml"))
 inf("Loading profile: " + settings.profile+"/profile.yaml")
 common.profile = common.parse_profile(settings.profile+"/profile.yaml")
 if common.profile == None:

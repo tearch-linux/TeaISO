@@ -2,4 +2,5 @@ base
 grub
 linux
 mkinitcpio
+mkinitcpio-archiso
 openssh

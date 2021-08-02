@@ -1,4 +1,2 @@
 #!/usr/bin/env bash
-pwd
-ls
-echo "Nothing to do!"
+chroot airootfs mkinitcpio -p linux
