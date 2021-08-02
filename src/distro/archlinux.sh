@@ -19,6 +19,7 @@ create_rootfs(){
         run install "$profile/pacman.conf" "$rootfs/etc/pacman.conf"
     fi
     run_in_chroot pacman-key --init
+    run_in_chroot pacman-key --populate archlinux
     run_in_chroot pacman -Syyu --noconfirm
     run_in_chroot pacman -Sy archiso --noconfirm
 }
