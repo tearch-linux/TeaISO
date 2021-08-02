@@ -51,6 +51,10 @@ generate_isowork(){
     done
 }
 
+customize_airootfs(){
+    chroot "$rootfs" update-initramfs -u -k all
+}
+
 clear_rootfs(){
     run_in_chroot apt clean
     run_in_chroot apt autoremove

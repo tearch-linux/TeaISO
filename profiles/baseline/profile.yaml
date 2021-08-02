@@ -12,5 +12,5 @@ packages:
  - packages.x86_64
 file_permissions:
  - /etc/shadow|0:0:400
-customize_airootfs:
- - customize-airootfs.sh
+#customize_airootfs:
+# - customize-airootfs.sh

@@ -31,6 +31,9 @@ def install_packages():
 def make_pkglist():
     run_function("make_pkglist")
 
+def customize_airootfs():
+    run_function("customize_airootfs")
+
 def clear_rootfs():
     run_function("clear_rootfs")
     

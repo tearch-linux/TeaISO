@@ -147,6 +147,7 @@ if common.get_stage() < 2:
 if common.get_stage() < 3:
     inf("Customizing airootfs")
     os.chdir(settings.workdir)
+    distro.customize_airootfs()
     for i in common.get("customize_airootfs", []):
         os.chmod(settings.profile + "/" + i, 0o755)
         inf("==> Running: {}".format(colorize(i, 0)))

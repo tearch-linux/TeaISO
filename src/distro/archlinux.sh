@@ -43,6 +43,11 @@ generate_isowork(){
     echo "}" >> isowork/boot/grub/grub.cfg
 }
 
+customize_airootfs(){
+    chroot "$rootfs" mkinitcpio -p linux
+}
+
 clear_rootfs(){
     find "$rootfs/var/log/" -type f | xargs rm -f
+    find "$rootfs/var/cache/pacman/pkg" -type f | xargs rm -f
 }
