@@ -50,22 +50,27 @@ char* colorize(char* msg, char* num){
 void err(char* msg){
      fprintf(stderr,colorize("Error: %s","31;1"),msg);
      fputc('\n',stderr);
+     fflush(stderr);
 }
 void dbg(char* msg){
      fprintf(stderr,colorize("Debug: %s","35"),msg);
      fputc('\n',stderr);
+     fflush(stderr);
 }
 void inf(char* msg){
     fprintf(stdout,colorize("%s","36"),msg);
     fputc('\n',stdout);
+    fflush(stdout);
 }
 void out(char* msg){
     fprintf(stdout,msg);
     fputc('\n',stdout);
+    fflush(stdout);
 }
 void warn(char* msg){
     fprintf(stderr,colorize("Warning: %s","33"),msg);
     fputc('\n',stderr);
+    fflush(stderr);
 }
 
 char* get_argument_value(char* arg, char* val){

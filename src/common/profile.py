@@ -2,10 +2,10 @@ import yaml
 import os
 from utils import err
 profile=None
+
+
 def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml",teaiso="/usr/lib/teaiso"):
     global profile
-    if os.path.exists(teaiso+"/profiles/"+file):
-        file = teaiso+"/profiles/"+file
     if not os.path.exists(file):
         return None
     
@@ -24,15 +24,14 @@ def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml",teaiso="/
             contents["file_permissions"] = file_permissions
         
     profile=contents
-    validation = validate_profile()
+    validation = validate_profile(profile)
     
     if not validation[0]:
        err("Key not defined in profile:\n -> {}".format(validation[1])) 
     
     return profile
 
-def validate_profile():
-    global profile
+def validate_profile(profile):
     required_keys = ['name', 'publisher', 'label', 'application_id', 'arch', 'grub_cfg', 'packages', 'distro']
 
     for key in required_keys:

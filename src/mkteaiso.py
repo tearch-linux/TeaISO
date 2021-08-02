@@ -43,6 +43,10 @@ if not is_root():
 os.environ.clear()
 os.environ["PATH"] = "/bin:/sbin:/usr/bin:/usr/sbin"
 
+if os.path.exists(settings.teaiso+"/profiles/"+settings.profile):
+    settings.profile = settings.teaiso+"/profiles/"+settings.profile
+settings.profile = getoutput("realpath "+settings.profile)
+
 if not nocheck:
     settings.check()
 else:
@@ -51,7 +55,6 @@ settings.show()
 
 
 # load profile
-settings.profile = getoutput("realpath "+settings.profile)
 if os.path.exists(settings.profile+"/profiledef.sh"):
     run("cd \"{}\" ; bash -ec \"{}/misc/import_profiledef.sh\" > \"{}\"".format(settings.profile, settings.teaiso, settings.profile+"/profile.yaml"))
 inf("Loading profile: " + settings.profile+"/profile.yaml")

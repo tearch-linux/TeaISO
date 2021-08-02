@@ -5,7 +5,7 @@ from colors import *
 output="/var/teaiso/output"
 workdir="/var/teaiso/work"
 teaiso="/usr/lib/teaiso"
-profile="profiles/baseline"
+profile="baseline"
 rootfs=None
 debug=False
 def show():
