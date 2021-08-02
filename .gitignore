@@ -3,5 +3,4 @@
 /output
 lib/libteaiso.so
 lib/a.out
-src/__pycache__/
-
+*.pyc
