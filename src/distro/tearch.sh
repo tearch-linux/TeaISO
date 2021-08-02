@@ -1,7 +1,7 @@
 source "$teaiso"/distro/archlinux.sh
 
 populate_rootfs(){
-    wget https://gitlab.com/tearch-linux/configs/tearch-mirrorlist/-/raw/master/tearch-mirrorlist -O "$rootfs/etc/pacman.d/tearch-mirrorlist"
+    run wget https://gitlab.com/tearch-linux/configs/tearch-mirrorlist/-/raw/master/tearch-mirrorlist -O "$rootfs/etc/pacman.d/tearch-mirrorlist"
     run_in_chroot pacman-key --init
     run_in_chroot pacman-key --populate archlinux
     run_in_chroot pacman -Syyu --noconfirm || true
