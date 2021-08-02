@@ -32,7 +32,7 @@ install_packages(){
 }
 
 make_pkglist() {
-    chroot "$rootfs" pacman -Qqn >  ${workdir}/packages.list
+    run_in_chroot pacman -Qqn >  ${workdir}/packages.list
 }
 
 generate_isowork(){
@@ -48,7 +48,7 @@ generate_isowork(){
 }
 
 customize_airootfs(){
-    chroot "$rootfs" mkinitcpio -p linux
+    run_in_chroot mkinitcpio -p linux
 }
 
 clear_rootfs(){

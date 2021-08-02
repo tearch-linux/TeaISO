@@ -35,7 +35,7 @@ install_packages(){
 }
 
 make_pkglist() {
-    chroot "$rootfs" apt list --installed >  ${workdir}/packages.list
+    run_in_chroot apt list --installed >  ${workdir}/packages.list
 }
 
 generate_isowork(){
@@ -55,7 +55,7 @@ generate_isowork(){
 }
 
 customize_airootfs(){
-    chroot "$rootfs" update-initramfs -u -k all
+    run_in_chroot update-initramfs -u -k all
 }
 
 clear_rootfs(){

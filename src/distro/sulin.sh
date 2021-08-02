@@ -19,7 +19,7 @@ install_packages(){
 }
 
 make_pkglist() {
-    chroot "$rootfs" inary li >  ${workdir}/packages.list
+    run_in_chroot inary li >  ${workdir}/packages.list
 }
 
 generate_isowork(){
@@ -37,12 +37,12 @@ generate_isowork(){
 
 customize_airootfs(){
     ls "$rootfs/kernel/modules/" | while read line ; do
-        chroot "$rootfs" update-initrd KERNELVER="$line"
+        run_in_chroot update-initrd KERNELVER="$line"
     done
 }
 
 clear_rootfs(){
     find "$rootfs/var/log/" -type f | xargs rm -f
-    chroot "$rootfs" inary dc
-    chroot "$rootfs" inary hs -r
+    run_in_chroot inary dc
+    run_in_chroot inary hs -r
 }
