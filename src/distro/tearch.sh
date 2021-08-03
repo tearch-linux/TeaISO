@@ -14,8 +14,8 @@ generate_isowork(){
     if [[ -f "$profile/grub.cfg" ]] ; then
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
     fi
-    mkdir -p isowork/arch/$arch || true
-    mv filesystem.squashfs isowork/arch/$arch/airootfs.sfs
+    mkdir -p isowork/live || true
+    mv filesystem.squashfs isowork/live/airootfs.sfs
     echo "menuentry Tearch-linux --class arch {" >> isowork/boot/grub/grub.cfg
     echo "  linux /boot/vmlinuz-linux boot=live" >> isowork/boot/grub/grub.cfg
     echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg
