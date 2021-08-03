@@ -120,9 +120,7 @@ if common.get_stage() < 2:
 os.chdir(settings.workdir)
 if common.get_stage() < 3:
     for i in common.get("customize_airootfs_pre", []):
-        os.chmod(settings.profile + "/" + i, 0o755)
-        inf("==> Running: {}".format(colorize(i, 0)))
-        run("chroot||"+settings.profile+"/"+i)
+        common.run_hook(settings,i)
     common.set_stage(3)
 
 os.chdir(settings.teaiso)
@@ -168,8 +166,7 @@ if common.get_stage() < 6:
     distro.customize_airootfs()
     for i in common.get("customize_airootfs", []):
         os.chmod(settings.profile + "/" + i, 0o755)
-        inf("==> Running: {}".format(colorize(i, 0)))
-        run("chroot||"+settings.profile+"/"+i)
+        common.run_hook(settings,i)
     os.chdir(settings.teaiso)
     common.set_stage(6)
 
