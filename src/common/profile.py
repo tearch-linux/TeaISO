@@ -50,13 +50,13 @@ def get(key, default=""):
 
 
 def get_package_list(common, settings):
+    packages = []
     for file in common.get("packages"):
         file = settings.profile + "/" + file
 
         if not os.path.exists(file):
             warn("Packages file not exists:\n -> {}".format(file))
 
-        packages = []
         with open(file, "r") as f:
             for line in f.read().split("\n"):
                 if not line.startswith("#"):
