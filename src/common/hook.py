@@ -1,3 +1,4 @@
+import os
 from utils import inf, run, colorize
 def run_hook(settings,i):
     inf("==> Running: {}".format(colorize(i, 0)))
