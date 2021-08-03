@@ -108,6 +108,8 @@ if common.get_stage() < 1:
 else:
     inf("Using build stage: {}".format(colorize(common.get_stage(), 0)))
 
+common.mount_operations(settings.rootfs)
+
 if common.get_stage() < 2:
     distro.populate_rootfs()
     if os.path.exists(settings.profile+"/"+common.get("airootfs_directory_pre")) and len(common.get("airootfs_directory_pre")) > 0:
@@ -124,7 +126,6 @@ if common.get_stage() < 3:
     common.set_stage(3)
 
 os.chdir(settings.teaiso)
-common.mount_operations(settings.rootfs)
 
 # install packages (stage 1)
 if common.get_stage() < 4:
