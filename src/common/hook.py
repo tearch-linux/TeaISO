@@ -1,3 +1,4 @@
+from utils import inf, run
 def run_hook(settings,i):
     inf("==> Running: {}".format(colorize(i, 0)))
     os.chmod(settings.profile + "/" + i, 0o755)
