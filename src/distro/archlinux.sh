@@ -48,7 +48,7 @@ generate_isowork(){
 }
 
 customize_airootfs(){
-    run_in_chroot mkinitcpio -p linux
+    run_in_chroot mkinitcpio -v -p linux
 }
 
 clear_rootfs(){
