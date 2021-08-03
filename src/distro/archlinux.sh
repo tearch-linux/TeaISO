@@ -48,7 +48,9 @@ generate_isowork(){
 }
 
 customize_airootfs(){
-    run_in_chroot mkinitcpio -v -p linux
+    if [[ ! -f "$rootfs/boot/initramfs-linux.img" ]] ; then
+        run_in_chroot mkinitcpio -v -p linux
+    fi
 }
 
 clear_rootfs(){
