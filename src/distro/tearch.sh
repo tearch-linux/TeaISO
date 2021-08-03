@@ -1,4 +1,6 @@
 source "$teaiso"/distro/archlinux.sh
+typeset -r populate_rootfs
+typeset -r generate_isowork
 
 populate_rootfs(){
     run wget https://gitlab.com/tearch-linux/configs/tearch-mirrorlist/-/raw/master/tearch-mirrorlist -O "$rootfs/etc/pacman.d/tearch-mirrorlist"

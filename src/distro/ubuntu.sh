@@ -1,4 +1,7 @@
 source "$teaiso"/distro/debian.sh
+typeset -r populate_rootfs
+typeset -r generate_isowork
+typeset -r create_rootfs
 
 create_rootfs(){
     if [[ "$codename" == "latest" ]] ; then
