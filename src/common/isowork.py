@@ -6,6 +6,12 @@ import shutil
 
 
 def create_isowork(settings):
+    if os.path.exists("{}/isowork/".format(settings.workdir)):
+        run("rm -rf -- {}/isowork".format(settings.workdir))
+    os.makedirs("{}/isowork/".format(settings.workdir))
+    if os.path.exists("{}/isowork".format(settings.profile)):
+        run("cp -prfv {}/isowork/* {}/isowork/".format(settings.profile,
+            settings.workdir))
     if not os.path.exists("{}/isowork/boot/grub".format(settings.workdir)):
         os.makedirs("{}/isowork/boot/grub".format(settings.workdir))
     for i in os.listdir("{}/boot".format(settings.rootfs)):
@@ -19,7 +25,8 @@ def create_isowork(settings):
 
 def create_iso(settings):
     inf("Creating iso file.")
-    os.makedirs("{}/isowork/EFI/boot".format(settings.workdir))
+    if not os.path.exists("{}/isowork/EFI/boot".format(settings.workdir)):
+        os.makedirs("{}/isowork/EFI/boot".format(settings.workdir))
 
     # Copy Necessary Directories
     run("cp -r {}/usr/lib/grub/i386-pc/ {}/isowork/boot/grub/".format(settings.rootfs,
@@ -40,7 +47,7 @@ def create_iso(settings):
         settings.workdir), vital=False)
 
     # Generate efi.img
-    run("truncate -s 4M {}/isowork/efi.img".format(settings.workdir))
+    run("dd if=/dev/zero of=\"{}/isowork/efi.img\" bs=4M count=1".format(settings.workdir))
     run("mkfs.vfat -n TEAISO_EFI {}/isowork/efi.img &>/dev/null".format(settings.workdir))
     run("mmd -i {}/isowork/efi.img ::/EFI".format(settings.workdir))
     run("mmd -i {}/isowork/efi.img ::/EFI/boot".format(settings.workdir))
@@ -62,7 +69,8 @@ def create_iso(settings):
                 --sort-weight 0 / \
                 --sort-weight 1 /boot \
                 --grub2-mbr {5}/isowork/boot/grub/i386-pc/boot_hybrid.img \
-                -iso_mbr_part_type 0x00 \
+                -iso_mbr_part_type 0x83 \
+                -isohybrid-gpt-basdat \
                 -partition_offset 16 \
                 -b boot/grub/i386-pc/eltorito.img \
                 -c boot.catalog \
@@ -71,6 +79,10 @@ def create_iso(settings):
                 -append_partition 2 0xef {5}/isowork/efi.img \
                 -e --interval:appended_partition_2:all:: \
                 -no-emul-boot \
+                --mbr-force-bootable \
+                --modification-date='1970000000000000' \
+                -apm-block-size 512 \
+                -partition_cyl_align off \
                 -full-iso9660-filenames \
                 -iso-level 3 -rock -joliet \
                 -o {6} \

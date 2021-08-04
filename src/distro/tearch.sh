@@ -16,7 +16,7 @@ generate_isowork(){
     fi
     mkdir -p isowork/live || true
     mv filesystem.squashfs isowork/live/airootfs.sfs
-    echo "menuentry Tearch-linux --class arch {" >> isowork/boot/grub/grub.cfg
+    echo "menuentry $(distro_name) --class arch {" >> isowork/boot/grub/grub.cfg
     echo "  linux /boot/vmlinuz-linux boot=live" >> isowork/boot/grub/grub.cfg
     echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg
     echo "}" >> isowork/boot/grub/grub.cfg

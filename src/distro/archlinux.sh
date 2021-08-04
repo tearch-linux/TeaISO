@@ -41,7 +41,7 @@ generate_isowork(){
     fi
     mkdir -p isowork/arch/$arch || true
     mv filesystem.squashfs isowork/arch/$arch/airootfs.sfs
-    echo "menuentry Archlinux --class arch {" >> isowork/boot/grub/grub.cfg
+    echo "menuentry $(distro_name) --class arch {" >> isowork/boot/grub/grub.cfg
     echo "  linux /boot/vmlinuz-linux archisobasedir=arch archisolabel=$label" >> isowork/boot/grub/grub.cfg
     echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg
     echo "}" >> isowork/boot/grub/grub.cfg

@@ -26,7 +26,7 @@ generate_isowork(){
     mkdir -p isowork/live/ || true
     mv filesystem.squashfs isowork/live/
     ls isowork/boot/ | grep "vmlinuz" | while read line ; do
-        echo "menuentry Ubuntu --class debian {" >> isowork/boot/grub/grub.cfg
+        echo "menuentry $(distro_name) --class debian {" >> isowork/boot/grub/grub.cfg
         echo "  linux /boot/$line boot=casper" >> isowork/boot/grub/grub.cfg
         echo "  initrd /boot/$(echo $line | sed s/vmlinuz/initrd.img/g)" >> isowork/boot/grub/grub.cfg
         echo "}" >> isowork/boot/grub/grub.cfg
