@@ -1,4 +1,6 @@
 source "$teaiso"/distro/archlinux.sh
+typeset -r populate_rootfs
+typeset -r generate_isowork
 
 populate_rootfs(){
     run wget https://gitlab.com/tearch-linux/configs/tearch-mirrorlist/-/raw/master/tearch-mirrorlist -O "$rootfs/etc/pacman.d/tearch-mirrorlist"
@@ -12,10 +14,10 @@ generate_isowork(){
     if [[ -f "$profile/grub.cfg" ]] ; then
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
     fi
-    mkdir -p isowork/arch/$arch || true
-    mv filesystem.squashfs isowork/arch/$arch/airootfs.sfs
-    echo "menuentry Tearch-linux --class arch {" >> isowork/boot/grub/grub.cfg
-    echo "  linux /boot/vmlinuz-linux boot=live" >> isowork/boot/grub/grub.cfg
+    mkdir -p isowork/live || true
+    mv filesystem.squashfs isowork/live/airootfs.sfs
+    echo "menuentry $(distro_name) --class arch {" >> isowork/boot/grub/grub.cfg
+    echo "  linux /boot/vmlinuz-linux boot=live live-config" >> isowork/boot/grub/grub.cfg
     echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg
     echo "}" >> isowork/boot/grub/grub.cfg
 }

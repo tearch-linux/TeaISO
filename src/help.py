@@ -1,6 +1,7 @@
 from utils import out as o
 from utils import disable_color
 
+
 def help_message():
     disable_color()
     o("Usage: mkteaiso [options]")
