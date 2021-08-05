@@ -10,7 +10,7 @@ create_rootfs(){
     run sulinstrapt "$rootfs"
 }
 
-populate_chroot(){
+populate_rootfs(){
     run_in_chroot inary it initrd openrc openrc-tmpfiles -y
 }
 
