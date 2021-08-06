@@ -10,13 +10,13 @@ def create_isowork(settings):
         run("rm -rf -- {}/isowork".format(settings.workdir))
     os.makedirs("{}/isowork/".format(settings.workdir))
     if os.path.exists("{}/isowork".format(settings.profile)):
-        run("cp -prfv {}/isowork/* {}/isowork/".format(settings.profile,
+        run("cp -rf {}/isowork/* {}/isowork/".format(settings.profile,
             settings.workdir))
     if not os.path.exists("{}/isowork/boot/grub".format(settings.workdir)):
         os.makedirs("{}/isowork/boot/grub".format(settings.workdir))
     for i in os.listdir("{}/boot".format(settings.rootfs)):
         if os.path.isfile("{}/boot/{}".format(settings.rootfs, i)):
-            run("cp -pf {}/boot/{} {}/isowork/boot".format(settings.rootfs,
+            run("cp -f {}/boot/{} {}/isowork/boot".format(settings.rootfs,
                 i, settings.workdir))
 
     shutil.copyfile(settings.workdir + "/packages.list",
@@ -88,7 +88,7 @@ def create_iso(settings):
                 -o {6} \
                 {5}/isowork/""".format(modification_date, get("label"), get("application_id"),
                                        get("publisher"), "2.0", settings.workdir,
-                                       settings.output + "/{}-{}-{}.iso".format(get("name"), get("arch"), modification_date)))
+                                       get("iso_name"), modification_date))
 
 
 def create_squashfs(settings):

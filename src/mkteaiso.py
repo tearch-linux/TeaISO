@@ -62,7 +62,6 @@ if not nocheck:
     settings.check()
 else:
     warn("Settings checking skipped")
-settings.show()
 
 
 # load profile
@@ -77,13 +76,16 @@ if common.profile == None:
 if settings.debug:
     dbg("Profile content:\n"+str(common.profile))
 
+packages = common.get_package_list(common, settings)
+
+    
+settings.show(common.profile, packages)
+
 # distro settings
 distro.set("workdir", settings.workdir)
 os.chdir(settings.profile)
 
 # distro options
-packages = common.get_package_list(common, settings)
-
 distro.set("interactive", interactive)
 
 distro.set("name", common.get("name"))

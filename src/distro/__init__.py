@@ -8,7 +8,7 @@ def set(option, variable):
     workdir = os.environ["workdir"]
     with open("{}/options.sh".format(workdir), "a") as f:
         f.write("{}={}\n".format(option, variable))
-        out("{} : {}".format(colorize(option, green), variable))
+        #out("{} : {}".format(colorize(option, green), variable))
 
 
 def get(option, default=""):

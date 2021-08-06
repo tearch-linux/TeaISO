@@ -1,5 +1,6 @@
 import yaml
 import os
+from datetime import date
 from utils import err
 profile = None
 
@@ -23,6 +24,8 @@ def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml", teaiso="
             file_permissions[file[0]] = file[1]
         contents["file_permissions"] = file_permissions
 
+    contents["iso_name"] = contents["name"] + "-" + date.today().strftime("%d-%m-%Y") + "-" + contents["arch"] + ".iso"
+    
     profile = contents
     validation = validate_profile(profile)
 

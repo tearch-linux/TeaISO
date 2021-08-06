@@ -58,7 +58,7 @@ void dbg(char* msg, char* date){
      fflush(stderr);
 }
 void inf(char* msg, char* date){
-    fprintf(stdout,colorize("%s","36"),msg);
+    fprintf(stdout,colorize("%s - [mkteaiso] INFO: %s","36"),date,msg);
     fputc('\n',stdout);
     fflush(stdout);
 }
