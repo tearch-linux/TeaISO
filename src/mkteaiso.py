@@ -39,6 +39,9 @@ sys.path.insert(0, settings.teaiso)
 if not is_root():
     err("You must be root!")
 
+# Disable selinux
+os.system("setenforce 0 &>/dev/null")
+
 os.environ.clear()
 os.environ["PATH"] = "/bin:/sbin:/usr/bin:/usr/sbin"
 
