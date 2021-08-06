@@ -12,5 +12,6 @@ def help_message():
     o("  -d --debug    :    Print debug logs")
     o("     --simulate :    Enable simulation mode. Do nothing")
     o("     --nocheck  :    Skip all check.")
+    o(" --interactive  :    Interactive operations.")
     o("  -h --help     :    Write help message and exit.")
     exit(0)

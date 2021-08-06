@@ -1,5 +1,6 @@
 from subprocess import getoutput
 from ctypes import CDLL, c_int, c_char_p
+from datetime import datetime
 libteaiso = CDLL("libteaiso.so")
 libteaiso.run.argtypes = [c_char_p]
 libteaiso.run.restype = c_int
@@ -31,24 +32,24 @@ def run(cmd, vital=True):
 
 
 def err(msg, colorize=True):
-    libteaiso.err(str(msg).encode("utf-8"))
+    libteaiso.err(str(msg).encode("utf-8"), now())
     exit(1)
 
 
 def out(msg, colorize=True):
-    libteaiso.out(str(msg).encode("utf-8"))
+    libteaiso.out(str(msg).encode("utf-8"), now())
 
 
 def warn(msg, colorize=True):
-    libteaiso.warn(str(msg).encode("utf-8"))
+    libteaiso.warn(str(msg).encode("utf-8"), now())
 
 
 def dbg(msg, colorize=True):
-    libteaiso.dbg(str(msg).encode("utf-8"))
+    libteaiso.dbg(str(msg).encode("utf-8"), now())
 
 
 def inf(msg, colorize=True):
-    libteaiso.inf(str(msg).encode("utf-8"))
+    libteaiso.inf(str(msg).encode("utf-8"), now())
 
 
 def get_argument_value(arg, var):
@@ -74,3 +75,7 @@ def is_root():
 def set_simulation():
     global simulation
     simulation = True
+    
+
+def now():
+    return str(datetime.now().strftime("%d/%m/%y %H:%M")).encode("utf-8")

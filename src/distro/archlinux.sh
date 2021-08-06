@@ -15,6 +15,7 @@ tools_init(){
 }
 create_rootfs(){
     run arch-bootstrap -a "$arch" $(write_repo) "$rootfs"
+
     if [[ -f "$pacman" ]] ; then
         run install "$pacman" "$rootfs/etc/pacman.conf"
     fi
@@ -23,12 +24,21 @@ create_rootfs(){
 populate_rootfs(){
     run_in_chroot pacman-key --init
     run_in_chroot pacman-key --populate archlinux
-    run_in_chroot pacman -Syyu --noconfirm || true
-    run_in_chroot pacman -Sy archiso grub arch-install-scripts --noconfirm
+    if ! ${interactive}; then
+        run_in_chroot pacman -Syyu --noconfirm || true
+    else
+        run_in_chroot pacman -Syyu || true
+    fi
+    run_in_chroot pacman -Sy grub arch-install-scripts --noconfirm
+
 }
 
 install_packages(){
-    run_in_chroot pacman -Sy ${packages[@]} --noconfirm
+    if ! ${interactive}; then
+        run_in_chroot pacman -Sy ${packages[@]} --noconfirm
+    else
+        run_in_chroot pacman -Sy ${packages[@]}
+    fi
 }
 
 make_pkglist() {
@@ -48,10 +58,16 @@ generate_isowork(){
 }
 
 customize_airootfs(){
-        chroot "$rootfs" mkinitcpio -p linux
+        run_in_chroot mkinitcpio -p linux
 }
 
 clear_rootfs(){
-    find "$rootfs/var/log/" -type f | xargs rm -f
-    find "$rootfs/var/cache/pacman/pkg" -type f | xargs rm -f
+    find "${rootfs}/var/lib/pacman" -maxdepth 1 -type f -delete
+    find "${rootfs}/var/lib/pacman/sync" -delete
+    find "${rootfs}/var/cache/pacman/pkg" -type f -delete
+    find "${rootfs}/var/log" -type f -delete
+    find "${rootfs}/var/tmp" -mindepth 1 -delete
+    find "${rootfs}" \( -name '*.pacnew' -o -name '*.pacsave' -o -name '*.pacorig' \) -delete
+
+    echo "" > "$rootfs/etc/machine-id"
 }

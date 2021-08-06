@@ -47,17 +47,17 @@ char* colorize(char* msg, char* num){
 }
 
 // logging
-void err(char* msg){
-     fprintf(stderr,colorize("Error: %s","31;1"),msg);
+void err(char* msg, char* date){
+     fprintf(stderr,colorize("%s - [mkteaiso] ERROR: %s","31;1"),date,msg);
      fputc('\n',stderr);
      fflush(stderr);
 }
-void dbg(char* msg){
-     fprintf(stderr,colorize("Debug: %s","35"),msg);
+void dbg(char* msg, char* date){
+     fprintf(stderr,colorize("%s - [mkteaiso] DEBUG: %s","35"),date,msg);
      fputc('\n',stderr);
      fflush(stderr);
 }
-void inf(char* msg){
+void inf(char* msg, char* date){
     fprintf(stdout,colorize("%s","36"),msg);
     fputc('\n',stdout);
     fflush(stdout);
@@ -67,8 +67,8 @@ void out(char* msg){
     fputc('\n',stdout);
     fflush(stdout);
 }
-void warn(char* msg){
-    fprintf(stderr,colorize("Warning: %s","33"),msg);
+void warn(char* msg, char* date){
+    fprintf(stderr,colorize("%s - [mkteaiso] WARN: %s","33"),date,msg);
     fputc('\n',stderr);
     fflush(stderr);
 }

@@ -6,6 +6,7 @@ import common
 import distro
 from help import help_message
 nocheck = False
+interactive = "false"
 os.umask(18)  # set umask as 022
 # argument parse
 
@@ -17,7 +18,6 @@ for i in sys.argv[1:]:
         settings.workdir = common.get_value(i)
     elif common.is_arg(i, "profile"):
         settings.profile = common.get_value(i)
-
     elif common.is_arg(i, "debug"):
         settings.debug = True
     elif i == "--nocolor":
@@ -27,6 +27,8 @@ for i in sys.argv[1:]:
         set_simulation()
     elif i == "--nocheck":
         nocheck = True
+    elif i == "interactive":
+        interactive = "true"
     elif common.is_arg(i, "help"):
         help_message()
 
@@ -81,6 +83,8 @@ os.chdir(settings.profile)
 
 # distro options
 packages = common.get_package_list(common, settings)
+
+distro.set("interactive", interactive)
 
 distro.set("name", common.get("name"))
 distro.set("arch", common.get("arch"))

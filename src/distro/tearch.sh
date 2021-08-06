@@ -6,7 +6,11 @@ populate_rootfs(){
     run wget https://gitlab.com/tearch-linux/configs/tearch-mirrorlist/-/raw/master/tearch-mirrorlist -O "$rootfs/etc/pacman.d/tearch-mirrorlist"
     run_in_chroot pacman-key --init
     run_in_chroot pacman-key --populate archlinux
-    run_in_chroot pacman -Syyu --noconfirm || true
+    if ! ${interactive}; then
+        run_in_chroot pacman -Syyu --noconfirm || true
+    else
+        run_in_chroot pacman -Syyu || true
+    fi
     run_in_chroot pacman -Sy mkinitcpio-teaiso grub --noconfirm
 }
 
