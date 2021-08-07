@@ -4,24 +4,24 @@ import os
 import settings
 import common
 import distro
-from help import help_message
+
 nocheck = False
 create_profile = False
 interactive = "false"
+
 os.umask(18)  # set umask as 022
+
 # argument parse
-
-
 for i in sys.argv[1:]:
-    if common.is_arg(i, "output"):
-        settings.output = common.get_value(i)
-    elif common.is_arg(i, "work"):
-        settings.workdir = common.get_value(i)
-    elif common.is_arg(i, "profile"):
-        settings.profile = common.get_value(i)
-    elif common.is_arg(i, "create"):
-        create_profile = common.get_value(i)
-    elif common.is_arg(i, "debug"):
+    if Args.is_arg(i, "output"):
+        settings.output = Args().get_value(i)
+    elif Args.is_arg(i, "work"):
+        settings.workdir = Args().get_value(i)
+    elif Args.is_arg(i, "profile"):
+        settings.profile = Args().get_value(i)
+    elif Args.is_arg(i, "create"):
+        create_profile = Args().get_value(i)
+    elif Args.is_arg(i, "debug"):
         settings.debug = True
     elif i == "--nocolor":
         disable_color()
@@ -32,8 +32,8 @@ for i in sys.argv[1:]:
         nocheck = True
     elif i == "interactive":
         interactive = "true"
-    elif common.is_arg(i, "help"):
-        help_message()
+    elif Args.is_arg(i, "help"):
+        Args.help_message()
 
 if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
     settings.teaiso = os.getcwd()+"/src"
@@ -62,7 +62,7 @@ settings.profile = getoutput("realpath "+settings.profile)
 # rootfs settings
 settings.rootfs = settings.workdir+"/airootfs"
 set_rootfs(settings.rootfs)
-common.unmount_operations(settings.rootfs)
+Mount.unmount(settings.rootfs)
 
 
 if not nocheck:
@@ -117,37 +117,37 @@ if settings.debug:
 
 
 # airootfs creation (stage 1)
-if common.get_stage() < 1:
+if Stage().get() < 1:
     distro.tools_init()
     distro.create_rootfs()
-    common.set_stage(1)
+    Stage().set(1)
 else:
-    inf("Using build stage: {}".format(colorize(common.get_stage(), 0)))
+    inf("Using build stage: {}".format(colorize(Stage().get(), 0)))
 
-common.mount_operations(settings.rootfs)
+Mount.mount(settings.rootfs)
 
-if common.get_stage() < 2:
+if Stage().get() < 2:
     distro.populate_rootfs()
     if os.path.exists(settings.profile+"/"+common.get("airootfs_directory_pre")) and len(common.get("airootfs_directory_pre")) > 0:
         run("cp -af --no-preserve=ownership,mode \"{}\"/* \"{}\"/".format(settings.profile +
             "/" + common.get("airootfs_directory_pre"), settings.rootfs))
-    common.set_stage(2)
+    Stage().set(2)
 
 os.chdir(settings.workdir)
-if common.get_stage() < 3:
+if Stage().get() < 3:
     for i in common.get("customize_airootfs_pre", []):
-        common.run_hook(settings,i)
-    common.set_stage(3)
+        run_hook(settings,i)
+    Stage().set(3)
 
 os.chdir(settings.teaiso)
 
 # install packages (stage 1)
-if common.get_stage() < 4:
+if Stage().get() < 4:
     distro.install_packages()
-    common.set_stage(4)
+    Stage().set(4)
 
 # merge with airootfs directory
-if common.get_stage() < 5:
+if Stage().get() < 5:
     inf("Copy airootfs")
     if os.path.exists(settings.profile+"/"+common.get("airootfs_directory")) and len(common.get("airootfs_directory")) > 0:
         run("cp -af --no-preserve=ownership,mode \"{}\"/* \"{}\"/".format(
@@ -173,28 +173,28 @@ if common.get_stage() < 5:
                 run(
                     "install -d -m 0750 -o {} -g {} -- {}".format(contents[2], contents[3], settings.rootfs + contents[5]))
 
-    common.set_stage(5)
+    Stage().set(5)
 
 # customize airootfs
-if common.get_stage() < 6:
+if Stage().get() < 6:
     inf("Customizing airootfs")
     os.chdir(settings.workdir)
     distro.customize_airootfs()
     for i in common.get("customize_airootfs", []):
         os.chmod(settings.profile + "/" + i, 0o755)
-        common.run_hook(settings,i)
+        run_hook(settings,i)
     os.chdir(settings.teaiso)
-    common.set_stage(6)
+    Stage().set(6)
 
 # Make package list (stage 4)
-if common.get_stage() < 7:
+if Stage().get() < 7:
     distro.make_pkglist()
-    common.set_stage(7)
+    Stage().set(7)
 
-common.unmount_operations(settings.rootfs)
+Mount.unmount(settings.rootfs)
 
 # Set permissions if exists
-if common.get_stage() < 8:
+if Stage().get() < 8:
     if 'file_permissions' in common.profile:
         for name, permission in common.profile["file_permissions"].items():
             permission = permission.split(':')
@@ -205,13 +205,13 @@ if common.get_stage() < 8:
                 settings.rootfs + "/" + name))
         inf("Permissions set!")
 
-    common.set_stage(8)
+    Stage().set(8)
 
 # Generate ISO
-if common.get_stage() < 9:
+if Stage().get() < 9:
     distro.clear_rootfs()
     common.create_squashfs(settings)
     common.create_isowork(settings)
     distro.generate_isowork()
-    common.set_stage(9)
+    Stage().set(9)
 common.create_iso(settings)
