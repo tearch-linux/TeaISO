@@ -6,6 +6,7 @@ import common
 import distro
 from help import help_message
 nocheck = False
+create_profile = False
 interactive = "false"
 os.umask(18)  # set umask as 022
 # argument parse
@@ -18,6 +19,8 @@ for i in sys.argv[1:]:
         settings.workdir = common.get_value(i)
     elif common.is_arg(i, "profile"):
         settings.profile = common.get_value(i)
+    elif common.is_arg(i, "create"):
+        create_profile = common.get_value(i)
     elif common.is_arg(i, "debug"):
         settings.debug = True
     elif i == "--nocolor":
@@ -37,6 +40,10 @@ if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
 
 
 sys.path.insert(0, settings.teaiso)
+
+if create_profile:
+    run("cp -rf {0}/profiles/{1} {2}/{1}".format(settings.teaiso,create_profile,os.getcwd()))
+    exit(0)
 
 if not is_root():
     err("You must be root!")
