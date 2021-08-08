@@ -58,7 +58,9 @@ generate_isowork(){
 }
 
 customize_airootfs(){
-        run_in_chroot mkinitcpio -p linux
+    for kernel in $(chroot "${rootfs}" ls /etc/mkinitcpio.d/*.preset | xargs -n1 basename); do
+        run_in_chroot mkinitcpio -p "${kernel%.preset}"
+    done
 }
 
 clear_rootfs(){
