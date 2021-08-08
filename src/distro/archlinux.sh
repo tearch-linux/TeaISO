@@ -50,7 +50,11 @@ generate_isowork(){
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
     fi
     mkdir -p isowork/arch/$arch || true
-    mv filesystem.squashfs isowork/arch/$arch/airootfs.sfs
+    if [[ -e "filesystem.squashfs" ]]; then
+        mv filesystem.squashfs isowork/arch/$arch/airootfs.sfs
+    elif [[ -e "filesystem.erofs" ]]; then
+        mv filesystem.erofs isowork/arch/$arch/airootfs.erofs
+    fi
     echo "menuentry $(distro_name) --class arch {" >> isowork/boot/grub/grub.cfg
     echo "  linux /boot/vmlinuz-linux archisobasedir=arch archisolabel=$label" >> isowork/boot/grub/grub.cfg
     echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg
@@ -64,12 +68,12 @@ customize_airootfs(){
 }
 
 clear_rootfs(){
-    find "${rootfs}/var/lib/pacman" -maxdepth 1 -type f -delete
-    find "${rootfs}/var/lib/pacman/sync" -delete
-    find "${rootfs}/var/cache/pacman/pkg" -type f -delete
-    find "${rootfs}/var/log" -type f -delete
-    find "${rootfs}/var/tmp" -mindepth 1 -delete
-    find "${rootfs}" \( -name '*.pacnew' -o -name '*.pacsave' -o -name '*.pacorig' \) -delete
+    find "${rootfs}/var/lib/pacman" -maxdepth 1 -type f -delete || true
+    find "${rootfs}/var/lib/pacman/sync" -delete || true
+    find "${rootfs}/var/cache/pacman/pkg" -type f -delete || true
+    find "${rootfs}/var/log" -type f -delete || true
+    find "${rootfs}/var/tmp" -mindepth 1 -delete || true
+    find "${rootfs}" \( -name '*.pacnew' -o -name '*.pacsave' -o -name '*.pacorig' \) -delete || true
 
-    echo "" > "$rootfs/etc/machine-id"
+    echo "" > "$rootfs/etc/machine-id" || true
 }

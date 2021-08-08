@@ -1,8 +1,12 @@
 import os
-from utils import getoutput, run, inf
+from utils import getoutput, run, inf, err
 from datetime import date, datetime
 from common import get
 import shutil
+import subprocess
+
+
+compression_tool = "squashfs"
 
 
 def create_isowork(settings):
@@ -80,7 +84,6 @@ def create_iso(settings):
                 -e --interval:appended_partition_2:all:: \
                 -no-emul-boot \
                 --mbr-force-bootable \
-                --modification-date='1970000000000000' \
                 -apm-block-size 512 \
                 -partition_cyl_align off \
                 -full-iso9660-filenames \
@@ -92,7 +95,15 @@ def create_iso(settings):
 
 
 def create_squashfs(settings):
-    inf("Creating squashfs file.")
-    if os.path.exists("{}/filesystem.squashfs".format(settings.workdir)):
-        os.unlink("{}/filesystem.squashfs".format(settings.workdir))
-    run("mksquashfs {} {}/filesystem.squashfs -comp gzip -wildcards".format(settings.rootfs, settings.workdir))
+    inf("Creating airootfs file.")
+    if settings.compression[0] == "squashfs":
+        if os.path.exists("{}/filesystem.squashfs".format(settings.workdir)):
+            os.unlink("{}/filesystem.squashfs".format(settings.workdir))
+        run("mksquashfs {} {}/filesystem.squashfs {} -wildcards".format(settings.rootfs, settings.workdir, settings.compression[1]))
+    elif settings.compression[0] == "erofs":
+        if os.path.exists("{}/filesystem.sfs".format(settings.workdir)):
+            os.unlink("{}/filesystem.squassfshfs".format(settings.workdir))
+        uuid = subprocess.check_output("uuidgen --sha1 --namespace 93a870ff-8565-4cf3-a67b-f47299271a96 --name $(date +%s)", shell=True).decode("UTF-8").strip()
+        run("mkfs.erofs -U {} {} -- {}/filesystem.erofs \"{}\"".format(uuid, settings.compression[1], settings.workdir, settings.rootfs))
+    else:
+        err("Valid compression tool not found! Please, check your profile.")

@@ -24,7 +24,11 @@ generate_isowork(){
         echo "insmod all_video" > isowork/boot/grub/grub.cfg
     fi
     mkdir -p isowork/live/ || true
-    mv filesystem.squashfs isowork/live/
+    if [[ -e "filesystem.squashfs" ]]; then
+        mv filesystem.squashfs isowork/live/
+    elif [[ -e "filesystem.erofs" ]]; then
+        mv filesystem.erofs isowork/live/
+    fi
     ls isowork/boot/ | grep "vmlinuz" | while read line ; do
         echo "menuentry $(distro_name) --class debian {" >> isowork/boot/grub/grub.cfg
         echo "  linux /boot/$line boot=casper" >> isowork/boot/grub/grub.cfg

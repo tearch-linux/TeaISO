@@ -23,6 +23,11 @@ def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml", teaiso="
             file = file.split("|")
             file_permissions[file[0]] = file[1]
         contents["file_permissions"] = file_permissions
+        
+    if 'compression' in contents:
+        contents["compression"] = contents["compression"].split("||")
+    else:
+        contents["compression"] = ['squashfs', '-comp gzip']
 
     contents["iso_name"] = contents["name"] + "-" + date.today().strftime("%d-%m-%Y") + "-" + contents["arch"] + ".iso"
     

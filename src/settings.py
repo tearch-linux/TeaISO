@@ -6,7 +6,8 @@ from colors import *
 output = "/var/teaiso/output"
 workdir = "/var/teaiso/work"
 teaiso = "/usr/lib/teaiso"
-profile = "baseline"
+profile = "archlinux"
+compression = []
 rootfs = None
 debug = False
 

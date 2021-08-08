@@ -84,7 +84,7 @@ if settings.debug:
     dbg("Profile content:\n"+str(common.profile))
 
 packages = common.get_package_list(common, settings)
-
+settings.compression = common.profile["compression"]
     
 settings.show(common.profile, packages)
 

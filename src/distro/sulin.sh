@@ -26,7 +26,11 @@ generate_isowork(){
     if [[ -f "$profile/grub.cfg" ]] ; then
         cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
     fi
-    mv filesystem.squashfs isowork/main.sfs
+    if [[ -e "filesystem.squashfs" ]]; then
+        mv filesystem.squashfs isowork/live/main.sfs
+    elif [[ -e "filesystem.erofs" ]]; then
+        mv filesystem.erofs isowork/live/main.erofs
+    fi
     ls "$rootfs/kernel/modules/" | while read line ; do
         echo "menuentry $(distro_name) --class sulin {" >> isowork/boot/grub/grub.cfg
         echo "  linux /boot/linux-$line boot=live" >> isowork/boot/grub/grub.cfg
@@ -42,7 +46,7 @@ customize_airootfs(){
 }
 
 clear_rootfs(){
-    find "$rootfs/var/log/" -type f | xargs rm -f
+    find "$rootfs/var/log/" -type f | xargs rm -f || true
     run_in_chroot inary dc
     run_in_chroot inary hs -r
 }
