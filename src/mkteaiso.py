@@ -42,7 +42,8 @@ if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
 sys.path.insert(0, settings.teaiso)
 
 if create_profile:
-    run("cp -rf {0}/profiles/{1} {2}/{1}".format(settings.teaiso,create_profile,os.getcwd()))
+    run("cp -rf {0}/profiles/{1} {2}/{1}".format(settings.teaiso,
+        create_profile, os.getcwd()))
     exit(0)
 
 if not is_root():
@@ -85,7 +86,7 @@ if settings.debug:
 
 packages = common.get_package_list(common, settings)
 settings.compression = common.profile["compression"]
-    
+
 settings.show(common.profile, packages)
 
 # distro settings
@@ -136,7 +137,7 @@ if Stage().get() < 2:
 os.chdir(settings.workdir)
 if Stage().get() < 3:
     for i in common.get("customize_airootfs_pre", []):
-        run_hook(settings,i)
+        run_hook(settings, i)
     Stage().set(3)
 
 os.chdir(settings.teaiso)
@@ -182,7 +183,7 @@ if Stage().get() < 6:
     distro.customize_airootfs()
     for i in common.get("customize_airootfs", []):
         os.chmod(settings.profile + "/" + i, 0o755)
-        run_hook(settings,i)
+        run_hook(settings, i)
     os.chdir(settings.teaiso)
     Stage().set(6)
 

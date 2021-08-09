@@ -14,23 +14,28 @@ debug = False
 
 def show(contents, packages):
     inf("mkteaiso configuration settings:")
-    
-    #maybe pacman, codename, repository and compression options
+
+    # maybe pacman, codename, repository and compression options
     inf("\t{}: {}".format(colorize("Profile Directory", bold), profile))
     inf("\t{}: {}".format(colorize("Working Directory", bold), workdir))
     inf("\t{}: {}".format(colorize("Output Directory", bold), output))
-    
+
     inf("\t{}: {}".format(colorize("Profile", bold), contents["name"]))
     inf("\t{}: {}".format(colorize("Label", bold), contents["label"]))
-    inf("\t{}: {}".format(colorize("Application ID", bold), contents["application_id"]))
-    inf("\t{}: {}".format(colorize("ISO publisher", bold), contents["publisher"]))
+    inf("\t{}: {}".format(colorize("Application ID", bold),
+        contents["application_id"]))
+    inf("\t{}: {}".format(
+        colorize("ISO publisher", bold), contents["publisher"]))
     inf("\t{}: {}".format(colorize("Architecture", bold), contents["arch"]))
     inf("\t{}: {}".format(colorize("Packages", bold), packages))
     inf("\t{}: {}".format(colorize("Build date", bold), time.time()))
     inf("\t{}: {}".format(colorize("ISO name", bold), contents["iso_name"]))
-    inf("\t{}: {}".format(colorize("File permissions", bold), contents["airootfs_directory"] if 'airootfs_directory' in contents else 'N/A'))
-    inf("\t{}: {}".format(colorize("Airootfs directory", bold), contents["file_permissions"] if 'file_permissions' in contents else 'N/A'))
-    inf("\t{}: {}".format(colorize("Customize airootfs", bold), contents["customize_airootfs"] if 'customize_airootfs' in contents else 'N/A'))
+    inf("\t{}: {}".format(colorize("File permissions", bold),
+        contents["airootfs_directory"] if 'airootfs_directory' in contents else 'N/A'))
+    inf("\t{}: {}".format(colorize("Airootfs directory", bold),
+        contents["file_permissions"] if 'file_permissions' in contents else 'N/A'))
+    inf("\t{}: {}".format(colorize("Customize airootfs", bold),
+        contents["customize_airootfs"] if 'customize_airootfs' in contents else 'N/A'))
 
 
 def check():

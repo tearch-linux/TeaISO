@@ -73,15 +73,15 @@ def is_root():
 def set_simulation():
     global simulation
     simulation = True
-    
+
 
 def now():
     return str(datetime.now().strftime("%d/%m/%y %H:%M")).encode("utf-8")
 
 
-def run_hook(settings,i):
+def run_hook(settings, i):
     inf("==> Running: {}".format(colorize(i, 0)))
-    run("cat \"{}\" > \"{}/tmp/hook\"".format(settings.profile+"/"+i,settings.rootfs))
+    run("cat \"{}\" > \"{}/tmp/hook\"".format(settings.profile+"/"+i, settings.rootfs))
     os.chmod("{}/tmp/hook".format(settings.rootfs), 0o755)
     run("chroot \"{}\" bash -e /tmp/hook".format(settings.rootfs))
     run("rm -f \"{}/tmp/hook\"".format(settings.rootfs))
@@ -90,7 +90,7 @@ def run_hook(settings,i):
 class Args:
     def get_argument_value(self, arg, var):
         return libteaiso.get_argument_value(arg.encode("utf-8"), var.encode("utf-8")).decode("utf-8")
-    
+
     def get_value(self, i):
         if "=" in i:
             return self.get_argument_value(i, i.split("=")[0])
@@ -106,7 +106,7 @@ class Args:
 
     def is_arg(i, var):
         return "--{}".format(var) in i or "-{}".format(var[0]) in i
-    
+
     def help_message():
         disable_color()
         out("Usage: mkteaiso [options]")
@@ -120,7 +120,7 @@ class Args:
         out(" --interactive  :    Interactive operations.")
         out("  -h --help     :    Write help message and exit.")
         exit(0)
-        
+
 
 class Stage:
     def get(self):
@@ -131,7 +131,6 @@ class Stage:
             return 0
         with open("{}/stage".format(workdir), "r") as f:
             return int(f.read())
-
 
     def set(self, stage):
         workdir = os.environ["workdir"]
@@ -146,7 +145,6 @@ class Mount:
             run("mount --bind /{1} /{0}/{1} 2>/dev/null".format(rootfs, dir))
             run("ln -s {0}/proc/self/fd {0}/dev/fd 2>/dev/null || true".format(rootfs), vital=False)
             run("ln -s {0}/proc/self/mounts /etc/mtab || true")
-
 
     def unmount(rootfs):
         for dir in ["dev/pts", "dev", "sys", "proc", "run"]:
