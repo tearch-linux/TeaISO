@@ -99,11 +99,14 @@ def create_squashfs(settings):
     if settings.compression[0] == "squashfs":
         if os.path.exists("{}/filesystem.squashfs".format(settings.workdir)):
             os.unlink("{}/filesystem.squashfs".format(settings.workdir))
-        run("mksquashfs {} {}/filesystem.squashfs {} -wildcards".format(settings.rootfs, settings.workdir, settings.compression[1]))
+        run("mksquashfs {} {}/filesystem.squashfs {} -wildcards".format(
+            settings.rootfs, settings.workdir, settings.compression[1]))
     elif settings.compression[0] == "erofs":
-        if os.path.exists("{}/filesystem.sfs".format(settings.workdir)):
-            os.unlink("{}/filesystem.squassfshfs".format(settings.workdir))
-        uuid = subprocess.check_output("uuidgen --sha1 --namespace 93a870ff-8565-4cf3-a67b-f47299271a96 --name $(date +%s)", shell=True).decode("UTF-8").strip()
-        run("mkfs.erofs -U {} {} -- {}/filesystem.erofs \"{}\"".format(uuid, settings.compression[1], settings.workdir, settings.rootfs))
+        if os.path.exists("{}/filesystem.erofs".format(settings.workdir)):
+            os.unlink("{}/filesystem.erofs".format(settings.workdir))
+        uuid = subprocess.check_output(
+            "uuidgen --sha1 --namespace 93a870ff-8565-4cf3-a67b-f47299271a96 --name $(date +%s)", shell=True).decode("UTF-8").strip()
+        run("mkfs.erofs -U {} {} -- {}/filesystem.erofs \"{}\"".format(uuid,
+            settings.compression[1], settings.workdir, settings.rootfs))
     else:
         err("Valid compression tool not found! Please, check your profile.")
