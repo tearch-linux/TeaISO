@@ -19,6 +19,10 @@ create_rootfs(){
     if [[ -f "$pacman" ]] ; then
         run install "$pacman" "$rootfs/etc/pacman.conf"
     fi
+    
+    # Add another mirrors
+    wget -c -qO- "https://archlinux.org/mirrorlist/?country=all&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" > "$rootfs/etc/pacman.d/mirrorlist"
+    run sed -i "s/^#Server/Server/" "$rootfs/etc/pacman.d/mirrorlist"
 }
 
 populate_rootfs(){

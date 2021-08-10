@@ -33,7 +33,7 @@ for i in sys.argv[1:]:
         set_simulation()
     elif i == "--nocheck":
         nocheck = True
-    elif i == "interactive":
+    elif i == "--interactive":
         interactive = "true"
     elif Args.is_arg(i, "help"):
         Args.help_message()
