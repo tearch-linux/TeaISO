@@ -47,9 +47,12 @@ generate_isowork(){
     mkdir -p isowork/live/ || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/live/
+        cd isowork/live; sha512sum filesystem.sfs > filesystem.sha512; cd -
     elif [[ -e "filesystem.erofs" ]]; then
         mv filesystem.erofs isowork/live/
+        cd isowork/live; sha512sum filesystem.erofs > filesystem.sha512; cd -
     fi
+    generate_sig isowork/live
     ls isowork/boot/ | grep "vmlinuz" | while read line ; do
         echo "menuentry $(distro_name) --class debian {" >> isowork/boot/grub/grub.cfg
         echo "  linux /boot/$line boot=live" >> isowork/boot/grub/grub.cfg

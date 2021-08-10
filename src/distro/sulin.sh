@@ -28,9 +28,12 @@ generate_isowork(){
     fi
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/live/main.sfs
+        cd isowork/live; sha512sum main.sfs > main.sha512; cd -
     elif [[ -e "filesystem.erofs" ]]; then
         mv filesystem.erofs isowork/live/main.erofs
+        cd isowork/live; sha512sum main.sfs > main.sha512; cd -
     fi
+    generate_sig isowork/live
     ls "$rootfs/kernel/modules/" | while read line ; do
         echo "menuentry $(distro_name) --class sulin {" >> isowork/boot/grub/grub.cfg
         echo "  linux /boot/linux-$line boot=live" >> isowork/boot/grub/grub.cfg

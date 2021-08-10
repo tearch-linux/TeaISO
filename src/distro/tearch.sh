@@ -21,9 +21,12 @@ generate_isowork(){
     mkdir -p isowork/live || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/live/airootfs.sfs
+        cd isowork/live; sha512sum airootfs.sfs > airootfs.sha512; cd -
     elif [[ -e "filesystem.erofs" ]]; then
         mv filesystem.erofs isowork/live/airootfs.erofs
+        cd isowork/live; sha512sum airootfs.sfs > airootfs.sha512; cd -
     fi
+    generate_sig isowork/live
     echo "menuentry $(distro_name) --class arch {" >> isowork/boot/grub/grub.cfg
     echo "  linux /boot/vmlinuz-linux boot=live live-config" >> isowork/boot/grub/grub.cfg
     echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg

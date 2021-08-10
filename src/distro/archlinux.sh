@@ -52,9 +52,12 @@ generate_isowork(){
     mkdir -p isowork/arch/$arch || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/arch/$arch/airootfs.sfs
+        cd isowork/arch/$arch; sha512sum airootfs.sfs > airootfs.sha512; cd -
     elif [[ -e "filesystem.erofs" ]]; then
         mv filesystem.erofs isowork/arch/$arch/airootfs.erofs
+        cd isowork/arch/$arch; sha512sum airootfs.erofs > airootfs.sha512; cd -
     fi
+    generate_sig isowork/arch/$arch
     echo "menuentry $(distro_name) --class arch {" >> isowork/boot/grub/grub.cfg
     echo "  linux /boot/vmlinuz-linux archisobasedir=arch archisolabel=$label" >> isowork/boot/grub/grub.cfg
     echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg

@@ -7,6 +7,7 @@ import distro
 
 nocheck = False
 create_profile = False
+gpg_key = None
 interactive = "false"
 
 os.umask(18)  # set umask as 022
@@ -21,6 +22,8 @@ for i in sys.argv[1:]:
         settings.profile = Args().get_value(i)
     elif Args.is_arg(i, "create"):
         create_profile = Args().get_value(i)
+    elif Args.is_arg(i, "gpg"):
+        gpg_key = Args().get_value(i)
     elif Args.is_arg(i, "debug"):
         settings.debug = True
     elif i == "--nocolor":
@@ -94,6 +97,7 @@ os.chdir(settings.profile)
 
 # distro options
 distro.set("interactive", interactive)
+gpg_key and distro.set("gpg", gpg_key)
 
 distro.set("name", common.get("name"))
 distro.set("arch", common.get("arch"))

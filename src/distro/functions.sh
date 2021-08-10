@@ -13,3 +13,11 @@ distro_name(){
     echo $name
     
 }
+
+generate_sig() {
+    if ! [ -z ${gpg+x} ]; then
+        for airootfs in $(ls $1/*.squashfs $1/*.sfs $1/*.erofs 2>/dev/null); do
+            gpg --pinentry-mode loopback --output $airootfs.sig --detach-sign --default-key "$gpg" $airootfs
+        done
+    fi
+}
