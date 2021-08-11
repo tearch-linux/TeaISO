@@ -5,3 +5,4 @@ lib/libteaiso.so
 lib/a.out
 __pycache__/
 *.pyc
+*.iso

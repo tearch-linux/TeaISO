@@ -23,8 +23,8 @@ make_pkglist() {
 }
 
 generate_isowork(){
-    if [[ -f "$profile/grub.cfg" ]] ; then
-        cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
+    if [[ -f "$grub_cfg" ]]; then
+        cat $grub_cfg > isowork/boot/grub/grub.cfg
     fi
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/live/main.sfs

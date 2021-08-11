@@ -79,8 +79,8 @@ else:
 if os.path.exists(settings.profile+"/profiledef.sh"):
     run("cd \"{}\" ; bash -ec \"{}/misc/import_profiledef.sh\" > \"{}\"".format(
         settings.profile, settings.teaiso, settings.profile+"/profile.yaml"))
-inf("Loading profile: " + settings.profile+"/profile.yaml")
-common.profile = common.parse_profile(settings.profile+"/profile.yaml")
+inf("Loading profile: " + settings.profile)
+common.profile = common.parse_profile(settings.profile)
 if common.profile == None:
     err("Cannot load profile: profile.yaml is not valid")
 
@@ -102,6 +102,8 @@ gpg_key and distro.set("gpg", gpg_key)
 
 distro.set("name", common.get("name"))
 distro.set("arch", common.get("arch"))
+distro.set("grub_cfg", common.get("grub_cfg"))
+
 distro.set("distro", common.get("distro"))
 distro.set("label", common.get("label"))
 pacman = common.get("pacman")

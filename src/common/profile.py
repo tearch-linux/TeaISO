@@ -5,13 +5,13 @@ from utils import err
 profile = None
 
 
-def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml", teaiso="/usr/lib/teaiso"):
-    global profile
-    if not os.path.exists(file):
+def parse_profile(profile_dir="/usr/lib/teaiso/profile/archlinux", teaiso="/usr/lib/teaiso"):
+    global profile    
+    if not os.path.exists(profile_dir + "/profile.yaml"):
         return None
 
     contents = {}
-    with open(file, "r") as file:
+    with open(profile_dir + "/profile.yaml", "r") as file:
         try:
             contents = yaml.load(file.read(), Loader=yaml.FullLoader)
         except BaseException:
@@ -29,6 +29,7 @@ def parse_profile(file="/usr/lib/teaiso/profile/baseline/profile.yaml", teaiso="
     else:
         contents["compression"] = ['squashfs', '-comp gzip']
 
+    contents["grub_cfg"] = os.path.realpath(profile_dir + "/" + contents["grub_cfg"])
     contents["iso_name"] = contents["name"] + "-" + \
         date.today().strftime("%d-%m-%Y") + "-" + contents["arch"] + ".iso"
 

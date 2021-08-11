@@ -39,8 +39,8 @@ make_pkglist() {
 }
 
 generate_isowork(){
-    if [[ -f "$profile/grub.cfg" ]] ; then
-        cat $profile/grub.cfg > isowork/boot/grub/grub.cfg
+    if [[ -f "$grub_cfg" ]]; then
+        cat $grub_cfg > isowork/boot/grub/grub.cfg
     else
         echo "insmod all_video" > isowork/boot/grub/grub.cfg
     fi
