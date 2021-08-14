@@ -58,6 +58,9 @@ def create_iso(settings):
     run("mcopy -i {0}/isowork/efi.img {0}/isowork/EFI/boot/* ::/EFI/boot".format(settings.workdir))
 
     # Miscellaneous
+    if not os.path.exists(settings.output):
+        os.mkdir(settings.output)
+        
     run("grub-editenv {}/isowork/boot/grub/grubenv set menu_show_once=1".format(settings.workdir))
 
     modification_date = datetime.now().strftime(
@@ -90,8 +93,8 @@ def create_iso(settings):
                 -iso-level 3 -rock -joliet \
                 -o {6} \
                 {5}/isowork/""".format(modification_date, get("label"), get("application_id"),
-                                       get("publisher"), "2.0", settings.workdir,
-                                       get("iso_name"), modification_date))
+                                       get("publisher"), settings.VERSION, settings.workdir,
+                                       settings.output + "/" + get("iso_name")))
 
 
 def create_squashfs(settings):

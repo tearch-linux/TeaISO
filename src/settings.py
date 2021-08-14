@@ -3,6 +3,8 @@ import time
 from utils import out, err, inf, colorize, run
 from colors import *
 
+VERSION = "2.0"
+
 output = "/var/teaiso/output"
 workdir = "/var/teaiso/work"
 teaiso = "/usr/lib/teaiso"

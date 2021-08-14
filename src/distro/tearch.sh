@@ -3,7 +3,7 @@ typeset -r populate_rootfs
 typeset -r generate_isowork
 
 populate_rootfs(){
-    run wget https://gitlab.com/tearch-linux/configs/tearch-mirrorlist/-/raw/master/tearch-mirrorlist -O "$rootfs/etc/pacman.d/tearch-mirrorlist"
+    wget https://gitlab.com/tearch-linux/configs/tearch-mirrorlist/-/raw/master/tearch-mirrorlist -O "$rootfs/etc/pacman.d/tearch-mirrorlist"
     run_in_chroot pacman-key --init
     run_in_chroot pacman-key --populate archlinux
     if ! ${interactive}; then
