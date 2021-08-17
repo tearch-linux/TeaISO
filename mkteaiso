@@ -1,7 +1,7 @@
 #!/bin/bash
+teaiso="/usr/lib/teaiso"
 if [[ -f Makefile && -f src/mkteaiso.py ]] ; then
-    cd src
-else
-    cd /usr/lib/teaiso
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(realpath ./lib)
+    teaiso="src"
 fi
-exec python3 mkteaiso.py $*
+exec python3 $teaiso/mkteaiso.py $* |& tee /var/log/teaiso.log 2>/dev/null

@@ -1,12 +1,13 @@
-name: debian
-distro: debian
-codename: testing
-publisher: Debian GNU/Linux <https://debian.org>
-label: DEBIAN_TEAISO
-application_id: Debian Linux Live/Rescue Media
+name: archlinux
+distro: archlinux
+publisher: Arch Linux <https://archlinux.org>
+label: ARCH_TEAISO
+application_id: Arch Linux Live/Rescue Media
 airootfs_directory: airootfs
 #iso_merge: iso_merge
 arch: x86_64
+pacman: pacman.conf
+compression: erofs||-zlz4hc,12
 grub_cfg: grub.cfg
 packages:
  - packages.x86_64

@@ -1,4 +1,4 @@
 grub-pc-bin
 grub-efi
-linux-image-amd64
+linux-image-generic
 ssh

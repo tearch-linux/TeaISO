@@ -1,61 +1,152 @@
+from subprocess import getoutput
+from ctypes import CDLL, c_int, c_char_p
+from datetime import datetime
 import os
 import sys
-import shutil
-import logging
-import glob
-logfile="/var/log/teaiso.log"
-if os.getuid() != 0:
-	logfile=os.environ["HOME"]+"/.local/teaiso.log"
-logging.basicConfig(handlers=[logging.FileHandler(logfile), logging.StreamHandler()],
-                    format='%(asctime)s [mkteaiso] %(levelname)s: %(message)s', datefmt='%d/%m/%y %H:%M:%S')
+libteaiso = CDLL("libteaiso.so")
+libteaiso.run.argtypes = [c_char_p]
+libteaiso.run.restype = c_int
 
-def execute_command(command, vital=True):
-    process = os.system(command)
-    if vital and process != 0:
-        logging.error("-> " + command)
-        logging.error("Process exited with {}".format(str(process)))
-        sys.exit(process)
-    return process
+libteaiso.get_argument_value.argtypes = [c_char_p, c_char_p]
+libteaiso.get_argument_value.restype = c_char_p
 
+libteaiso.colorize.argtypes = [c_char_p, c_char_p]
+libteaiso.colorize.restype = c_char_p
 
-def run_chroot(work_directory, iso_profile, command, path="/dev/stdout", vital=True):
-    command = command.replace('"', "'").strip()
-    target = work_directory + '/' + iso_profile["arch"]
-    return execute_command('chroot {} /bin/sh -c "{}" > {}'.format(target, command, path), vital)
+libteaiso.set_rootfs.argtypes = [c_char_p]
+libteaiso.out.argtypes = [c_char_p]
+libteaiso.err.argtypes = [c_char_p]
+libteaiso.warn.argtypes = [c_char_p]
+libteaiso.inf.argtypes = [c_char_p]
+
+libteaiso.is_root.restype = c_int
+simulation = False
 
 
-def remove_all_contents(directory):
-    for path in glob.glob(directory):
-        if os.path.isfile(path):
-            os.remove(path)
-        elif os.path.isdir(path):
-            shutil.rmtree(path)
+def run(cmd, vital=True):
+    if simulation:
+        return 0
+    inf("=> Executing: {}".format(colorize(str(cmd), 0)))
+    i = libteaiso.run(str(cmd).encode("utf-8"))
+    if i != 0 and vital:
+        err("Failed to run command:{}".format(cmd))
+    return i
 
 
-def change_status(work_directory, name):
-    open(work_directory + "/" + name, 'a').close()
+def err(msg, colorize=True):
+    libteaiso.err(str(msg).encode("utf-8"), now())
+    exit(1)
 
 
-def check_status(work_directory, name):
-    if os.path.exists(work_directory):
-        if not name in os.listdir(work_directory + "/"):
-            return 1
-    else:
-        return 1
+def out(msg, colorize=True):
+    libteaiso.out(str(msg).encode("utf-8"), now())
 
 
-def mount_operations(target, type="mount"):
-    if type == "mount":
-        for dir in ["dev", "sys", "proc", "run", "dev/pts"]:
-            execute_command("mount --bind /{0} {1}/{0}".format(dir, target))
-    elif type == "umount":
-        for dir in ["dev", "sys", "proc", "run", "dev/pts"]:
-            while 0 == os.system("umount -lf -R {1}/{0}".format(dir, target)):
+def warn(msg, colorize=True):
+    libteaiso.warn(str(msg).encode("utf-8"), now())
+
+
+def dbg(msg, colorize=True):
+    libteaiso.dbg(str(msg).encode("utf-8"), now())
+
+
+def inf(msg, colorize=True):
+    libteaiso.inf(str(msg).encode("utf-8"), now())
+
+
+def colorize(msg, num):
+    return libteaiso.colorize(str(msg).encode("utf-8"), str(num).encode("utf-8")).decode("utf-8")
+
+
+def set_rootfs(rootfs):
+    libteaiso.set_rootfs(rootfs.encode("utf-8"))
+
+
+def disable_color():
+    libteaiso.disable_color()
+
+
+def is_root():
+    return libteaiso.is_root() == 1
+
+
+def set_simulation():
+    global simulation
+    simulation = True
+
+
+def now():
+    return str(datetime.now().strftime("%d/%m/%y %H:%M")).encode("utf-8")
+
+
+def run_hook(settings, i):
+    inf("==> Running: {}".format(colorize(i, 0)))
+    run("cat \"{}\" > \"{}/tmp/hook\"".format(settings.profile+"/"+i, settings.rootfs))
+    os.chmod("{}/tmp/hook".format(settings.rootfs), 0o755)
+    run("chroot \"{}\" bash -e /tmp/hook".format(settings.rootfs))
+    run("rm -f \"{}/tmp/hook\"".format(settings.rootfs))
+
+
+class Args:
+    def get_argument_value(self, arg, var):
+        return libteaiso.get_argument_value(arg.encode("utf-8"), var.encode("utf-8")).decode("utf-8")
+
+    def get_value(self, i):
+        if "=" in i:
+            return self.get_argument_value(i, i.split("=")[0])
+        else:
+            if i in sys.argv:
+                n = sys.argv.index(i)
+                if n < len(sys.argv)-1:
+                    return sys.argv[n+1]
+                else:
+                    err("Missing argument value {}".format(i))
+            else:
+                err("Invalid argument {}".format(i))
+
+    def is_arg(i, var):
+        return "--{}".format(var) in i or "-{}".format(var[0]) in i
+
+    def help_message():
+        disable_color()
+        out("Usage: mkteaiso [options]")
+        out("  -o --output   :    Iso output directory (default /var/teaiso/output)")
+        out("  -w --workdir  :    Working directory (default /var/teaiso/workdir)")
+        out("  -p --profile  :    Profile directory or name (default baseline)")
+        out("     --nocolor  :    Disable colorized output")
+        out("  -d --debug    :    Print debug logs")
+        out("     --simulate :    Enable simulation mode. Do nothing")
+        out("     --nocheck  :    Skip all check.")
+        out(" --interactive  :    Interactive operations.")
+        out("  -h --help     :    Write help message and exit.")
+        exit(0)
+
+
+class Stage:
+    def get(self):
+        workdir = os.environ["workdir"]
+        if not os.path.exists("{}/stage".format(workdir)):
+            self.set(0)
+
+            return 0
+        with open("{}/stage".format(workdir), "r") as f:
+            return int(f.read())
+
+    def set(self, stage):
+        workdir = os.environ["workdir"]
+        inf("Stage:{} done.".format(stage))
+        with open("{}/stage".format(workdir), "w") as f:
+            return f.write(str(stage))
+
+
+class Mount:
+    def mount(rootfs):
+        for dir in ["dev", "dev/pts", "sys", "proc", "run"]:
+            run("mount --bind /{1} /{0}/{1} 2>/dev/null".format(rootfs, dir))
+            run("ln -s {0}/proc/self/fd {0}/dev/fd 2>/dev/null || true".format(rootfs), vital=False)
+            run("ln -s {0}/proc/self/mounts /etc/mtab || true")
+
+    def unmount(rootfs):
+        for dir in ["dev/pts", "dev", "sys", "proc", "run"]:
+            while 0 == run("umount -lf -R /{}/{}".format(rootfs, dir), vital=False):
                 True
-    else:
-        logging.error("Please select true type for mount operations!")
-        sys.exit(1)
-
-def sign_rootfs(input, cmd_line):
-    if cmd_line.gpg:
-        execute_command("gpg --output {0}.sig --detach-sign --default-key \"{1}\" {0}".format(input, cmd_line.gpg))
