@@ -1,7 +1,9 @@
 #!/bin/bash
+set +o pipefail
 teaiso="/usr/lib/teaiso"
 if [[ -f Makefile && -f src/mkteaiso.py ]] ; then
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(realpath ./lib)
     teaiso="src"
 fi
-exec python3 $teaiso/mkteaiso.py $* |& tee /var/log/teaiso.log 2>/dev/null
+python3 $teaiso/mkteaiso.py $* |& tee /var/log/teaiso.log 2>/dev/null
+exit ${PIPESTATUS[0]}
