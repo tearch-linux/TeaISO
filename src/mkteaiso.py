@@ -35,6 +35,8 @@ for i in sys.argv[1:]:
         nocheck = True
     elif i == "--interactive":
         interactive = "true"
+    elif i == "--version":
+        out("mkteaiso (ISO generation tool for GNU/Linux), v{}".format(VERSION))
     elif Args.is_arg(i, "help"):
         Args.help_message()
 
@@ -89,6 +91,8 @@ if settings.debug:
 
 packages = common.get_package_list(common, settings)
 settings.compression = common.profile["compression"]
+if "iso_merge" in common.profile:
+    settings.iso_merge = common.profile["iso_merge"]
 
 settings.show(common.profile, packages)
 

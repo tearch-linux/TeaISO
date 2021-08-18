@@ -3,21 +3,19 @@ import time
 from utils import out, err, inf, colorize, run
 from colors import *
 
-VERSION = "2.0"
-
 output = "/var/teaiso/output"
 workdir = "/var/teaiso/work"
 teaiso = "/usr/lib/teaiso"
 profile = "archlinux"
 compression = []
 rootfs = None
+iso_merge = None
 debug = False
 
 
 def show(contents, packages):
     inf("mkteaiso configuration settings:")
 
-    # maybe pacman, codename, repository and compression options
     inf("\t{}: {}".format(colorize("Profile Directory", bold), profile))
     inf("\t{}: {}".format(colorize("Working Directory", bold), workdir))
     inf("\t{}: {}".format(colorize("Output Directory", bold), output))
@@ -38,7 +36,17 @@ def show(contents, packages):
         contents["file_permissions"] if 'file_permissions' in contents else 'N/A'))
     inf("\t{}: {}".format(colorize("Customize airootfs", bold),
         contents["customize_airootfs"] if 'customize_airootfs' in contents else 'N/A'))
-
+    inf("\t{}: {}".format(colorize("Compression options", bold), contents["compression"]))
+    
+    if contents["distro"] == "archlinux" or contents["distro"] == "tearch":
+        inf("\t{}: {}".format(colorize("Pacman Configuration", bold),
+            os.path.realpath(profile + "/" + contents["pacman"]) if 'pacman' in contents else 'N/A'))
+    elif contents["distro"] == "debian" or contents["distro"] == "ubuntu":
+        inf("\t{}: {}".format(colorize("Codename", bold),
+            contents["codename"] if 'codename' in contents else 'N/A'))
+        inf("\t{}: {}".format(colorize("Repository", bold),
+            contents["repository"] if 'repository' in contents else 'N/A'))
+         
 
 def check():
     if not os.path.exists(output):

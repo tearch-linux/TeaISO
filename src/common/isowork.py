@@ -1,5 +1,5 @@
 import os
-from utils import getoutput, run, inf, err
+from utils import getoutput, run, inf, err, VERSION
 from datetime import date, datetime
 from common import get
 import shutil
@@ -13,8 +13,8 @@ def create_isowork(settings):
     if os.path.exists("{}/isowork/".format(settings.workdir)):
         run("rm -rf -- {}/isowork".format(settings.workdir))
     os.makedirs("{}/isowork/".format(settings.workdir))
-    if os.path.exists("{}/isowork".format(settings.profile)):
-        run("cp -rf {}/isowork/* {}/isowork/".format(settings.profile,
+    if settings.iso_merge:
+        run("cp -rf {}/* {}/isowork/".format(settings.profile + "/" + settings.iso_merge,
             settings.workdir))
     if not os.path.exists("{}/isowork/boot/grub".format(settings.workdir)):
         os.makedirs("{}/isowork/boot/grub".format(settings.workdir))
@@ -93,7 +93,7 @@ def create_iso(settings):
                 -iso-level 3 -rock -joliet \
                 -o {6} \
                 {5}/isowork/""".format(modification_date, get("label"), get("application_id"),
-                                       get("publisher"), settings.VERSION, settings.workdir,
+                                       get("publisher"), VERSION, settings.workdir,
                                        settings.output + "/" + get("iso_name")))
 
 

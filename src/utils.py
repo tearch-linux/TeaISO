@@ -22,6 +22,7 @@ libteaiso.inf.argtypes = [c_char_p]
 libteaiso.is_root.restype = c_int
 simulation = False
 
+VERSION = "2.0"
 
 def run(cmd, vital=True):
     if simulation:
@@ -109,16 +110,26 @@ class Args:
 
     def help_message():
         disable_color()
-        out("Usage: mkteaiso [options]")
-        out("  -o --output   :    Iso output directory (default /var/teaiso/output)")
-        out("  -w --workdir  :    Working directory (default /var/teaiso/workdir)")
-        out("  -p --profile  :    Profile directory or name (default baseline)")
-        out("     --nocolor  :    Disable colorized output")
-        out("  -d --debug    :    Print debug logs")
-        out("     --simulate :    Enable simulation mode. Do nothing")
-        out("     --nocheck  :    Skip all check.")
-        out(" --interactive  :    Interactive operations.")
-        out("  -h --help     :    Write help message and exit.")
+        out("""Usage: mkteaiso -p=PROFILE [OPTION]...
+ISO generation tool for GNU/Linux, v{}.
+Example: mkteaiso -p=/usr/lib/teaiso/profiles/archlinux --interactive
+Profile directory should contain profile.yaml.
+
+Base Arguments:
+  -p=PROFILE, --profile=PROFILE     Profile directory or name (default: archlinux)
+  -o=OUTPUT, --output=OUTPUT        ISO output directory (default: /var/teaiso/output)
+  -w=WORK, --work=WORK              ISO work directory (default: /var/teaiso/work)
+  -c=BASE, --create=BASE            Create profile by base profile
+  -g=KEY, --gpg=KEY                 Sign airootfs image by GPG
+  -d=KEY, --debug=KEY               Enable debug mode
+
+Miscellaneous:
+  -h, --help                        Display this help text and exit
+      --version                     Display version and exit
+      --nocolor                     Disable colorized output
+      --simulate                    Enable simulation mode
+      --nocheck                     Skip all check
+      --interactive                 Interactive operations""".format(VERSION))
         exit(0)
 
 
