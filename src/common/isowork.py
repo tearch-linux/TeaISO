@@ -60,7 +60,7 @@ def create_iso(settings):
     # Miscellaneous
     if not os.path.exists(settings.output):
         os.mkdir(settings.output)
-        
+
     run("grub-editenv {}/isowork/boot/grub/grubenv set menu_show_once=1".format(settings.workdir))
 
     modification_date = datetime.now().strftime(

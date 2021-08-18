@@ -36,8 +36,9 @@ def show(contents, packages):
         contents["file_permissions"] if 'file_permissions' in contents else 'N/A'))
     inf("\t{}: {}".format(colorize("Customize airootfs", bold),
         contents["customize_airootfs"] if 'customize_airootfs' in contents else 'N/A'))
-    inf("\t{}: {}".format(colorize("Compression options", bold), contents["compression"]))
-    
+    inf("\t{}: {}".format(
+        colorize("Compression options", bold), contents["compression"]))
+
     if contents["distro"] == "archlinux" or contents["distro"] == "tearch":
         inf("\t{}: {}".format(colorize("Pacman Configuration", bold),
             os.path.realpath(profile + "/" + contents["pacman"]) if 'pacman' in contents else 'N/A'))
@@ -46,7 +47,7 @@ def show(contents, packages):
             contents["codename"] if 'codename' in contents else 'N/A'))
         inf("\t{}: {}".format(colorize("Repository", bold),
             contents["repository"] if 'repository' in contents else 'N/A'))
-         
+
 
 def check():
     if not os.path.exists(output):

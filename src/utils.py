@@ -24,6 +24,7 @@ simulation = False
 
 VERSION = "2.0"
 
+
 def run(cmd, vital=True):
     if simulation:
         return 0

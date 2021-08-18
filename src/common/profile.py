@@ -6,7 +6,7 @@ profile = None
 
 
 def parse_profile(profile_dir="/usr/lib/teaiso/profile/archlinux", teaiso="/usr/lib/teaiso"):
-    global profile    
+    global profile
     if not os.path.exists(profile_dir + "/profile.yaml"):
         return None
 
@@ -29,7 +29,8 @@ def parse_profile(profile_dir="/usr/lib/teaiso/profile/archlinux", teaiso="/usr/
     else:
         contents["compression"] = ['squashfs', '-comp gzip']
 
-    contents["grub_cfg"] = os.path.realpath(profile_dir + "/" + contents["grub_cfg"])
+    contents["grub_cfg"] = os.path.realpath(
+        profile_dir + "/" + contents["grub_cfg"])
     contents["iso_name"] = contents["name"] + "-" + \
         date.today().strftime("%d-%m-%Y") + "-" + contents["arch"] + ".iso"
 
