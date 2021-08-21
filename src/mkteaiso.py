@@ -15,7 +15,7 @@ os.umask(18)  # set umask as 022
 # argument parse
 for i in sys.argv[1:]:
     if Args.is_arg(i, "output"):
-        settings.output = Args().get_value(i)
+        settings.output = os.getcwd() + "/" + Args().get_value(i)
     elif Args.is_arg(i, "work"):
         settings.workdir = Args().get_value(i)
     elif Args.is_arg(i, "profile"):
@@ -39,6 +39,8 @@ for i in sys.argv[1:]:
         out("mkteaiso (ISO generation tool for GNU/Linux), v{}".format(VERSION))
     elif Args.is_arg(i, "help"):
         Args.help_message()
+    else:
+        Args.unrecognized_opt(i)
 
 if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
     settings.teaiso = os.getcwd()+"/src"
@@ -125,7 +127,6 @@ distro.set("repository", common.get("repository"))  # for debian
 
 if settings.debug:
     dbg("Distro options:\n"+getoutput("cat "+settings.workdir+"/options.sh"))
-
 
 # airootfs creation (stage 1)
 if Stage().get() < 1:

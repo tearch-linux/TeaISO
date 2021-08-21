@@ -122,7 +122,6 @@ Base Arguments:
   -w=WORK, --work=WORK              ISO work directory (default: /var/teaiso/work)
   -c=BASE, --create=BASE            Create profile by base profile
   -g=KEY, --gpg=KEY                 Sign airootfs image by GPG
-  -d=KEY, --debug=KEY               Enable debug mode
 
 Miscellaneous:
   -h, --help                        Display this help text and exit
@@ -130,8 +129,15 @@ Miscellaneous:
       --nocolor                     Disable colorized output
       --simulate                    Enable simulation mode
       --nocheck                     Skip all check
-      --interactive                 Interactive operations""".format(VERSION))
+      --interactive                 Interactive operations
+      --debug                       Enable debug mode""".format(VERSION))
         exit(0)
+        
+    def unrecognized_opt(option):
+        out("""mkteaiso: unrecognized option '{}'
+Usage: mkteaiso -p=PROFILE [OPTION]...
+Try 'mkteaiso --help' for more information.""".format(option))
+        exit(2)
 
 
 class Stage:
