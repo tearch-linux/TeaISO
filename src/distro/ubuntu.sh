@@ -23,15 +23,16 @@ generate_isowork(){
     else
         echo "insmod all_video" > isowork/boot/grub/grub.cfg
     fi
-    mkdir -p isowork/live/ || true
+    mkdir -p isowork/casper/ || true
+    ln -s capser live
     if [[ -e "filesystem.squashfs" ]]; then
-        mv filesystem.squashfs isowork/live/
-        cd isowork/live; sha512sum filesystem.sfs > filesystem.sha512; cd -
+        mv filesystem.squashfs isowork/casper/
+        cd isowork/casper; sha512sum filesystem.sfs > filesystem.sha512; cd ..
     elif [[ -e "filesystem.erofs" ]]; then
-        mv filesystem.erofs isowork/live/
-        cd isowork/live; sha512sum filesystem.sfs > filesystem.sha512; cd -
+        mv filesystem.erofs isowork/casper/
+        cd isowork/casper; sha512sum filesystem.sfs > filesystem.sha512; cd ..
     fi
-    generate_sig isowork/live
+    generate_sig isowork/casper
     ls isowork/boot/ | grep "vmlinuz" | while read line ; do
         echo "menuentry $(distro_name) --class debian {" >> isowork/boot/grub/grub.cfg
         echo "  linux /boot/$line boot=casper" >> isowork/boot/grub/grub.cfg

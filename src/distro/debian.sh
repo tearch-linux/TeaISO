@@ -45,12 +45,13 @@ generate_isowork(){
         echo "insmod all_video" > isowork/boot/grub/grub.cfg
     fi
     mkdir -p isowork/live/ || true
+    ln -s live casper || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/live/
-        cd isowork/live; sha512sum filesystem.sfs > filesystem.sha512; cd -
+        cd isowork/live; sha512sum filesystem.sfs > filesystem.sha512; cd ..
     elif [[ -e "filesystem.erofs" ]]; then
         mv filesystem.erofs isowork/live/
-        cd isowork/live; sha512sum filesystem.erofs > filesystem.sha512; cd -
+        cd isowork/live; sha512sum filesystem.erofs > filesystem.sha512; cd ..
     fi
     generate_sig isowork/live
     ls isowork/boot/ | grep "vmlinuz" | while read line ; do
