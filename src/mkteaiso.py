@@ -223,7 +223,7 @@ if Stage().get() < 8:
 if Stage().get() < 9:
     distro.clear_rootfs()
     common.create_squashfs(settings)
-    common.create_isowork(settings)
-    distro.generate_isowork()
     Stage().set(9)
+common.create_isowork(settings)
+distro.generate_isowork()
 common.create_iso(settings)
