@@ -45,7 +45,7 @@ generate_isowork(){
         echo "insmod all_video" > isowork/boot/grub/grub.cfg
     fi
     mkdir -p isowork/live/ || true
-    ln -s live casper || true
+    ln -s live isowork/casper || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/live/
         cd isowork/live; sha512sum filesystem.squashfs > filesystem.sha512

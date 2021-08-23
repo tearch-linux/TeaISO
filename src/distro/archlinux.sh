@@ -54,7 +54,7 @@ generate_isowork(){
         cat $grub_cfg > isowork/boot/grub/grub.cfg
     fi
     mkdir -p isowork/arch/$arch || true
-    ln -s arch/$arch live || true
+    ln -s arch/$arch isowork/live || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/arch/$arch/airootfs.sfs
         cd isowork/arch/$arch; sha512sum airootfs.sfs > airootfs.sha512
