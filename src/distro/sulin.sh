@@ -29,10 +29,12 @@ generate_isowork(){
     ln -s ../ isowork/live || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/main.sfs
-        cd isowork; sha512sum main.sfs > main.sha512; cd ..
+        cd isowork; sha512sum main.sfs > main.sha512
+        cd "${workdir}"
     elif [[ -e "filesystem.erofs" ]]; then
         mv filesystem.erofs isowork/live/main.erofs
-        cd isowork; sha512sum main.sfs > main.sha512; cd ..
+        cd isowork; sha512sum main.sfs > main.sha512
+        cd "${workdir}"
     fi
     generate_sig isowork
     ls "$rootfs/kernel/modules/" | while read line ; do

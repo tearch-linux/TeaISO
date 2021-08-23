@@ -27,10 +27,12 @@ generate_isowork(){
     ln -s capser live
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/casper/
-        cd isowork/casper; sha512sum filesystem.squashfs > filesystem.sha512; cd ..
+        cd isowork/casper; sha512sum filesystem.squashfs > filesystem.sha512
+        cd "${workdir}"
     elif [[ -e "filesystem.erofs" ]]; then
         mv filesystem.erofs isowork/casper/
-        cd isowork/casper; sha512sum filesystem.erofs > filesystem.sha512; cd ..
+        cd isowork/casper; sha512sum filesystem.erofs > filesystem.sha512
+        cd "${workdir}"
     fi
     generate_sig isowork/casper
     ls isowork/boot/ | grep "vmlinuz" | while read line ; do

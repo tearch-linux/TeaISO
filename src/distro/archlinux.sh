@@ -57,10 +57,12 @@ generate_isowork(){
     ln -s arch/$arch live || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/arch/$arch/airootfs.sfs
-        cd isowork/arch/$arch; sha512sum airootfs.sfs > airootfs.sha512; cd -
+        cd isowork/arch/$arch; sha512sum airootfs.sfs > airootfs.sha512
+        cd "${workdir}"
     elif [[ -e "filesystem.erofs" ]]; then
         mv filesystem.erofs isowork/arch/$arch/airootfs.erofs
-        cd isowork/arch/$arch; sha512sum airootfs.erofs > airootfs.sha512; cd -
+        cd isowork/arch/$arch; sha512sum airootfs.erofs > airootfs.sha512
+        cd "${workdir}"
     fi
     generate_sig isowork/arch/$arch
     echo "menuentry $(distro_name) --class arch {" >> isowork/boot/grub/grub.cfg
