@@ -48,7 +48,7 @@ generate_isowork(){
     ln -s live casper || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/live/
-        cd isowork/live; sha512sum filesystem.sfs > filesystem.sha512; cd ..
+        cd isowork/live; sha512sum filesystem.squashfs > filesystem.sha512; cd ..
     elif [[ -e "filesystem.erofs" ]]; then
         mv filesystem.erofs isowork/live/
         cd isowork/live; sha512sum filesystem.erofs > filesystem.sha512; cd ..
