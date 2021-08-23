@@ -99,7 +99,7 @@ class Args:
         else:
             if i in sys.argv:
                 n = sys.argv.index(i)
-                if n < len(sys.argv)-1:
+                if n < len(sys.argv):
                     return sys.argv[n+1]
                 else:
                     err("Missing argument value {}".format(i))

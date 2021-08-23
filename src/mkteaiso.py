@@ -39,8 +39,6 @@ for i in sys.argv[1:]:
         out("mkteaiso (ISO generation tool for GNU/Linux), v{}".format(VERSION))
     elif Args.is_arg(i, "help"):
         Args.help_message()
-    else:
-        Args.unrecognized_opt(i)
 
 if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
     settings.teaiso = os.getcwd()+"/src"
