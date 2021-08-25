@@ -1,5 +1,4 @@
 # required
-set -ex
 tools_init(){
     return
 }
@@ -27,8 +26,6 @@ generate_isowork(){
     else
         echo "insmod all_video" > isowork/boot/grub/grub.cfg
     fi
-    mkdir -p "$rootfs/usr/lib/grub"
-    cp -r /usr/lib/grub/* "$rootfs/usr/lib/grub"
 }
 
 customize_airootfs(){

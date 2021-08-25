@@ -33,14 +33,13 @@ def create_iso(settings):
         os.makedirs("{}/isowork/EFI/boot".format(settings.workdir))
 
     # Copy Necessary Directories
-    run("cp -r {}/usr/lib/grub/i386-pc/ {}/isowork/boot/grub/".format(settings.rootfs,
-        settings.workdir), vital=False)
-    run("cp -r {}/usr/lib/grub/i386-efi/ {}/isowork/boot/grub/".format(
-        settings.rootfs, settings.workdir), vital=False)
-    run("cp -r {}/usr/lib/grub/x86_64-efi/ {}/isowork/boot/grub/".format(
-        settings.rootfs, settings.workdir), vital=False)
-    run("cp -r {}/usr/share/grub/themes/ {}/isowork/boot/grub/".format(
-        settings.rootfs, settings.workdir), vital=False)
+    for bootloader in ["i386-pc", "i386-efi", "x86_64-efi", "themes"]:
+        if os.path.isdir("{}/usr/lib/grub/i386-pc/".format(settings.rootfs)):
+            run("cp -r {}/usr/lib/grub/{}/ {}/isowork/boot/grub/".format(settings.rootfs,
+                bootloader, settings.workdir), vital=False)
+        else:
+            run("cp -r /usr/lib/grub/{}/ {}/isowork/boot/grub/".format(bootloader,
+                settings.workdir), vital=False)
 
     # Generate Bootloaders
     run("grub-mkimage -d {0}/isowork/boot/grub/i386-pc/ -o {0}/isowork/boot/grub/i386-pc/core.img -O i386-pc -p /boot/grub biosdisk iso9660".format(settings.workdir), vital=False)
@@ -57,6 +56,10 @@ def create_iso(settings):
     run("mmd -i {}/isowork/efi.img ::/EFI/boot".format(settings.workdir))
     run("mcopy -i {0}/isowork/efi.img {0}/isowork/EFI/boot/* ::/EFI/boot".format(settings.workdir))
 
+    # Generate writable
+    run("dd if=/dev/zero of=\"{}/writable.img\" bs=4M count=1".format(settings.workdir))
+    run("mkfs.ext4 -L writable \"{}/writable.img\"".format(settings.workdir))
+    
     # Miscellaneous
     if not os.path.exists(settings.output):
         os.mkdir(settings.output)
@@ -84,6 +87,7 @@ def create_iso(settings):
                 -no-emul-boot -boot-load-size 4 -boot-info-table --grub2-boot-info \
                 -eltorito-alt-boot \
                 -append_partition 2 0xef {5}/isowork/efi.img \
+                -append_partition 3 0x83 {5}/writable.img \
                 -e --interval:appended_partition_2:all:: \
                 -no-emul-boot \
                 --mbr-force-bootable \
