@@ -15,7 +15,7 @@ os.umask(18)  # set umask as 022
 # argument parse
 for i in sys.argv[1:]:
     if Args.is_arg(i, "output"):
-        settings.output = os.getcwd() + "/" + Args().get_value(i)
+        settings.output = getoutput("realpath "+Args().get_value(i))
     elif Args.is_arg(i, "work"):
         settings.workdir = Args().get_value(i)
     elif Args.is_arg(i, "profile"):
