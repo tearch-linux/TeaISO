@@ -97,6 +97,7 @@ if "iso_merge" in common.profile:
 settings.show(common.profile, packages)
 
 # distro settings
+distro.set("rootfs", settings.workdir+"/airootfs/")
 distro.set("workdir", settings.workdir)
 os.chdir(settings.profile)
 
