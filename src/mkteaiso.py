@@ -26,7 +26,7 @@ for i in sys.argv[1:]:
         gpg_key = Args().get_value(i)
     elif Args.is_arg(i, "debug"):
         settings.debug = True
-    elif i == "--nocolor":
+    elif i == "--nocolor" or "NO_COLOR" in os.environ:
         disable_color()
     elif i == "--simulate":
         warn("Simulation mode enabled.")
@@ -221,7 +221,7 @@ if Stage().get() < 8:
 if Stage().get() < 9:
     distro.clear_rootfs()
     common.create_squashfs(settings)
+    common.create_isowork(settings)
+    distro.generate_isowork()
     Stage().set(9)
-common.create_isowork(settings)
-distro.generate_isowork()
 common.create_iso(settings)
