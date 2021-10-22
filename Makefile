@@ -11,3 +11,5 @@ install:
 	chmod +x -R $(DESTDIR)/usr/lib/teaiso/
 	install mkteaiso $(DESTDIR)/usr/bin/mkteaiso
 
+clean:
+	make -C lib clean

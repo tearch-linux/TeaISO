@@ -5,3 +5,5 @@ install:
 	install libteaiso.so $(DESTDIR)/usr/lib/libteaiso.so
 test:
 	gcc util.c test.c -g -Wno-all -o a.out && ./a.out
+clean:
+	rm -f libteaiso.so

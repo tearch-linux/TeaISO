@@ -43,7 +43,6 @@ for i in sys.argv[1:]:
 if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
     settings.teaiso = os.getcwd()+"/src"
 
-
 sys.path.insert(0, settings.teaiso)
 
 if create_profile:
@@ -97,8 +96,8 @@ if "iso_merge" in common.profile:
 settings.show(common.profile, packages)
 
 # distro settings
-distro.set("rootfs", settings.workdir+"/airootfs/")
 distro.set("workdir", settings.workdir)
+distro.set("rootfs", settings.workdir+"/airootfs/")
 os.chdir(settings.profile)
 
 # distro options
