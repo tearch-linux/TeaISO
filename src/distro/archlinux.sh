@@ -8,13 +8,13 @@ write_repo(){
 # required
 tools_init(){
     if ! which arch-bootstrap &>/dev/null ; then
-        echo "Installing arch-bootstrap script"
-        wget -c "https://raw.githubusercontent.com/tokland/arch-bootstrap/master/arch-bootstrap.sh" -O arch-bootstrap.sh
-        install arch-bootstrap.sh /usr/bin/arch-bootstrap
+        echo "Installing archstrap script"
+        wget -c "https://gitlab.com/tearch-linux/applications-and-tools/archstrap/-/raw/master/archstrap.sh" -O archstrap
+        install archstrap /usr/bin/archstrap
     fi
 }
 create_rootfs(){
-    run arch-bootstrap -a "$arch" $(write_repo) "$rootfs"
+    run archstrap "$rootfs" -r $(write_repo)
 
     if [[ -f "$pacman" ]] ; then
         run install "$pacman" "$rootfs/etc/pacman.conf"
