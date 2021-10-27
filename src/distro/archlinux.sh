@@ -73,8 +73,8 @@ generate_isowork(){
 
 customize_airootfs(){
     echo "HOOKS=(base udev memdisk archiso_shutdown archiso archiso_loop_mnt archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_kms block filesystems keyboard)" > "$rootfs/etc/mkinitcpio-archiso.conf"
-    for kernel in $(chroot "${rootfs}" ls /etc/mkinitcpio.d/*.preset | xargs -n1 basename); do
-        run_in_chroot mkinitcpio -p "${kernel%.preset}" -c "/etc/mkinitcpio-archiso.conf"
+    for kernel in $(chroot "${rootfs}" ls /lib/modules | xargs -n1 basename); do
+        run_in_chroot mkinitcpio -k "$kernel" -c "/etc/mkinitcpio-archiso.conf"
     done
 }
 
