@@ -63,7 +63,7 @@ void inf(char* msg, char* date){
     fflush(stdout);
 }
 void out(char* msg){
-    fprintf(stdout,msg);
+    fprintf(stdout,"%s",msg);
     fputc('\n',stdout);
     fflush(stdout);
 }
