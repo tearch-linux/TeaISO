@@ -7,7 +7,7 @@ airootfs_directory: airootfs
 #iso_merge: iso_merge
 arch: x86_64
 pacman: pacman.conf
-compression: erofs||-zlz4hc,12
+compression: squashfs||-comp gzip
 grub_cfg: grub.cfg
 packages:
  - packages.x86_64
