@@ -11,7 +11,7 @@ populate_rootfs(){
     else
         run_in_chroot pacman -Syyu || true
     fi
-    run_in_chroot pacman -Sy mkinitcpio-teaiso grub --noconfirm
+    run_in_chroot pacman -Sy mkinitcpio-teaiso grub lvm2 --noconfirm
 }
 
 customize_airootfs(){

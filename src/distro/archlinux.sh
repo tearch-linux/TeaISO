@@ -33,7 +33,7 @@ populate_rootfs(){
     else
         run_in_chroot pacman -Syyu || true
     fi
-    run_in_chroot pacman -Sy grub arch-install-scripts archiso --noconfirm
+    run_in_chroot pacman -Sy grub arch-install-scripts archiso lvm2 --noconfirm
 
 }
 
