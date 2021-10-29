@@ -15,7 +15,8 @@ populate_rootfs(){
 }
 
 customize_airootfs(){
-    echo "HOOKS=(base udev live_hook lvm2 block filesystems keyboard)" > "$rootfs/etc/mkinitcpio-tearch.conf"
+    echo "MODULES=(dm-raid raid0 raid1 raid10 raid456)" > "$rootfs/etc/mkinitcpio-tearch.conf"
+    echo "HOOKS=(base udev live_hook lvm2 block filesystems keyboard)" >> "$rootfs/etc/mkinitcpio-tearch.conf"
     for kernel in $(chroot "${rootfs}" ls /lib/modules | xargs -n1 basename); do
         run_in_chroot mkinitcpio -k "$kernel" -c "/etc/mkinitcpio-tearch.conf" -g "/boot/initramfs-linux.img"
     done

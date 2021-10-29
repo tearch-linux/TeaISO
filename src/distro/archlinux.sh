@@ -72,7 +72,8 @@ generate_isowork(){
 }
 
 customize_airootfs(){
-    echo "HOOKS=(base udev archiso_shutdown archiso archiso_loop_mnt archiso_kms lvm2 block filesystems keyboard)" > "$rootfs/etc/mkinitcpio-archiso.conf"
+    echo "MODULES=(dm-raid raid0 raid1 raid10 raid456)" > "$rootfs/etc/mkinitcpio-archiso.conf"
+    echo "HOOKS=(base udev archiso_shutdown archiso archiso_loop_mnt archiso_kms lvm2 block filesystems keyboard)" >> "$rootfs/etc/mkinitcpio-archiso.conf"
     for kernel in $(chroot "${rootfs}" ls /lib/modules | xargs -n1 basename); do
         run_in_chroot mkinitcpio -k "$kernel" -c "/etc/mkinitcpio-archiso.conf" -g "/boot/initramfs-linux.img"
     done
