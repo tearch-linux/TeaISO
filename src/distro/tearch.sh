@@ -14,6 +14,13 @@ populate_rootfs(){
     run_in_chroot pacman -Sy mkinitcpio-teaiso grub --noconfirm
 }
 
+customize_airootfs(){
+    echo "HOOKS=(base udev live_hook lvm2 block filesystems keyboard)" > "$rootfs/etc/mkinitcpio-tearch.conf"
+    for kernel in $(chroot "${rootfs}" ls /lib/modules | xargs -n1 basename); do
+        run_in_chroot mkinitcpio -k "$kernel" -c "/etc/mkinitcpio-tearch.conf" -g "/boot/initramfs-linux.img"
+    done
+}
+
 generate_isowork(){
     if [[ -f "$grub_cfg" ]]; then
         cat $grub_cfg > isowork/boot/grub/grub.cfg
