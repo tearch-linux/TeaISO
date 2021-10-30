@@ -4,7 +4,7 @@ from utils import out, err, inf, colorize, run
 from colors import *
 
 output = "/var/teaiso/output"
-workdir = "/var/teaiso/work"
+workdir = "/var/teaiso/work/{}".format(int(time.time()*1000))
 teaiso = "/usr/lib/teaiso"
 profile = "archlinux"
 compression = []
