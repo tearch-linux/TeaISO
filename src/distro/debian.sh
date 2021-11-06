@@ -19,7 +19,7 @@ tools_init(){
 }
 
 create_rootfs(){
-    if ! run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude=usrmerge --extractor=ar "$codename" "$rootfs" "$repository" ; then
+    if ! run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude=usrmerge --extractor=ar --variant=minbase "$codename" "$rootfs" "$repository" ; then
         cat $rootfs/debootstrap/debootstrap.log
         exit 1
     fi
