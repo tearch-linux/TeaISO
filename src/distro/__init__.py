@@ -4,6 +4,8 @@ from colors import *
 
 
 def set(option, variable):
+    if not variable:
+        return
     os.environ[option] = variable
     workdir = os.environ["workdir"]
     with open("{}/options.sh".format(workdir), "a") as f:

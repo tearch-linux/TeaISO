@@ -120,6 +120,7 @@ distro.set("packages", "(" + ' '.join(packages) + ")")
 
 distro.set("rootfs", settings.rootfs)
 distro.set("workdir", settings.workdir)
+distro.set("variant", common.get("variant","")) # for debian
 distro.set("codename", common.get("codename", "stable"))  # for debian
 distro.set("repository", common.get("repository"))  # for debian
 

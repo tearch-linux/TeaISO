@@ -45,6 +45,8 @@ def show(contents, packages):
     elif contents["distro"] == "debian" or contents["distro"] == "ubuntu":
         inf("\t{}: {}".format(colorize("Codename", bold),
             contents["codename"] if 'codename' in contents else 'N/A'))
+        inf("\t{}: {}".format(colorize("Variant", bold),
+            contents["variant"] if 'variant' in contents else 'N/A'))
         inf("\t{}: {}".format(colorize("Repository", bold),
             contents["repository"] if 'repository' in contents else 'N/A'))
 
