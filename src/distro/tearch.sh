@@ -11,14 +11,13 @@ populate_rootfs(){
     else
         run_in_chroot pacman -Syyu || true
     fi
-    run_in_chroot pacman -Sy mkinitcpio-teaiso grub lvm2 --noconfirm
+    run_in_chroot pacman -Sy mkinitcpio-teaiso grub --noconfirm
 }
 
 customize_airootfs(){
-    echo "MODULES=(dm-raid raid0 raid1 raid10 raid456)" > "$rootfs/etc/mkinitcpio-tearch.conf"
-    echo "HOOKS=(base udev live_hook lvm2 block filesystems keyboard)" >> "$rootfs/etc/mkinitcpio-tearch.conf"
+    echo "HOOKS+=(live_hook)" >> "$rootfs/etc/mkinitcpio.conf"
     for kernel in $(chroot "${rootfs}" ls /lib/modules | xargs -n1 basename); do
-        run_in_chroot mkinitcpio -k "$kernel" -c "/etc/mkinitcpio-tearch.conf" -g "/boot/initramfs-linux.img"
+        run_in_chroot mkinitcpio -k "$kernel" -g "/boot/initramfs-linux.img"
     done
 }
 

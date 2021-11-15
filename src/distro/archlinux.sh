@@ -7,14 +7,14 @@ write_repo(){
 
 # required
 tools_init(){
-    if ! which arch-bootstrap &>/dev/null ; then
+    if [[-e /usr/local/bin/archstrap]]; then
         echo "Installing archstrap script"
         wget -c "https://gitlab.com/tearch-linux/applications-and-tools/archstrap/-/raw/master/archstrap.sh" -O archstrap
-        install archstrap /usr/bin/archstrap
+        install archstrap /usr/local/bin/
     fi
 }
 create_rootfs(){
-    run archstrap "$rootfs" -r $(write_repo)
+    run /usr/local/bin/archstrap "$rootfs" -r $(write_repo)
 
     if [[ -f "$pacman" ]] ; then
         run install "$pacman" "$rootfs/etc/pacman.conf"
@@ -33,7 +33,7 @@ populate_rootfs(){
     else
         run_in_chroot pacman -Syyu || true
     fi
-    run_in_chroot pacman -Sy grub arch-install-scripts archiso lvm2 --noconfirm
+    run_in_chroot pacman -Sy grub arch-install-scripts mkinitcpio-archiso --noconfirm
 
 }
 
@@ -72,10 +72,9 @@ generate_isowork(){
 }
 
 customize_airootfs(){
-    echo "MODULES=(dm-raid raid0 raid1 raid10 raid456)" > "$rootfs/etc/mkinitcpio-archiso.conf"
-    echo "HOOKS=(base udev archiso_shutdown archiso archiso_loop_mnt archiso_kms lvm2 block filesystems keyboard)" >> "$rootfs/etc/mkinitcpio-archiso.conf"
+    echo "HOOKS+=(archiso_shutdown archiso archiso_loop_mnt archiso_kms)" >> "$rootfs/etc/mkinitcpio.conf"
     for kernel in $(chroot "${rootfs}" ls /lib/modules | xargs -n1 basename); do
-        run_in_chroot mkinitcpio -k "$kernel" -c "/etc/mkinitcpio-archiso.conf" -g "/boot/initramfs-linux.img"
+        run_in_chroot mkinitcpio -k "$kernel" -g "/boot/initramfs-linux.img"
     done
 }
 
