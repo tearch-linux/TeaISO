@@ -3,4 +3,4 @@ grub
 linux
 mkinitcpio
 mkinitcpio-archiso
-openssh
+arch-install-scripts
