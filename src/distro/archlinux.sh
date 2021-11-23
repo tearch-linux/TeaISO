@@ -7,7 +7,7 @@ write_repo(){
 
 # required
 tools_init(){
-    if [[-e /usr/local/bin/archstrap]]; then
+    if [[ -e /usr/local/bin/archstrap ]]; then
         echo "Installing archstrap script"
         wget -c "https://gitlab.com/tearch-linux/applications-and-tools/archstrap/-/raw/master/archstrap.sh" -O archstrap
         install archstrap /usr/local/bin/
