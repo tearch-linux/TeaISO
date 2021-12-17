@@ -1,7 +1,7 @@
 # additional
 write_repo(){
     if [[ "$repository" != "" ]] ; then
-        echo -r $repository
+        echo "-r $repository"
     fi
 }
 
@@ -14,7 +14,7 @@ tools_init(){
     fi
 }
 create_rootfs(){
-    run /usr/local/bin/archstrap "$rootfs" -r $(write_repo)
+    run /usr/local/bin/archstrap "$rootfs" $(write_repo)
 
     if [[ -f "$pacman" ]] ; then
         run install "$pacman" "$rootfs/etc/pacman.conf"
