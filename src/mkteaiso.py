@@ -58,6 +58,7 @@ os.system("setenforce 0 &>/dev/null")
 
 os.environ.clear()
 os.environ["PATH"] = "/bin:/sbin:/usr/bin:/usr/sbin"
+os.environ["DEBIAN_FRONTEND"] = "noninteractive"
 
 if os.path.exists(settings.teaiso+"/profiles/"+settings.profile):
     settings.profile = settings.teaiso+"/profiles/"+settings.profile
