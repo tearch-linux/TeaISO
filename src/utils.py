@@ -96,18 +96,20 @@ class Args:
     def get_value(self, i):
         if "=" in i:
             return self.get_argument_value(i, i.split("=")[0])
-        else:
+        elif i.startswith("-"):
             if i in sys.argv:
                 n = sys.argv.index(i)
-                if n < len(sys.argv)-1:
+                if n < len(sys.argv):
                     return sys.argv[n+1]
                 else:
                     err("Missing argument value {}".format(i))
             else:
                 err("Invalid argument {}".format(i))
+        else:
+            err("Unexcepted argument {}".format(i))
 
     def is_arg(i, var):
-        return "--{}".format(var) in i or "-{}".format(var[0]) in i
+        return i.startswith("--{}".format(var)) or i.startswith("-{}".format(var[0]))
 
     def help_message():
         disable_color()
