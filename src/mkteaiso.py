@@ -146,6 +146,7 @@ if Stage().get() < 2:
     Stage().set(2)
 
 os.chdir(settings.workdir)
+open(settings.rootfs + '/etc/hostname', "w").write(common.get("name").lower())
 if Stage().get() < 3:
     for i in common.get("customize_airootfs_pre", []):
         run_hook(settings, i)
