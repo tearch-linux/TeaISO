@@ -223,8 +223,16 @@ if Stage().get() < 8:
 # Generate ISO
 if Stage().get() < 9:
     distro.clear_rootfs()
+    os.chdir(settings.workdir)
+    for i in common.get("customize_isowork_pre", []):
+        run(i)
+    os.chdir(settings.teaiso)
     common.create_squashfs(settings)
     common.create_isowork(settings)
+    os.chdir(settings.workdir)
+    for i in common.get("customize_isowork", []):
+        run(i)
+    os.chdir(settings.teaiso)
     distro.generate_isowork()
     Stage().set(9)
 common.create_iso(settings)
