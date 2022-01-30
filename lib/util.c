@@ -12,8 +12,9 @@ void set_rootfs(char* dir){
 void disable_color(){
   nocolor = 1;
 }
+// command pointer
+char* ncmd;
 int run(char* cmd){
-  char* ncmd;
   if (strlen(cmd)<1){
     return 0;
   }if(strstr(cmd,"chroot||")){
