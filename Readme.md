@@ -21,3 +21,20 @@ Miscellaneous:
       --interactive                 Interactive operations
       --debug                       Enable debug mode
 ```
+
+## Documentation: 
+Please visit **doc** directory.
+
+## Installation
+
+`make` and `make install`
+
+## Dependencies
+* gcc (build)
+* make (build)
+* python3
+* busybox
+* mtools
+* xorriso
+* grub (for creating iso)
+* squashfs-tools
