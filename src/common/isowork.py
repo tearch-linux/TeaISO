@@ -50,14 +50,15 @@ def create_iso(settings):
         settings.workdir), vital=False)
 
     # Generate efi.img
-    run("dd if=/dev/zero of=\"{}/isowork/efi.img\" bs=4M count=1".format(settings.workdir))
+    run("dd if=/dev/zero of=\"{}/isowork/efi.img\" bs=4M count=1 oflag=sync".format(settings.workdir))
     run("mkfs.vfat -n TEAISO_EFI {}/isowork/efi.img &>/dev/null".format(settings.workdir))
+    os.sync() # Call sync for efi image.
     run("mmd -i {}/isowork/efi.img ::/EFI".format(settings.workdir))
     run("mmd -i {}/isowork/efi.img ::/EFI/boot".format(settings.workdir))
     run("mcopy -i {0}/isowork/efi.img {0}/isowork/EFI/boot/* ::/EFI/boot".format(settings.workdir))
 
     # Generate writable
-    run("dd if=/dev/zero of=\"{}/writable.img\" bs=4M count=1".format(settings.workdir))
+    run("dd if=/dev/zero of=\"{}/writable.img\" bs=4M count=1 oflag=sync".format(settings.workdir))
     run("mkfs.ext4 -L writable \"{}/writable.img\"".format(settings.workdir))
     
     # Miscellaneous
@@ -65,6 +66,9 @@ def create_iso(settings):
         os.mkdir(settings.output)
 
     run("grub-editenv {}/isowork/boot/grub/grubenv set menu_show_once=1".format(settings.workdir))
+
+    # md5sums.txt file
+    run("cd {0}/isowork ; find . -type f | xargs md5sum | sort -V > {0}/isowork/md5sums.txt".format(settings.workdir))
 
     modification_date = datetime.now().strftime(
         "%Y-%m-%d-%H-%M-%S-00").replace("-", "")

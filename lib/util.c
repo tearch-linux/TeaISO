@@ -27,6 +27,7 @@ int run(char* cmd){
       strcat(ncmd,rootfs);
       strcat(ncmd," ");
       strcat(ncmd,mcmd);
+      free(mcmd);
   }else{
     ncmd = cmd;
   }
