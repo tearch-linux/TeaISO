@@ -17,9 +17,9 @@ for i in sys.argv[1:]:
     if Args.is_arg(i, "output"):
         settings.output = getoutput("realpath "+Args().get_value(i))
     elif Args.is_arg(i, "work"):
-        settings.workdir = Args().get_value(i)
+        settings.workdir = getoutput("realpath "+Args().get_value(i))
     elif Args.is_arg(i, "profile"):
-        settings.profile = Args().get_value(i)
+        settings.profile = getoutput("realpath "+Args().get_value(i))
     elif Args.is_arg(i, "create"):
         create_profile = Args().get_value(i)
     elif Args.is_arg(i, "gpg"):
