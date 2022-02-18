@@ -49,6 +49,8 @@ def show(contents, packages):
             contents["variant"] if 'variant' in contents else 'N/A'))
         inf("\t{}: {}".format(colorize("Repository", bold),
             contents["repository"] if 'repository' in contents else 'N/A'))
+    inf("\t{}: {}".format(colorize("Kernel cmdline", bold),
+        contents["linux_args"] if 'linux_args' in contents else 'N/A'))
 
 
 def check():

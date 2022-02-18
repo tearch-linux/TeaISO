@@ -42,6 +42,7 @@ This file is distribution configuration file. Example file here:
 	iso_merge: iso_merge
 	arch: x86_64
 	grub_cfg: grub.cfg
+	linux_args: quiet splash
 	packages:
 	 - packages.x86_64
 	file_permissions:

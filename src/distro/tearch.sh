@@ -38,7 +38,7 @@ generate_isowork(){
     fi
     generate_sig isowork/live
     echo "menuentry $(distro_name) --class arch {" >> isowork/boot/grub/grub.cfg
-    echo "  linux /boot/vmlinuz-linux boot=live live-config" >> isowork/boot/grub/grub.cfg
+    echo "  linux /boot/vmlinuz-linux boot=live live-config ${cmdline}" >> isowork/boot/grub/grub.cfg
     echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg
     echo "}" >> isowork/boot/grub/grub.cfg
 }

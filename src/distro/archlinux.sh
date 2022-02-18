@@ -66,7 +66,7 @@ generate_isowork(){
     fi
     generate_sig isowork/arch/$arch
     echo "menuentry $(distro_name) --class arch {" >> isowork/boot/grub/grub.cfg
-    echo "  linux /boot/vmlinuz-linux archisobasedir=arch archisolabel=$label" >> isowork/boot/grub/grub.cfg
+    echo "  linux /boot/vmlinuz-linux archisobasedir=arch archisolabel=$label ${cmdline}" >> isowork/boot/grub/grub.cfg
     echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg
     echo "}" >> isowork/boot/grub/grub.cfg
 }

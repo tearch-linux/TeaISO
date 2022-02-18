@@ -120,10 +120,12 @@ distro.set("packages", "(" + ' '.join(packages) + ")")
 
 
 distro.set("rootfs", settings.rootfs)
+distro.set("cmdline", common.get("linux_args"))
 distro.set("workdir", settings.workdir)
 distro.set("variant", common.get("variant","")) # for debian
 distro.set("codename", common.get("codename", "stable"))  # for debian
 distro.set("repository", common.get("repository"))  # for debian
+
 
 if settings.debug:
     dbg("Distro options:\n"+getoutput("cat "+settings.workdir+"/options.sh"))

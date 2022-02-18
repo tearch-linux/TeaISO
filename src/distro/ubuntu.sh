@@ -39,7 +39,7 @@ generate_isowork(){
     generate_sig isowork/casper
     ls isowork/boot/ | grep "vmlinuz" | while read line ; do
         echo "menuentry $(distro_name) --class debian {" >> isowork/boot/grub/grub.cfg
-        echo "  linux /boot/$line boot=casper" >> isowork/boot/grub/grub.cfg
+        echo "  linux /boot/$line boot=casper ${cmdline}" >> isowork/boot/grub/grub.cfg
         echo "  initrd /boot/$(echo $line | sed s/vmlinuz/initrd.img/g)" >> isowork/boot/grub/grub.cfg
         echo "}" >> isowork/boot/grub/grub.cfg
     done
