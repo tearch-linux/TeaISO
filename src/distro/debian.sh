@@ -23,7 +23,8 @@ create_rootfs(){
         cat "$rootfs"/debootstrap/debootstrap.log
         exit 1
     fi
-    echo -e "#!/bin/sh\nexit 0" > "$rootfs"/usr/sbin/policy-rc.d
+    echo -e "#!/bin/sh\nexit 101" > "$rootfs"/usr/sbin/policy-rc.d
+    chmod +x "$rootfs"/usr/sbin/policy-rc.d
 }
 
 populate_rootfs(){
