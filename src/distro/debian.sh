@@ -20,9 +20,10 @@ tools_init(){
 
 create_rootfs(){
     if ! run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude=usrmerge --extractor=ar ${variant:+--variant=$variant} "$codename" "$rootfs" "$repository" ; then
-        cat $rootfs/debootstrap/debootstrap.log
+        cat "$rootfs"/debootstrap/debootstrap.log
         exit 1
     fi
+    echo -e "#!/bin/sh\nexit 0" > "$rootfs"/usr/sbin/policy-rc.d
 }
 
 populate_rootfs(){
@@ -73,4 +74,5 @@ clear_rootfs(){
     run_in_chroot apt autoremove
     rm -rf $rootfs/var/lib/apt/lists || true
     find "$rootfs/var/log/" -type f | xargs rm -f  || true
+    rm -f "$rootfs"/usr/sbin/policy-rc.d || true
 }
