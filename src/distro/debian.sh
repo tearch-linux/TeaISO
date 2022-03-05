@@ -75,7 +75,7 @@ customize_airootfs(){
 
 clear_rootfs(){
     run_in_chroot apt clean
-    run_in_chroot apt autoremove
+    run_in_chroot apt autoremove --purge
     rm -rf $rootfs/var/lib/apt/lists || true
     find "$rootfs/var/log/" -type f | xargs rm -f  || true
 }
