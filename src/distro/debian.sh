@@ -25,6 +25,9 @@ create_rootfs(){
     fi
     echo -e "#!/bin/sh\nexit 101" > "$rootfs"/usr/sbin/policy-rc.d
     chmod +x "$rootfs"/usr/sbin/policy-rc.d
+    if [[ "" != "${keyring_package}" ]] ; then
+        run_in_chroot apt install ${keyring_package} -yq
+    fi
 }
 
 populate_rootfs(){
@@ -75,5 +78,4 @@ clear_rootfs(){
     run_in_chroot apt autoremove
     rm -rf $rootfs/var/lib/apt/lists || true
     find "$rootfs/var/log/" -type f | xargs rm -f  || true
-    rm -f "$rootfs"/usr/sbin/policy-rc.d || true
 }

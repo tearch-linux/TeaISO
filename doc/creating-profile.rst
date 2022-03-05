@@ -43,6 +43,7 @@ This file is distribution configuration file. Example file here:
 	arch: x86_64
 	grub_cfg: grub.cfg
 	linux_args: quiet splash
+	keyring_package: debian-archive-keyring
 	packages:
 	 - packages.x86_64
 	file_permissions:

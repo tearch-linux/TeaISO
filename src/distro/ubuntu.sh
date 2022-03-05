@@ -13,6 +13,9 @@ create_rootfs(){
     fi
     echo -e "#!/bin/sh\nexit 101" > "$rootfs"/usr/sbin/policy-rc.d
     chmod +x "$rootfs"/usr/sbin/policy-rc.d
+    if [[ "" != "${keyring_package}" ]] ; then
+        run_in_chroot apt install ${keyring_package} -yq
+    fi
 }
 
 populate_rootfs(){
