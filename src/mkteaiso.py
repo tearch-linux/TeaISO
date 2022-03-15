@@ -53,6 +53,9 @@ if create_profile:
 if not is_root():
     err("You must be root!")
 
+if interractive != "true":
+    os.close(0)
+
 # Disable selinux
 os.system("setenforce 0 &>/dev/null")
 
