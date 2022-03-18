@@ -54,7 +54,11 @@ if not is_root():
     err("You must be root!")
 
 if interactive != "true":
-    os.close(0)
+    try:
+        os.close(0)
+    except:
+        warn("Failed to close stdin")
+        pass
 
 # Disable selinux
 os.system("setenforce 0 &>/dev/null")
