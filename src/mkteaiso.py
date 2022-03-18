@@ -53,7 +53,7 @@ if create_profile:
 if not is_root():
     err("You must be root!")
 
-if interractive != "true":
+if interactive != "true":
     os.close(0)
 
 # Disable selinux
