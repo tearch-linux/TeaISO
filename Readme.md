@@ -29,6 +29,10 @@ Please visit **doc** directory.
 
 `make` and `make install`
 
+## Netinstall
+Run as root:
+`wget https://gitlab.com/tearch-linux/applications-and-tools/teaiso/-/raw/master/netinstall -O - | bash`
+
 ## Dependencies
 * gcc (build)
 * make (build)

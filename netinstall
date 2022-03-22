@@ -1,0 +1,14 @@
+#!/bin/bash
+if [[ $UID -ne 0 ]] ; then
+    echo "You must be root!"
+    exit 1
+fi
+if [[ -d /var/lib/dpkg ]] ; then
+    apt install xorriso mtools dosfstools squashfs-tools zstd debootstrap git make \
+        gcc python3-yaml --no-install-recommends -yq
+fi
+git clone https://gitlab.com/tearch-linux/applications-and-tools/teaiso /tmp/teaiso
+cd /tmp/teaiso
+make && make install
+cd /
+rm -rf /tmp/teaiso
