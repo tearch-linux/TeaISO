@@ -6,7 +6,6 @@ from colors import *
 def set(option, variable):
     if not variable:
         return
-    os.environ[option] = variable
     workdir = os.environ["workdir"]
     with open("{}/options.sh".format(workdir), "a") as f:
         if type(variable) == type(""):
@@ -16,7 +15,8 @@ def set(option, variable):
             f.write("{}=({})\n".format(option, variable))
         else:
             f.write("{}={}\n".format(option, variable))
-        #out("{} : {}".format(colorize(option, green), variable))
+    os.environ[option] = variable
+    #out("{} : {}".format(colorize(option, green), variable))
 
 
 def get(option, default=""):
