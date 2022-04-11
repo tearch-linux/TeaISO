@@ -123,7 +123,7 @@ if os.path.exists(pacman):
     distro.set("pacman", getoutput("realpath \"{}\"".format(pacman)))
 distro.set("teaiso", settings.teaiso)
 distro.set("profile", settings.profile)
-distro.set("packages", "(" + ' '.join(packages) + ")")
+distro.set("packages", packages)
 
 
 distro.set("rootfs", settings.rootfs)

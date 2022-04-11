@@ -9,7 +9,13 @@ def set(option, variable):
     os.environ[option] = variable
     workdir = os.environ["workdir"]
     with open("{}/options.sh".format(workdir), "a") as f:
-        f.write("{}='{}'\n".format(option, variable))
+        if type(variable) == type(""):
+            f.write("{}='{}'\n".format(option, variable))
+        elif type(variable) == type([]):
+            variable = " ".join(variable)
+            f.write("{}=({})\n".format(option, variable))
+        else:
+            f.write("{}={}\n".format(option, variable))
         #out("{} : {}".format(colorize(option, green), variable))
 
 
