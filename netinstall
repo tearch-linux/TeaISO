@@ -4,8 +4,8 @@ if [[ $UID -ne 0 ]] ; then
     exit 1
 fi
 if [[ -d /var/lib/dpkg ]] ; then
-    apt install xorriso mtools dosfstools squashfs-tools zstd debootstrap git make \
-        gcc python3-yaml libc6-dev busybox-static --no-install-recommends -yq
+    apt-get install xorriso mtools dosfstools squashfs-tools zstd debootstrap git make \
+        gcc python3-yaml libc6-dev busybox-static unzip binutils --no-install-recommends -yq
 fi
 git clone https://gitlab.com/tearch-linux/applications-and-tools/teaiso /tmp/teaiso
 cd /tmp/teaiso
