@@ -12,10 +12,12 @@ def parse_profile(profile_dir="/usr/lib/teaiso/profile/archlinux", teaiso="/usr/
 
     contents = {}
     with open(profile_dir + "/profile.yaml", "r") as file:
-        try:
-            contents = yaml.load(file.read(), Loader=yaml.FullLoader)
-        except BaseException:
+        if 3.13 >= float(yaml.__version__) :
             contents = yaml.load(file.read())
+        else:
+            contents = yaml.load(file.read(), Loader=yaml.FullLoader)
+    if contents == None or contents == {}:
+        err("Failed to load profile.yaml file.")
 
     if 'file_permissions' in contents:
         file_permissions = {}
