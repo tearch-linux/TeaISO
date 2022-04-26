@@ -32,6 +32,7 @@ generate_isowork(){
     fi
     mkdir -p isowork/casper/ || true
     ln -s capser isowork/live
+    ln -s . isowork/ubuntu || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/casper/
         cd isowork/casper; sha512sum filesystem.squashfs > filesystem.sha512

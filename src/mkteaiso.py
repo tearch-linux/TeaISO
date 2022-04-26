@@ -59,6 +59,7 @@ if interactive != "true":
     except:
         warn("Failed to close stdin")
         pass
+settings.interactive = interactive
 
 # Disable selinux
 os.system("setenforce 0 &>/dev/null")
@@ -157,7 +158,8 @@ if Stage().get() < 2:
     Stage().set(2)
 
 os.chdir(settings.workdir)
-open(settings.rootfs + '/etc/hostname', "w").write(common.get("name").lower())
+with open(settings.rootfs + '/etc/hostname', "w") as f:
+    f.write(common.get("hostname","teaiso").lower())
 if Stage().get() < 3:
     for i in common.get("customize_airootfs_pre", []):
         run_hook(settings, i)

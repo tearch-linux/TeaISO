@@ -11,7 +11,7 @@ compression = []
 rootfs = None
 iso_merge = None
 debug = False
-
+interactive = False
 
 def show(contents, packages):
     inf("mkteaiso configuration settings:")
@@ -51,7 +51,9 @@ def show(contents, packages):
             contents["repository"] if 'repository' in contents else 'N/A'))
     inf("\t{}: {}".format(colorize("Kernel cmdline", bold),
         contents["linux_args"] if 'linux_args' in contents else 'N/A'))
-
+    if interactive:
+        if input("Do you wanna continue? [Y/n]").lower()[0] != "y": 
+            exit(1)
 
 def check():
     if not os.path.exists(output):

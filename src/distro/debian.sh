@@ -33,7 +33,7 @@ create_rootfs(){
 populate_rootfs(){
     run_in_chroot apt update -yq
     run_in_chroot apt full-upgrade -yq
-    run_in_chroot apt install live-boot live-config -yq
+    run_in_chroot apt install live-boot live-config user-setup -yq
 }
 
 install_packages(){
@@ -53,6 +53,7 @@ generate_isowork(){
     fi
     mkdir -p isowork/live/ || true
     ln -s live isowork/casper || true
+    ln -s . isowork/debian || true
     if [[ -e "filesystem.squashfs" ]]; then
         mv filesystem.squashfs isowork/live/
         cd isowork/live; sha512sum filesystem.squashfs > filesystem.sha512
