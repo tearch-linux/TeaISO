@@ -81,6 +81,12 @@ def now():
     return str(datetime.now().strftime("%d/%m/%y %H:%M")).encode("utf-8")
 
 
+def versiontuple(v):
+   filled = []
+   for point in str(v).split("."):
+      filled.append(point.zfill(8))
+   return tuple(filled)
+
 def run_hook(settings, i):
     inf("==> Running: {}".format(colorize(i, 0)))
     run("cat \"{}\" > \"{}/tmp/hook\"".format(settings.profile+"/"+i, settings.rootfs))

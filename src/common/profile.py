@@ -1,7 +1,7 @@
 import yaml
 import os
 from datetime import date
-from utils import err
+from utils import err, versiontuple
 profile = None
 
 
@@ -12,7 +12,7 @@ def parse_profile(profile_dir="/usr/lib/teaiso/profile/archlinux", teaiso="/usr/
 
     contents = {}
     with open(profile_dir + "/profile.yaml", "r") as file:
-        if 3.13 >= float(yaml.__version__) :
+        if versiontuple(3.13) >= versiontuple(yaml.__version__) :
             contents = yaml.load(file.read())
         else:
             contents = yaml.load(file.read(), Loader=yaml.FullLoader)
