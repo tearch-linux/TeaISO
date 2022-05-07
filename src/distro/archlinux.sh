@@ -72,7 +72,7 @@ generate_isowork(){
 }
 
 customize_airootfs(){
-    echo "HOOKS+=(archiso_shutdown archiso archiso_loop_mnt archiso_kms)" >> "$rootfs/etc/mkinitcpio.conf"
+    echo "HOOKS+=(archiso archiso_loop_mnt archiso_kms)" >> "$rootfs/etc/mkinitcpio.conf"
     for kernel in $(chroot "${rootfs}" ls /lib/modules | xargs -n1 basename); do
         run_in_chroot mkinitcpio -k "$kernel" -g "/boot/initramfs-linux.img"
     done
