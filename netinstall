@@ -6,6 +6,8 @@ fi
 if [[ -d /var/lib/dpkg ]] ; then
     apt-get install xorriso mtools dosfstools squashfs-tools zstd debootstrap git make \
         gcc python3-yaml libc6-dev busybox-static unzip binutils --no-install-recommends -yq
+elif [[ -d /var/lib/pacman ]] ; then
+    pacman -Sy xorriso mtools squashfs-tools git make gcc python-yaml busybox unzip binutils --noconfirm
 fi
 git clone https://gitlab.com/tearch-linux/applications-and-tools/teaiso /tmp/teaiso
 cd /tmp/teaiso
