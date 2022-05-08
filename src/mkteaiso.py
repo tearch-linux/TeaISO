@@ -45,6 +45,10 @@ if os.path.exists("./Makefile") and os.path.exists("./mkteaiso"):
 
 sys.path.insert(0, settings.teaiso)
 
+# load profile
+run("python3 \"{}/misc/check-command.py\"".format(settings.teaiso))
+
+
 if create_profile:
     run("cp -rf {0}/profiles/{1} {2}/{1}".format(settings.teaiso,
         create_profile, os.getcwd()))
