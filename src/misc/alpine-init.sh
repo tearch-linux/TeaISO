@@ -2,7 +2,7 @@
 /bin/busybox --install -s /bin
 mount -t devtmpfs devtmpfs /dev
 mount -t sysfs sysfs /sys
-mount -t proc proc proc
+mount -t proc proc /proc
 mount -t tmpfs tmpfs /run
 find /lib/modules/$(uname -r)/kernel -type f | sed "s/.*\//modprobe /g;s/\..*//g" | sh 2>/dev/null
 mdev -s
@@ -48,6 +48,17 @@ while [ "$root" == "" ] ; do
 		fi
 	done
 done
-sh
+for i in $(cat /proc/cmdline)
+do
+    echo "export $i" >> /env
+done
+. /env || true
 live_mount
-exec chroot /new_root /sbin/init
+mount --move /dev /new_root/dev
+mount --move /sys /new_root/sys
+mount --move /proc /new_root/proc
+mount --move /run /new_root/run
+if [ "$init" == "" ] ; then
+    init=/sbin/init
+fi
+exec switch_root /new_root $init "$@"
