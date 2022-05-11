@@ -31,14 +31,18 @@ create_rootfs(){
 
 populate_rootfs(){
     cat /etc/resolv.conf > "$rootfs"/etc/resolv.conf
-    run_in_chroot apk add linux-edge bash ca-certificates eudev
-    run_in_chroot setup-udev || true
+    run_in_chroot apk add bash ca-certificates eudev mkinitfs
+    chroot "$rootfs" setup-udev || true
     cp "${teaiso}"/misc/alpine-init.sh "$rootfs"/usr/share/mkinitfs/initramfs-init-live
     echo 'features="ata base cdrom ext4 keymap kms lvm mmc nvme raid scsi squashfs usb virtio"' > "$rootfs"/etc/mkinitfs/mkinitfs-live.conf
 }
 
 customize_airootfs(){
     kernel=$(ls "$rootfs"/lib/modules/ | sort -V | head -n 1)
+    if [[ "$kernel" == "" ]] ; then
+                echo "Kernel missing!"
+        exit 1
+    fi
     run_in_chroot mkinitfs -i /usr/share/mkinitfs/initramfs-init-live -c /etc/mkinitfs/mkinitfs-live.conf -o /boot/initramfs-live "$kernel"
 }
 
@@ -60,7 +64,14 @@ generate_isowork(){
         cd "${workdir}"
     fi
     echo "menuentry $(distro_name) --class alpine {" >> isowork/boot/grub/grub.cfg
-    echo "  linux /boot/vmlinuz-edge boot=live ${cmdline}" >> isowork/boot/grub/grub.cfg
+    if [[ -f isowork/boot/vmlinuz-lts ]] ; then
+        echo "  linux /boot/vmlinuz-lts boot=live ${cmdline}" >> isowork/boot/grub/grub.cfg
+    elif [[ -f isowork/boot/vmlinuz-edge ]] ; then
+        echo "  linux /boot/vmlinuz-edge boot=live ${cmdline}" >> isowork/boot/grub/grub.cfg
+    else
+        echo "Kernel missing!"
+        exit 1
+    fi
     echo "  initrd /boot/initramfs-live" >> isowork/boot/grub/grub.cfg
     echo "}" >> isowork/boot/grub/grub.cfg
 }
