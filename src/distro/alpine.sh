@@ -31,7 +31,8 @@ create_rootfs(){
 
 populate_rootfs(){
     cat /etc/resolv.conf > "$rootfs"/etc/resolv.conf
-    run_in_chroot apk add linux-edge bash ca-certificates
+    run_in_chroot apk add linux-edge bash ca-certificates eudev
+    run_in_chroot setup-udev || true
     cp "${teaiso}"/misc/alpine-init.sh "$rootfs"/usr/share/mkinitfs/initramfs-init-live
     echo 'features="ata base cdrom ext4 keymap kms lvm mmc nvme raid scsi squashfs usb virtio"' > "$rootfs"/etc/mkinitfs/mkinitfs-live.conf
 }

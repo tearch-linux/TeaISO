@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-#chroot airootfs mkinitcpio -p linux
+echo -e "live\nlive\n" | passwd root
 echo "Nothing to do!"
