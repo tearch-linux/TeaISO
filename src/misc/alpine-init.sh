@@ -36,6 +36,12 @@ is_file_avaiable(){
     return $status
 }
 
+if [ -f /ventoy/hook/arch/ventoy-disk.sh ] ; then
+	echo "Loading Ventoy hooks"
+	source /ventoy/hook/arch/ventoy-disk.sh &>/dev/null
+	sleep 0.3
+fi
+
 while [ "$root" == "" ] ; do
 	list=$(ls /sys/class/block/ | grep ".*[0-9]$" | grep -v loop | grep -v ram | grep -v nbd | grep -v fd | sed "s|^|/dev/|g")
 	for part in $list
