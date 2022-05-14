@@ -37,6 +37,7 @@ populate_rootfs(){
     mkdir -p "$rootfs"/etc/fonts/
     touch "$rootfs"/etc/fonts/fonts.conf
     mkdir -p "$rootfs"/boot/grub
+    echo "DISABLE_DM_VERITY=true" >> "$rootfs"/etc/live/boot.conf
 }
 
 install_packages(){
