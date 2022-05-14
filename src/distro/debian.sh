@@ -36,6 +36,7 @@ populate_rootfs(){
     run_in_chroot apt install live-boot live-config user-setup -yq
     mkdir -p "$rootfs"/etc/fonts/
     touch "$rootfs"/etc/fonts/fonts.conf
+    mkdir -p "$rootfs"/boot/grub
 }
 
 install_packages(){
