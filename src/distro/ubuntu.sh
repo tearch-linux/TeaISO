@@ -22,8 +22,9 @@ populate_rootfs(){
     run_in_chroot apt update -yq
     run_in_chroot apt full-upgrade -yq
     run_in_chroot apt install casper -yq
-    # Fix for ignore update-grub in chroot
-    ln -s ./true "$rootfs"/bin/systemd-detect-virt
+    mkdir -p "$rootfs"/etc/fonts/
+    touch "$rootfs"/etc/fonts/fonts.conf
+
 }
 
 generate_isowork(){

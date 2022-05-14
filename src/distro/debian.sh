@@ -34,8 +34,8 @@ populate_rootfs(){
     run_in_chroot apt update -yq
     run_in_chroot apt full-upgrade -yq
     run_in_chroot apt install live-boot live-config user-setup -yq
-    # Fix for ignore update-grub in chroot
-    ln -s ./true "$rootfs"/bin/systemd-detect-virt
+    mkdir -p "$rootfs"/etc/fonts/
+    touch "$rootfs"/etc/fonts/fonts.conf
 }
 
 install_packages(){
@@ -81,7 +81,6 @@ customize_airootfs(){
 clear_rootfs(){
     run_in_chroot apt clean
     run_in_chroot apt autoremove --purge
-    rm -f "$rootfs"/bin/systemd-detect-virt || true
     rm -rf $rootfs/var/lib/apt/lists || true
     find "$rootfs/var/log/" -type f | xargs rm -f  || true
 }
