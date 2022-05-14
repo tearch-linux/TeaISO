@@ -21,7 +21,7 @@ create_rootfs(){
 populate_rootfs(){
     run_in_chroot apt update -yq
     run_in_chroot apt full-upgrade -yq
-    run_in_chroot apt install casper -yq
+    run_in_chroot apt install casper -o Dpkg::Options::="--force-confnew" -yq
     mkdir -p "$rootfs"/etc/fonts/
     touch "$rootfs"/etc/fonts/fonts.conf
     mkdir -p "$rootfs"/boot/grub
