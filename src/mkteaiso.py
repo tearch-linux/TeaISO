@@ -140,6 +140,11 @@ distro.set("keyring_package", common.get("keyring_package","")) # for debian
 distro.set("codename", common.get("codename", "stable"))  # for debian
 distro.set("repository", common.get("repository"))  # for debian
 
+def error_event():
+    Mount.unmount(settings.rootfs)
+    
+
+set_error_event(error_event)
 
 if settings.debug:
     dbg("Distro options:\n"+getoutput("cat "+settings.workdir+"/options.sh"))

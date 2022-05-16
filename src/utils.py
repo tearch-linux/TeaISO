@@ -24,6 +24,7 @@ simulation = False
 
 VERSION = "2.0.1"
 
+error_event = None
 
 def run(cmd, vital=True):
     if simulation:
@@ -36,6 +37,8 @@ def run(cmd, vital=True):
 
 
 def err(msg, colorize=True):
+    if error_event:
+        error_event()
     libteaiso.err(str(msg).encode("utf-8"), now())
     exit(1)
 
@@ -71,6 +74,10 @@ def disable_color():
 def is_root():
     return libteaiso.is_root() == 1
 
+
+def set_error_event(func=None):
+    global error_event
+    error_event = func
 
 def set_simulation():
     global simulation
@@ -169,8 +176,9 @@ class Mount:
     def mount(rootfs):
         for dir in ["dev", "dev/pts", "sys", "proc", "run"]:
             run("mount --bind /{1} /{0}/{1} 2>/dev/null".format(rootfs, dir))
-            run("ln -s {0}/proc/self/fd {0}/dev/fd 2>/dev/null || true".format(rootfs), vital=False)
-            run("ln -s {0}/proc/self/mounts /etc/mtab || true")
+        run("ln -s {0}/proc/self/fd {0}/dev/fd 2>/dev/null || true".format(rootfs), vital=False)
+        run("ln -s {0}/proc/self/mounts /etc/mtab || true")
+        
 
     def unmount(rootfs):
         for dir in ["dev/pts", "dev", "sys", "proc", "run"]:
