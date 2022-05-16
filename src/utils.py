@@ -29,8 +29,9 @@ error_event = None
 def run(cmd, vital=True):
     if simulation:
         return 0
-    inf("=> Executing: {}".format(colorize(str(cmd), 0)))
-    i = libteaiso.run(str(cmd).encode("utf-8"))
+    cmd = " ".join(str(cmd).split())
+    inf("=> Executing: {}".format(colorize(cmd, 0)))
+    i = libteaiso.run(cmd.encode("utf-8"))
     if i != 0 and vital:
         err("Failed to run command:{}".format(cmd))
     return i
