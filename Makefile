@@ -13,3 +13,6 @@ install:
 
 clean:
 	make -C lib clean
+uninstall:
+	rm -rfv $(DESTDIR)/usr/bin/mkteaiso
+	rm -rfv $(DESTDIR)/usr/lib/teaiso/
