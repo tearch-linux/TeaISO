@@ -3,7 +3,10 @@ write_repo(){
     if [[ "$repository" != "" ]] ; then
         echo "-r $repository"
     else
-        echo http://dl-cdn.alpinelinux.org/alpine/latest-stable/
+        if [[ "$codename" == "" ]] ; then
+            codename="latest-stable"
+        fi
+        echo http://dl-cdn.alpinelinux.org/alpine/$codename/
     fi
 }
 
@@ -22,7 +25,6 @@ tools_init(){
 create_rootfs(){
     ls ${DESTDIR}/etc/alpine-release &>/dev/null && return 0
     arch="$(uname -m)"
-    REPO="http://dl-cdn.alpinelinux.org/alpine/latest-stable/"
     apk --arch $arch -X "$(write_repo)/main/" -U --allow-untrusted --root "$rootfs" --initdb add alpine-base
     sync
     echo "$(write_repo)/main/" > "$rootfs"/etc/apk/repositories

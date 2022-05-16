@@ -2,6 +2,7 @@ name: alpine
 distro: alpine
 publisher: Alpine Linux <https://alpinelinux.org>
 label: ALPINE_TEAISO
+codename: latest-stable
 application_id: Alpine Linux Live/Rescue Media
 #airootfs_directory: airootfs
 #iso_merge: iso_merge
