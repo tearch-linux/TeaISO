@@ -31,13 +31,14 @@ Where to starting
 
 Currently **Teaiso** is not packaged in any distro, but is distribution agnostic.. just clone the repository and install as described.
 
-When you install the project, only two places are touch, the program binary (the script named `mkteaiso`) that wil be in `$(DESTDIR)/usr/bin/mkteaiso` and the scripts files that will be in `$(DESTDIR)/usr/lib/teaiso/` as default paths when installed.
+When you install the project, only two places are touch, the program binary (the script named `mkteaiso`) that wil be in `$(DESTDIR)/usr/bin/mkteaiso` and the scripts files that will be in `$(DESTDIR)/usr/lib/teaiso/` as default paths when installed. For more information check the INSTALL.md file of the root directorty of the project sources.
 
-After that just call `mkteaiso` with a profile to build default linux distro of your preference
+After that just call `mkteaiso` with a profile to build default linux distro. For more information of usage check [starting-use-case.md](starting-use-case.md)
+
 
 See also
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* [Starting use case](starting-use-case.md)
+* [doc/starting-use-case.md](doc/starting-use-case.md)
 * [creating-profile](creating-profile.rst)
 * [porting-distribution](porting-distribution.rst)
