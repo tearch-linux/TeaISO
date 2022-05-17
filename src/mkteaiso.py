@@ -15,11 +15,13 @@ os.umask(18)  # set umask as 022
 # argument parse
 for i in sys.argv[1:]:
     if Args.is_arg(i, "output"):
-        settings.output = getoutput("realpath "+Args().get_value(i))
+        settings.output = os.path.realpath(Args().get_value(i))
     elif Args.is_arg(i, "work"):
-        settings.workdir = getoutput("realpath "+Args().get_value(i))
+        settings.workdir = os.path.realpath(Args().get_value(i))
     elif Args.is_arg(i, "profile"):
-        settings.profile = getoutput("realpath "+Args().get_value(i))
+        settings.profile = os.path.realpath(Args().get_value(i))
+    elif Args.is_arg(i, "shared"):
+        settings.shared = os.path.realpath(Args().get_value(i))
     elif Args.is_arg(i, "create"):
         create_profile = Args().get_value(i)
     elif Args.is_arg(i, "gpg"):
@@ -74,7 +76,7 @@ os.environ["DEBIAN_FRONTEND"] = "noninteractive"
 
 if os.path.exists(settings.teaiso+"/profiles/"+settings.profile):
     settings.profile = settings.teaiso+"/profiles/"+settings.profile
-settings.profile = getoutput("realpath "+settings.profile)
+settings.profile = os.path.realpath(settings.profile)
 
 
 # rootfs settings
@@ -141,6 +143,9 @@ distro.set("codename", common.get("codename", "stable"))  # for debian
 distro.set("repository", common.get("repository"))  # for debian
 
 def error_event():
+    if settings.shared and os.path.isdir(settings.shared):
+        run("umount -lf '{}/teaiso'".format(settings.rootfs))
+        os.rmdir("{}/teaiso".format(settings.rootfs))
     Mount.unmount(settings.rootfs)
     
 
@@ -158,6 +163,9 @@ else:
     inf("Using build stage: {}".format(colorize(Stage().get(), 0)))
 
 Mount.mount(settings.rootfs)
+if settings.shared and os.path.isdir(settings.shared):
+    os.mkdir("{}/teaiso".format(settings.rootfs))
+    run("mount --bind '{}' '{}/teaiso'".format(settings.shared,settings.rootfs))
 
 if Stage().get() < 2:
     distro.populate_rootfs()
@@ -226,6 +234,9 @@ if Stage().get() < 7:
     distro.make_pkglist()
     Stage().set(7)
 
+if settings.shared and os.path.isdir(settings.shared):
+    run("umount -lf '{}/teaiso'".format(settings.rootfs))
+    os.rmdir("{}/teaiso".format(settings.rootfs))
 Mount.unmount(settings.rootfs)
 
 # Set permissions if exists

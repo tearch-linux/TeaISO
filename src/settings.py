@@ -7,6 +7,7 @@ output = "/var/lib/teaiso/output"
 workdir = "/var/lib/teaiso/work/{}".format(int(time.time()*1000))
 teaiso = "/usr/lib/teaiso"
 profile = "archlinux"
+shared = None
 compression = []
 rootfs = None
 iso_merge = None
@@ -19,6 +20,7 @@ def show(contents, packages):
     inf("\t{}: {}".format(colorize("Profile Directory", bold), profile))
     inf("\t{}: {}".format(colorize("Working Directory", bold), workdir))
     inf("\t{}: {}".format(colorize("Output Directory", bold), output))
+    inf("\t{}: {}".format(colorize("Shared Directory", bold), shared))
 
     inf("\t{}: {}".format(colorize("Profile", bold), contents["name"]))
     inf("\t{}: {}".format(colorize("Label", bold), contents["label"]))

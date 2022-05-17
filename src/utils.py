@@ -136,6 +136,7 @@ Base Arguments:
   -p=PROFILE, --profile=PROFILE     Profile directory or name (default: archlinux)
   -o=OUTPUT, --output=OUTPUT        ISO output directory (default: /var/teaiso/output)
   -w=WORK, --work=WORK              ISO work directory (default: /var/teaiso/work)
+  -s=SHARED, --shared=SHARED        Shared directory (default: None)
   -c=BASE, --create=BASE            Create profile by base profile
   -g=KEY, --gpg=KEY                 Sign airootfs image by GPG
 
