@@ -5,7 +5,11 @@ Teaiso brief usage
 
 ##  General usage
 
-The main program is `mkteaiso`, the program will produce a iso and must be parse a default profile (linux flavour) to produce. So first time lest check what profiles (linux flavours) we can produce:
+The main program is `mkteaiso`, the program will produce an ISO boot image file and must be parse a default profile (linux flavour) to produce. 
+
+The complete terminology and step by step documentation are into [teaiso-technology.md](teaiso-technology.md).
+
+For quick workflow, first lest check what profiles (linux flavours) we can produce:
 
 #### Profiles
 
@@ -15,13 +19,13 @@ These are the available profiles and defaults for each one:
 
 | name         | linux            | observations                 |
 | ------------ | ---------------- | ---------------------------- |
-| alpine       | Alpine Linux     | power of x86_64 minimal 280MB console image 😍 |
-| archlinux    | Arch             | popular x86_64 base image 😉 |
-| debian       | Debian GNU/Linux | powered x86_64 testing Debian image 😳 |
-| none         | experimental empty | future empty linux or LFS image 😍 |
+| alpine       | Alpine Linux     | power of x86_64 minimal 280MB console image 😳 |
+| archlinux    | Arch             | popular x86_64 base image 😒 |
+| debian       | Debian GNU/Linux | powered x86_64 testing Debian image 😎  |
+| none         | dummy template   | mostly used by debugging 😍 |
 | sulin        | Sulin OS linux   | like LFS but with multilib support 😱 |
 | tearch       | Arch             | intent to customize to newbie users 😒 |
-| ubuntu       | Debian/Ubuntu    | imagine live without casper file..😎 |
+| ubuntu       | Debian/Ubuntu    | imagine live without casper file.. 😂 |
 
 #### Working dir and space
 
@@ -29,10 +33,14 @@ Profiles will determine what flavour and the contents of the flavour of linux. I
 
 Due to the fact that an ISO file will be produced, a considerable space will be required, this will depend on modifying the file `customize-airootfs.sh` and `packages.x86_64`. If you use default profiles the sizes will be around 300Mb.
 
+ For more information about `mkteaiso` terminology check [teaiso-technology.md](teaiso-technology.md).
+
 #### Default Examples
 
 * To produce a alpine linux base just `mkteaiso -p=alpine`
 * To produce a debian linux testing `mkteaiso -p=debian`
+
+The ISO files will be produced to the `/var/lib/teaiso/output` directory, with date as part of the name. For more information about `mkteaiso` workflow check [teaiso-technology.md](teaiso-technology.md)
 
 #### Customization Examples
 
@@ -69,6 +77,8 @@ EOF
 mkteaiso --profile=/usr/src/teaiso-alpine-kde-stable
 ```
 
+ For more information about `mkteaiso` check [teaiso-technology.md](teaiso-technology.md).
+
 ## Help of the program
 
 ```
@@ -79,8 +89,8 @@ Profile directory should contain profile.yaml.
 
 Base Arguments:
   -p=PROFILE, --profile=PROFILE     Profile directory or name (default: archlinux)
-  -o=OUTPUT, --output=OUTPUT        ISO output directory (default: /var/teaiso/output)
-  -w=WORK, --work=WORK              ISO work directory (default: /var/teaiso/work)
+  -o=OUTPUT, --output=OUTPUT        ISO output directory (default: /var/lib/teaiso/output)
+  -w=WORK, --work=WORK              ISO work directory (default: /var/lib/teaiso/work)
   -c=BASE, --create=BASE            Create profile by base profile
   -g=KEY, --gpg=KEY                 Sign airootfs image by GPG
 
@@ -96,6 +106,6 @@ Miscellaneous:
 
 ## See also
 
-* [doc/starting-use-case.md](doc/starting-use-case.md)
+* [teaiso-technology.md](teaiso-technology.md)
 * [creating-profile](creating-profile.rst)
 * [porting-distribution](porting-distribution.rst)

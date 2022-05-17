@@ -37,6 +37,7 @@ This file is distribution configuration file. Example file here:
 	codename: testing
 	publisher: Debian GNU/Linux <https://debian.org>
 	label: DEBIAN_TEAISO
+	codename: testing
 	application_id: Debian Linux Live/Rescue Media
 	airootfs_directory: airootfs
 	iso_merge: iso_merge
