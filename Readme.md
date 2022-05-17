@@ -5,7 +5,7 @@ Teaiso
 
 ## About Teaiso
 
-Produces ISO of any kind of linux distribution as base. For more information check [docs](docs) directory. **Teaiso** is the iso generation tool of the **Tearch-linux** project at https://gitlab.com/tearch-linux, our goal is not being distro like `eos`, `arco`.
+Produces ISO of any kind of linux distribution as base. For more information check [docs](docs) directory. **Teaiso** is the iso generation tool of the **Tearch-linux** project at https://gitlab.com/tearch-linux, our goal is not being distro.
 
 ## Where to start
 
