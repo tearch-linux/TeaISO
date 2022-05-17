@@ -29,6 +29,9 @@ create_rootfs(){
     sync
     echo "$(write_repo)/main/" > "$rootfs"/etc/apk/repositories
     echo "$(write_repo)/community/" >> "$rootfs"/etc/apk/repositories
+    if [[ "$codename" == "edge" ]] ; then
+        echo "$(write_repo)/testing/" >> "$rootfs"/etc/apk/repositories
+    fi
 }
 
 populate_rootfs(){
