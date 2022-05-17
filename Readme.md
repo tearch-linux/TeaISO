@@ -1,44 +1,17 @@
-# Teaiso
-```
-Usage: mkteaiso -p=PROFILE [OPTION]...
-ISO generation tool for GNU/Linux.
-Example: mkteaiso -p=/usr/lib/teaiso/profiles/archlinux --interactive
-Profile directory should contain profile.yaml.
+Teaiso
+======
 
-Base Arguments:
-  -p=PROFILE, --profile=PROFILE     Profile directory or name (default: archlinux)
-  -o=OUTPUT, --output=OUTPUT        ISO output directory (default: /var/teaiso/output)
-  -w=WORK, --work=WORK              ISO work directory (default: /var/teaiso/work)
-  -c=BASE, --create=BASE            Create profile by base profile
-  -g=KEY, --gpg=KEY                 Sign airootfs image by GPG
+**The ISO generation tool for GNU/Linux**
 
-Miscellaneous:
-  -h, --help                        Display this help text and exit
-      --version                     Display version and exit
-      --nocolor                     Disable colorized output
-      --simulate                    Enable simulation mode
-      --nocheck                     Skip all check
-      --interactive                 Interactive operations
-      --debug                       Enable debug mode
-```
+## About Teaiso
 
-## Documentation: 
-Please visit **doc** directory.
+Produces ISO of any kind of linux distribution as base. For more information check [docs](docs) directory. **Teaiso** is the iso generation tool of the **Tearch-linux** project at https://gitlab.com/tearch-linux, our goal is not being distro.
 
-## Installation
+## Where to start
 
-`make` and `make install`
+1. REQUIREMENTS AND INSTALL at [INSTALL.md](INSTALL.md) .
+2. DOCUMENTATION AND USAGE: check [doc/Starting use case](doc/starting-use-case.md)
 
-## Netinstall
-Run as root:
-`wget https://gitlab.com/tearch-linux/applications-and-tools/teaiso/-/raw/master/netinstall -O - | bash`
+## LICENSE
 
-## Dependencies
-* gcc (build)
-* make (build)
-* python3
-* busybox
-* mtools
-* xorriso
-* grub (for creating iso)
-* squashfs-tools
+Check [LICENSE](LICENSE) for more information
