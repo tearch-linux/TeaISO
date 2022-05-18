@@ -16,8 +16,8 @@ tools_init(){
     mkdir -p /tmp/apk
     cd /tmp/apk
     arch="$(uname -m)"
-    apktools=$(wget -O - https://dl-cdn.alpinelinux.org/alpine/latest-stable/main/$arch/ | grep "apk-tools-static" | sed "s/^.*=\"//g;s/\".*//g")
-    wget -c "https://dl-cdn.alpinelinux.org/alpine/latest-stable/main/$arch/$apktools" -O apk-tools-static.apk
+    apktools=$(wget -O - https://dl-cdn.alpinelinux.org/alpine/$codename/main/$arch/ | grep "apk-tools-static" | sed "s/^.*=\"//g;s/\".*//g")
+    wget -c "https://dl-cdn.alpinelinux.org/alpine/$codename/main/$arch/$apktools" -O apk-tools-static.apk
     tar -zxf apk-tools-static.apk
     cp -pf sbin/apk.static /bin/apk
     chmod +x /bin/apk
