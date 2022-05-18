@@ -6,7 +6,7 @@ write_repo(){
         if [[ "$codename" == "" ]] ; then
             codename="latest-stable"
         fi
-        echo http://dl-cdn.alpinelinux.org/alpine/$codename/
+        echo http://dl-cdn.alpinelinux.org/alpine/$codename
     fi
 }
 
