@@ -4,7 +4,7 @@ mount -t devtmpfs devtmpfs /dev
 mount -t sysfs sysfs /sys
 mount -t proc proc /proc
 mount -t tmpfs tmpfs /run
-find /lib/modules/$(uname -r)/kernel -type f | sed "s/.*\//modprobe /g;s/\..*//g" | sh 2>/dev/null
+find /lib/modules/$(uname -r)/kernel -type f | grep -v debug | sed "s/.*\//modprobe /g;s/\..*//g" | sh 2>/dev/null
 mdev -s
 live_mount(){
     mkdir -p /alpine/a # upper
@@ -60,6 +60,9 @@ do
 done
 . /env || true
 live_mount
+if [ -b /dev/disk/by-label/writable ] ; then
+    mount /dev/disk/by-label/writable /new_root/home || true
+fi
 mount --move /dev /new_root/dev
 mount --move /sys /new_root/sys
 mount --move /proc /new_root/proc
