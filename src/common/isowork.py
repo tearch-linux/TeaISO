@@ -59,7 +59,7 @@ def create_iso(settings):
 
     # Generate writable
     run("dd if=/dev/zero of=\"{}/writable.img\" bs=4M count=1 oflag=sync".format(settings.workdir))
-    run("mkfs.ext4 -L writable \"{}/writable.img\"".format(settings.workdir))
+    run("mkfs.ext4 -b 1024 -L writable \"{}/writable.img\"".format(settings.workdir))
     
     # Miscellaneous
     if not os.path.exists(settings.output):
@@ -110,7 +110,7 @@ def create_squashfs(settings):
     if settings.compression[0] == "squashfs":
         if os.path.exists("{}/filesystem.squashfs".format(settings.workdir)):
             os.unlink("{}/filesystem.squashfs".format(settings.workdir))
-        run("mksquashfs {} {}/filesystem.squashfs {} -wildcards".format(
+        run("mksquashfs {} {}/filesystem.squashfs {} -always-use-fragments -b 65536 -wildcards".format(
             settings.rootfs, settings.workdir, settings.compression[1]))
     elif settings.compression[0] == "erofs":
         if os.path.exists("{}/filesystem.erofs".format(settings.workdir)):
