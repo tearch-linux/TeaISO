@@ -3,6 +3,12 @@ Teaiso
 
 **The ISO generation tool for GNU/Linux**
 
+Welcome to Teaiso's official documentation. Here you can find probably anything you need to know about 
+the configuration and usage of your installation, the usage and the contributing guidelines.
+
+Are you ready to get into this boat? 🚢
+
+
 About Teaiso
 ============
 
@@ -17,28 +23,22 @@ About the project
 
 **Teaiso** is the iso generation tool of the **Tearch-linux** project at https://gitlab.com/tearch-linux, our goal is not being distro like `eos`, `arco`.
 
-About the technology
+Where to start
 ============
 
-Our technology is made with `c`, `bash` and `python`, the work of the teaiso is using chroot by the moment, in the future we will reimplement in `vala` and maybe use docker containers to avoid touch system process.
+The program is distribution agnostic.. just clone the repository and install as described.
 
-The live system used the `squashfs-tools` to produce the rootfs we called `airootfs` where we put everything included for live stuffs like desktop sesion.
-
-The project uses the concept of "profiles" as linux distributions to build, each profile are few files that determines what customizations are made in live mode and what stuffs are included in the squasfs file.
-
-Where to starting
-============
-
-Currently **Teaiso** is not packaged in any distro, but is distribution agnostic.. just clone the repository and install as described.
-
-When you install the project, only two places are touch, the program binary (the script named `mkteaiso`) that wil be in `$(DESTDIR)/usr/bin/mkteaiso` and the scripts files that will be in `$(DESTDIR)/usr/lib/teaiso/` as default paths when installed. For more information check the INSTALL.md file of the root directorty of the project sources.
-
-After that just call `mkteaiso` with a profile to build default linux distro. For more information of usage check [starting-use-case.md](starting-use-case.md)
-
+1. Install the project, check the [Installation.md](Installation.md) documentation.
+2. The manual usage is simple, check the [Manual-of-usage.md](Manual-of-usage.md)
+3. After understand basics, check:
+    * About the technology: [Teaiso-technology.md](Teaiso-technology.md)
+    * About profiles: [creating-profile](creating-profile.rst)
+    * About made linux distros: [porting-distribution](porting-distribution.rst)
+4. We encourage you to read the [FAQ-and-notes.md](FAQ-and-notes.md)
 
 See also
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* [doc/starting-use-case.md](doc/starting-use-case.md)
+* [starting-use-case.md](starting-use-case.md)
 * [creating-profile](creating-profile.rst)
 * [porting-distribution](porting-distribution.rst)
