@@ -36,6 +36,49 @@ Miscellaneous:
  
 #### Profiles
  
-The profiles are the flavours of iso that will be created, the format is well described in the document [creating-profile.rst](creating-profile.rst).
+The profiles are **directories that provides the nature of iso that will be created**, the format is well described in the document [creating-profile.rst](creating-profile.rst).
 
-These are the available profiles and defaults for each one:
+These are the available **template defaults for each supported [distro](Teaiso-technology.md#terminology) base [profile](Teaiso-technology.md#profiles-definitions)**:
+
+| Template name | Profile distro  | observations                 |
+| ------------ | ---------------- | ---------------------------- |
+| alpine       | Alpine Linux     | power of x86_64 minimal 280MB console image 😳 |
+| archlinux    | Arch             | popular x86_64 base image 😒 |
+| debian       | Debian GNU/Linux | powered x86_64 testing Debian image 😎  |
+| none         | dummy template   | mostly used by debugging 😍 |
+| sulin        | Sulin OS linux   | like LFS but with multilib support 😱 |
+| tearch       | Arch             | intent to customize to newbie users 😒 |
+| ubuntu       | Debian/Ubuntu    | imagine live without casper file.. 😂 |
+
+
+You must [create a profile](creating-profile.rst) from these templates running the following command: 
+
+`mkteaiso -c <Template name>`
+
+After that, one directory with the name of the `<Template name>` will be created, based on the [profile distro definitons](porting-distribution.rst) and [profile format](creating-profile.rst).
+
+You must tune the contents of the directory profile before produce the ISO image.
+
+#### Making the ISO image
+
+To produce a ISO image file based on your directori profile, you must run the following command:
+
+`mkteaiso -c <absolute path of the created profile directory>`
+
+Using your customized profile you can change the name of the profile directory to handle various flavours.
+
+A brieft example of making quick iso its provided at the [starting-use-case.md](starting-use-case.md)
+
+#### Debug your process
+
+You can just run the command and will provide standard out of the progress, also a log file is send to the `/var/log/teaiso.log` file. Extra debug information can be optained by the `--debug` option.
+
+The process uses [stages to determine the progress](Teaiso-technology.md#stage-runlevels) of the creation, 
+so in each one some task are performed.
+
+## See also
+
+* [starting-use-case.md](starting-use-case.md)
+* [Teaiso-technology.md](Teaiso-technology.md)
+
+
