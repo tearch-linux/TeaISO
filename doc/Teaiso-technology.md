@@ -5,26 +5,25 @@ Teaiso technology
 
 ##  General information
 
-Our project is made with `c`, `bash` and `python`, the work of the teaiso is using chroot by the moment, 
-in the future we will reimplement in `vala` and maybe use docker containers to avoid touch system process.
+Our project is made with `c`, `bash` and `python`, the work of the teaiso is using chroot by the moment.
 
 The live system used the `squashfs-tools` to produce the rootfs of the live disk.
 
-The project uses the concept of "profiles" as linux distributions to build, 
+The project uses the concept of "[profiles](#profiles-definitions)" as linux distributions to build, 
 each profile are few files that determines what customizations are made in live mode 
-and what stuffs are included in the squasfs file; also each profile 
+and what stuffs are included in the squasfs file; also each [profile](#profiles-definitions) 
 
 #### Terminology
 
 * `airootfs`: is the rootfs directory that willwork and from the squasfs will be created.
-* `profile`: are directories where customizations will be taken to apply over the `airootfs` check [creating-profile.rst](creating-profile.rst) for more information.
+* `profile`: are directories where customizations will be taken to apply over the `airootfs` check [Profile definitios](#profiles-definitions) section for information.
     * skeleton profiles: are template base from the teaiso profile directory, use it for creation of working profiles.
     * working profiles: are the real profiles created based on the skeleton ones. and will handle customizations to apply.
 * `distro`: each profile corresponds to a distro script for processing, to perform specific distro needs, check [porting-distribution.rst](porting-distribution.rst) for more information.
     * `funtion`: the distro format defined functions that will determine modifications and actions over the `airootfs`.
     * `variables`: are used in the performed funtions only for some distros, by example Debian based ones.
 * `shared`: this is a directory that will be common beetween the `airootfs` and the host real filesystem
-* `stage`: the runlevels controls to determine the creation progress of the iso generation, we have 10 stage runlevels where the profile customizations will be apply.
+* `stage`: the runlevels controls to determine the creation progress of the iso generation, [we have 10 stage runlevels](#stage-runlevels) where the [profile customizations](#profiles-definitions) will be apply.
 * `mkteaiso`: is the main program to use, check the quick workflow at the [starting-use-case.md](starting-use-case.md) document.
 
 #### Artifacts
