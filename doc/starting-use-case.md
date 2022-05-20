@@ -29,8 +29,8 @@ Firt we must create a profile, profiles are the template flavours of iso that wi
 To produce a debian linux testing:
 
 ```
-mkteaiso -c alpine
-cd alpine
+mkteaiso -c debian
+cd debian
 mkteaiso -p $(pwd)
 ```
 
