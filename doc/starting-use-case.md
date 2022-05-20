@@ -7,6 +7,20 @@ Teaiso brief usage
 
 The main program is `mkteaiso`this document is a quick workflow (for more complete information consult the document [Manual-of-usage.md](Manual-of-usage.md)).
 
+#### Fast Example
+
+To produce a Debian "testing" ISO Linux based on [Debian profile](#profiles):
+
+```
+mkteaiso -c debian
+cd debian
+mkteaiso -p $(pwd)
+```
+
+The ISO files will be produced to the `/var/lib/teaiso/output` directory, with date as part of the name.
+
+> This document is a quick way to carry out the workflow, for more complete information consult the document [Manual-of-usage.md](Manual-of-usage.md)
+
 #### Profiles
 
 Firt we must create a profile, profiles are the template flavours of iso that will be created, these are the available profiles and defaults for each one:
@@ -24,21 +38,7 @@ Firt we must create a profile, profiles are the template flavours of iso that wi
 
 > This document is a quick review made for fast workflow, the format is well described in the document [creating-profile.rst](creating-profile.rst).
 
-#### Default Examples
-
-To produce a debian linux testing:
-
-```
-mkteaiso -c debian
-cd debian
-mkteaiso -p $(pwd)
-```
-
-The ISO files will be produced to the `/var/lib/teaiso/output` directory, with date as part of the name.
-
-> This document is a quick way to carry out the workflow, for more complete information consult the document [Manual-of-usage.md](Manual-of-usage.md)
-
-#### Customization Examples
+#### Customization Example
 
 You can made your own customized iso:
 
