@@ -18,9 +18,9 @@ This project is widelly used to produce the VenenuX Alpine ISOS https://codeberg
 
 #### How can i install my teaiso images
 
-Teaiso is just a Live ISO image creator, the each linux installers are out of scope of the project, you have two options:
+Teaiso is just a Live ISO image creator, each installer of each linux flavor are out of scope of the project, you have two options:
 
-- Use the distro Live ISO creation tool (that of course are more complicated 😌)
+- Use the own Live ISO creation tool of each Linux distribution (that of course are more complicated 😌)
 - Use the [17g installer](http://gitlab.com/ggggggggggggggggg/17g) a fork of LMDE installer
 
 In some special cases, due the installer nature are included in the rootfs, installation 
@@ -35,7 +35,7 @@ only has networking if you included `networkmanager` package in the live iso cre
 #### Usage of DESTDIR at install
 
 Please understand that although you can set `$DESTDIR` at installation procedure, 
-the developer has set paths to the root, and this variable is only used to manage 
+the developer must set paths to the root, and this variable is only used to manage 
 the destination of files when performed the install, not the execution of the program.
 
 ## See also:
