@@ -6,7 +6,7 @@ Teaiso INSTALL
 ## Requirements
 
 Currently **Teaiso** is not packaged in any distribution, but is distribution agnostic.. 
-so will work in any Linux distribution, including those with `muslc` library.
+so will work in any Linux distribution, including those with `muslc` or `glibc` library.
 
 The process does not need much RAM neither DISK space.. but when performed runtime 
 will need so much as you wants into each ISO generation.
