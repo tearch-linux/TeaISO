@@ -5,13 +5,13 @@ Teaiso INSTALL
 
 ## Requirements
 
-Currently **Teaiso** is not packaged in any distro, but is distribution agnostic.. 
-so will work in any linux distro, including those with `muslc` library.
+Currently **Teaiso** is not packaged in any distribution, but is distribution agnostic.. 
+so will work in any Linux distribution, including those with `muslc` library.
 
-Just the program does not need RAM neither DISK so much.. but when performed runtime 
-will need so much as you wants into each iso generation.
+The process does not need much RAM neither DISK space.. but when performed runtime 
+will need so much as you wants into each ISO generation.
 
-## Dependencies
+## Requirements
 
 #### Build
 
@@ -40,7 +40,7 @@ Please read about the [usage of `$DESTDIR` variable at FAQ-and-notes.md](FAQ-and
 
 #### Local install
 
-This is the recommended way for any kind of linux:
+This is the recommended way for any kind of Linux:
 
 ```
 git clone https://gitlab.com/tearch-linux/applications-and-tools/teaiso
@@ -62,4 +62,4 @@ wget https://gitlab.com/tearch-linux/applications-and-tools/teaiso/-/raw/master/
 
 ## See also:
 
-* [README.md](README.md)
+* [Manual-of-usage.md](Manual-of-usage.md)

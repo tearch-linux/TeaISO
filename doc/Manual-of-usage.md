@@ -5,7 +5,7 @@ Teaiso Manual
 
 ## About the program
 
-The main program is `mkteaiso`, the program will produce an ISO boot image file and must be parse a default profile (linux flavour) to produce. 
+The main program is `mkteaiso`, the program will produce an ISO boot image file and must be parse a default profile (a template Linux flavor) to produce. 
 
 The complete terminology and step by step documentation are into [Teaiso-technology.md](Teaiso-technology.md).
 
@@ -36,9 +36,9 @@ Miscellaneous:
  
 #### Profiles
  
-The profiles are **directories that provides the nature of iso that will be created**, the format is well described in the document [creating-profile.rst](creating-profile.rst).
+The profiles are **directories that provides the nature of ISO that will be created**, the format is well described in the document [creating-profile.rst](creating-profile.rst).
 
-These are the available **template defaults for each supported [distro](Teaiso-technology.md#terminology) base [profile](Teaiso-technology.md#profiles-definitions)**:
+These are the available **templates for each supported ["distro" (Linux distribution](Teaiso-technology.md#terminology) base [profile](Teaiso-technology.md#profiles-definitions)**:
 
 | Template name | Profile distro  | observations                 |
 | ------------ | ---------------- | ---------------------------- |
@@ -55,23 +55,23 @@ You must [create a profile](creating-profile.rst) from these templates running t
 
 `mkteaiso -c <Template name>`
 
-After that, one directory with the name of the `<Template name>` will be created, based on the [profile distro definitons](porting-distribution.rst) and [profile format](creating-profile.rst).
+After that, one directory with the name of the `<Template name>` will be created, based on the [profile "distro" definitions](porting-distribution.rst) and [profile format](creating-profile.rst).
 
-You must tune the contents of the directory profile before produce the ISO image.
+You must tune the contents of the directory profile before produce the ISO image. For that get into the `<Template name>` directory just created and edit each file using the [Teaiso technology directives](Teaiso-technology.md).
 
 #### Making the ISO image
 
-To produce a ISO image file based on your directori profile, you must run the following command:
+To produce a ISO image file based on your directory profile, you must run the following command:
 
 `mkteaiso -c <absolute path of the created profile directory>`
 
 Using your customized profile you can change the name of the profile directory to handle various flavours.
 
-A brieft example of making quick iso its provided at the [starting-use-case.md](starting-use-case.md)
+A brief example of making quick ISO its provided at the [starting-use-case.md](starting-use-case.md#customization-example)
 
 #### Debug your process
 
-You can just run the command and will provide standard out of the progress, also a log file is send to the `/var/log/teaiso.log` file. Extra debug information can be optained by the `--debug` option.
+You can just run the command and will provide standard out of the progress, also a log file is send to the `/var/log/teaiso.log` file. Extra debug information can be obtained by the `--debug` option.
 
 The process uses [stages to determine the progress](Teaiso-technology.md#stage-runlevels) of the creation, 
 so in each one some task are performed.
@@ -80,5 +80,3 @@ so in each one some task are performed.
 
 * [starting-use-case.md](starting-use-case.md)
 * [Teaiso-technology.md](Teaiso-technology.md)
-
-

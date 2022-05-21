@@ -14,25 +14,25 @@ This project has a active telegram group: https://t.me/iso_calismalari Main lang
 
 #### Who are using teaiso?
 
-* **Tearch Linux ISOS**: This project is widelly used to produce the [TeArchlinux Releases](https://github.com/tearch-linux/releases) and is part of the [TeArchlinux Project](https://tearch-linux.github.io/)
-* **VenenuX Alpine ISOS**: This project is widelly used to produce the VenenuX Alpine ISOS https://codeberg.org/alpine/alpine-isomaker usign their own forked version https://gitlab.com/venenux/venenux-teaiso
-* **PUFF OS ISOS**: This project is widelly used to produce the [PUFFOS releases](https://github.com/PuffOS/teaiso-profile/releases/) and have they own forked profile definition.
+* **Tearch Linux ISOS**: This project is widely used to produce the [TeArchlinux Releases](https://github.com/tearch-linux/releases) and is part of the [TeArchlinux Project](https://tearch-linux.github.io/)
+* **VenenuX Alpine ISOS**: This project is widely used to produce the VenenuX Alpine ISOs https://codeberg.org/alpine/alpine-isomaker using their own forked version https://gitlab.com/venenux/venenux-teaiso
+* **PUFF OS ISOS**: This project is widely used to produce the [PUFFOS releases](https://github.com/PuffOS/teaiso-profile/releases/) and have they own forked profile definition.
 
 ## FAQ
 
-#### How can i install my teaiso images?
+#### How can i install my Teaiso images?
 
-Teaiso is just a Live ISO image creator, each installer of each linux flavor are out of scope of the project, you have two options:
+Teaiso is just a Live ISO image creator, each installer of each Linux flavor are out of scope of the project, you have two options:
 
 - Use the own Live ISO creation tool of each Linux distribution (that of course are more complicated 😌)
 - Use the [17g installer](http://gitlab.com/ggggggggggggggggg/17g) a fork of LMDE installer
 
 In some special cases, due the installer nature are included in the rootfs, installation 
-can be posible (by example Alpine script `setup-alpine` will work, check nexd faq item)
+can be posible (by example Alpine script `setup-alpine` will work, check next FAQ item)
 
-#### My iso do not have networking!
+#### My ISO do not have networking!
 
-Some cases are special, by example alpine init system is complete overriden, so the normal 
+Some cases are special, by example alpine init system is complete overridden, so the normal 
 init process is not the same, that's the reason `teaiso` created images of alpine linux 
 only has networking if you included `networkmanager` package in the live iso creation.
 
