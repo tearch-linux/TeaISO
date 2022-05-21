@@ -14,9 +14,9 @@ This project has a active telegram group: https://t.me/iso_calismalari Main lang
 
 #### Who are using teaiso?
 
-* Tearch Linux ISOS: This project is widelly used to produce the [TeArchlinux Releases](https://github.com/tearch-linux/releases) and is part of the [TeArchlinux Project](https://tearch-linux.github.io/)
-* VenenuX Alpine ISOS: This project is widelly used to produce the VenenuX Alpine ISOS https://codeberg.org/alpine/alpine-isomaker usign their own forked version https://gitlab.com/venenux/venenux-teaiso
-* PUFF OS ISOS: This project is widelly used to produce the [PUFFOS releases](https://github.com/PuffOS/teaiso-profile/releases/) and have they own forked profile definition.
+* **Tearch Linux ISOS**: This project is widelly used to produce the [TeArchlinux Releases](https://github.com/tearch-linux/releases) and is part of the [TeArchlinux Project](https://tearch-linux.github.io/)
+* **VenenuX Alpine ISOS**: This project is widelly used to produce the VenenuX Alpine ISOS https://codeberg.org/alpine/alpine-isomaker usign their own forked version https://gitlab.com/venenux/venenux-teaiso
+* **PUFF OS ISOS**: This project is widelly used to produce the [PUFFOS releases](https://github.com/PuffOS/teaiso-profile/releases/) and have they own forked profile definition.
 
 ## FAQ
 
