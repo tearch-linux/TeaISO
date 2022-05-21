@@ -7,12 +7,24 @@ Teaiso FAQ and Notes
 
 #### Social networks
 
-This project has a active telegram group: https://t.me/iso_calismalari Main language is Turkish but allowed English too.
+This project has a active telegram group: https://t.me/iso_calismalari Main language is Turkish but allowed English too. The Tearch linux are a related group comunity https://t.me/TeArchlinux
 
 * Açıklama ve kurallar https://t.me/kurallartr
 * GNU/Linux gurubumuz: https://t.me/gnulinuxtr
 
+This project is widelly used to produce the VenenuX Alpine ISOS https://codeberg.org/alpine/alpine-isomaker usign their own forked version https://gitlab.com/venenux/venenux-teaiso
+
 ## FAQ
+
+#### How can i install my teaiso images
+
+Teaiso is just a Live ISO image creator, the each linux installers are out of scope of the project, you have two options:
+
+- Use the distro Live ISO creation tool (that of course are more complicated 😌)
+- Use the [17g installer](http://gitlab.com/ggggggggggggggggg/17g) a fork of LMDE installer
+
+In some special cases, due the installer nature are included in the rootfs, installation 
+can be posible (by example Alpine script `setup-alpine` will work, check nexd faq item)
 
 #### My iso do not have networking
 
