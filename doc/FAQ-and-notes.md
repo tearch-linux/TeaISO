@@ -42,6 +42,12 @@ Please understand that although you can set `$DESTDIR` at installation procedure
 the developer must set paths to the root, and this variable is only used to manage 
 the destination of files when performed the install, not the execution of the program.
 
+#### Grub notes
+
+Teaiso uses grub for the creation of the ISO images, so it will install or will need the full Grub suite. 
+For example, this means that if you install Teaiso and you don't have grub-firmware on Debian, 
+it will be installed or will be required. This is only for the creation of the ISO boot not for the Live Disk roofs.
+
 ## See also:
 
 * [Teaiso-technology.md](Teaiso-technology.md)

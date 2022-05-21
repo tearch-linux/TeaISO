@@ -29,7 +29,7 @@ will need so much as you wants into each ISO generation.
 * busybox
 * mtools
 * xorriso
-* grub (check issue #3)
+* grub ([check notes at FAQ](FAQ-and-notes.md#grub-notes))
 * squashfs-tools
 
 ## Installation
