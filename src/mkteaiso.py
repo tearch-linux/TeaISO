@@ -139,7 +139,7 @@ distro.set("cmdline", common.get("linux_args"))
 distro.set("workdir", settings.workdir)
 distro.set("variant", common.get("variant","")) # for debian
 distro.set("keyring_package", common.get("keyring_package","")) # for debian
-distro.set("codename", common.get("codename", "stable"))  # for debian
+distro.set("codename", str(common.get("codename", "stable")))  # for debian
 distro.set("repository", common.get("repository"))  # for debian
 
 def error_event():
