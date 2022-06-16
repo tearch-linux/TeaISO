@@ -35,7 +35,8 @@ install_packages(){
 }
 
 make_pkglist() {
-    : #fixme
+    # fixme
+    : > ${workdir}/packages.list
 }
 
 generate_isowork(){
