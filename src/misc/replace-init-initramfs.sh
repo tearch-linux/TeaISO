@@ -19,6 +19,9 @@ for file in /boot/initramfs-*.img ; do
     rm -f init
     cat "$1" > init
     chmod +x init
+    echo "Add busybox binary"
+    install /lib/ld-musl-x86_64.so.1 ./lib/ld-musl-x86_64.so.1
+    install /usr/sbin/busybox ./bin/busybox
     echo "Compress: $file"
     compress $file
     rm -f "$file"
