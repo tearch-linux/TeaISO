@@ -4,7 +4,8 @@ mount -t devtmpfs devtmpfs /dev
 mount -t sysfs sysfs /sys
 mount -t proc proc /proc
 mount -t tmpfs tmpfs /run
-find /lib/modules/$(uname -r)/kernel -type f | grep -v debug | sed "s/.*\//modprobe /g;s/\..*//g" | sh 2>/dev/null
+depmod -a
+find /lib/modules/$(uname -r) -type f | grep -v debug | sed "s/.*\//modprobe /g;s/\..*//g" | sh 2>/dev/null
 mdev -s
 live_mount(){
     mkdir -p /alpine/a # upper

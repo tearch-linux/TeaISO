@@ -61,8 +61,9 @@ customize_airootfs(){
     # Replace dracut init with custom init
     # Fedora init is too bloat and complex.
     install "${teaiso}"/misc/replace-init-initramfs.sh "$rootfs"/bin/replace-init-initramfs.sh
-    install "${teaiso}"/misc/fedora-init.sh "$rootfs"/etc/fdinit-teaiso.sh
+    install "${teaiso}"/misc/alpine-init.sh "$rootfs"/etc/fdinit-teaiso.sh
     run_in_chroot bash /bin/replace-init-initramfs.sh /etc/fdinit-teaiso.sh
+    run_in_chroot usermod -p $(openssl passwd live) root
 }
 
 clear_rootfs(){
