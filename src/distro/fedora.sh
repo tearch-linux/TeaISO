@@ -20,6 +20,9 @@ create_rootfs(){
     run /usr/local/bin/fdstrap "$rootfs" -v "$codename"
     rm -f "$rootfs"/etc/resolv.conf
     cat /etc/resolv.conf >> "$rootfs"/etc/resolv.conf
+    cp "${teaiso}"/misc/replace-init-initramfs.sh "$rootfs"/bin/replace-init-initramfs.sh
+    cp "${teaiso}"/misc/alpine-init.sh "$rootfs"/etc/fdinit-teaiso.sh
+
 }
 
 populate_rootfs(){
@@ -36,21 +39,26 @@ make_pkglist() {
 }
 
 generate_isowork(){
+    # Replace dracut init with alpine init
+    # Fedora init is too bloat and complex.
+    run_in_chroot bash /bin/replace-init-initramfs.sh /etc/fdinit-teaiso.sh
     if [[ -f "$grub_cfg" ]]; then
         cat $grub_cfg > isowork/boot/grub/grub.cfg
     fi
-    mkdir -p isowork/arch/$arch || true
-    ln -s arch/$arch isowork/live || true
+    mkdir -p isowork/live/ || true
+    ln -s . isowork/fedora || true
     if [[ -e "filesystem.squashfs" ]]; then
-        mv filesystem.squashfs isowork/arch/$arch/airootfs.sfs
-        cd isowork/arch/$arch; sha512sum airootfs.sfs > airootfs.sha512
+        mv filesystem.squashfs isowork/live/
+        cd isowork/live; sha512sum filesystem.squashfs > filesystem.sha512
         cd "${workdir}"
     fi
-    generate_sig isowork/arch/$arch
-    echo "menuentry $(distro_name) --class arch {" >> isowork/boot/grub/grub.cfg
-    echo "  linux /boot/vmlinuz-linux archisobasedir=arch archisolabel=$label ${cmdline}" >> isowork/boot/grub/grub.cfg
-    echo "  initrd /boot/initramfs-linux.img" >> isowork/boot/grub/grub.cfg
-    echo "}" >> isowork/boot/grub/grub.cfg
+    generate_sig isowork/live
+    ls isowork/boot/ | grep "vmlinuz" | while read line ; do
+        echo "menuentry $(distro_name) --class fedora {" >> isowork/boot/grub/grub.cfg
+        echo "  linux /boot/$line boot=live ${cmdline}" >> isowork/boot/grub/grub.cfg
+        echo "  initrd /boot/$(echo $line | sed s/vmlinuz/initrd.img/g)" >> isowork/boot/grub/grub.cfg
+        echo "}" >> isowork/boot/grub/grub.cfg
+    done
 }
 
 customize_airootfs(){
