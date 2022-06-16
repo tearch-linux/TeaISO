@@ -4,9 +4,9 @@ mount -t devtmpfs devtmpfs /dev
 mount -t sysfs sysfs /sys
 mount -t proc proc /proc
 mount -t tmpfs tmpfs /run
-/usr/lib/systemd/systemd-udevd &
-/usr/bin/udevadm trigger -c add
-/usr/bin/udevadm settle
+depmod -a
+find /lib/modules/$(uname -r)/kernel -type f | grep -v debug | sed "s/.*\//modprobe /g;s/\..*//g" | sh 2>/dev/null
+/bin/sh
 mdev -s
 live_mount(){
     mkdir -p /alpine/a # upper
