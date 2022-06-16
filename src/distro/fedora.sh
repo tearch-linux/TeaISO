@@ -24,12 +24,12 @@ create_rootfs(){
 }
 
 populate_rootfs(){
-    run_in_chroot dnf install kernel-core dracut-live busybox -y
+    run_in_chroot dnf install -y --nogpgcheck kernel-core kernel-modules dracut-live busybox
 
 }
 
 install_packages(){
-    run_in_chroot dnf install -y ${packages[@]}
+    run_in_chroot dnf install -y --nogpgcheck ${packages[@]}
 }
 
 make_pkglist() {
