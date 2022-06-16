@@ -26,7 +26,7 @@ create_rootfs(){
 }
 
 populate_rootfs(){
-    run_in_chroot dnf install dracut-live -y
+    run_in_chroot dnf install kernel-core dracut-live busybox -y
 
 }
 

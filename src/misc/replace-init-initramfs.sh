@@ -6,7 +6,7 @@ extract(){
 
 compress(){
     cd /tmp/initrd/$(basename $1)
-    find -type f | cpio -o -H newc | gzip -9 > /boot/$(basename $1).new
+    find . | cpio -v -o -c -R root:root | gzip -9 > /boot/$(basename $1).new
 }
 
 rm -rf /tmp/initrd || true
@@ -27,4 +27,3 @@ for file in /boot/initramfs-*.img ; do
     rm -f "$file"
     mv "$file.new" "$file"
 done
-
