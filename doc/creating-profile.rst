@@ -20,9 +20,12 @@ Available Templates: **debian**, **archlinux**, **sulin**, **tearch**, **ubuntu*
 	├── airootfs
 	│   └── ...
 	├── grub.cfg
+	├── packages
+	│    └── ...
 	└── profile.yaml
 
 * airootfs directory store files that will merge with rootfs.
+* packages directory store package files that will install into rootfs.
 * grub.cfg file is header of grub config. Teaiso scan kernel and automatically merge with this config.
 * profile.yaml file is main configuration file. You can configure distribution settings with this file.
 

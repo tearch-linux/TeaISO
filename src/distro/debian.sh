@@ -43,6 +43,9 @@ populate_rootfs(){
 install_packages(){
     run_in_chroot apt update -yq
     run_in_chroot apt install -yq -o Dpkg::Options::="--force-confnew" ${packages[@]}
+    if [[ -f "$rootfs"/profile/packages ]] ; then
+        run_in_chroot dpkg -i /profile/packages/*.deb
+    fi
 }
 
 make_pkglist() {

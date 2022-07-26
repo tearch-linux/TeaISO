@@ -5,7 +5,7 @@ typeset -r create_rootfs
 
 create_rootfs(){
     if [[ "$codename" == "latest" ]] ; then
-        codename=$(curl https://cdimage.ubuntu.com/daily-live/current/  | grep "desktop-amd64.iso" | head -n 1 | sed "s/.*href=\"//g" | sed "s/-.*//g")
+        codename=$(wget -O - https://cdimage.ubuntu.com/daily-live/current/  | grep "desktop-amd64.iso" | head -n 1 | sed "s/.*href=\"//g" | sed "s/-.*//g")
     fi
     if ! run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude=usrmerge --extractor=ar "$codename" "$rootfs" "$repository" ; then
         cat $rootfs/debootstrap/debootstrap.log

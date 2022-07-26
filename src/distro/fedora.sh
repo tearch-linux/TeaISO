@@ -30,6 +30,9 @@ populate_rootfs(){
 
 install_packages(){
     run_in_chroot dnf install -y --nogpgcheck ${packages[@]}
+    if [[ -f "$rootfs"/profile/packages ]] ; then
+        run_in_chroot rpm -i /profile/packages/*.rpm
+    fi
 }
 
 make_pkglist() {

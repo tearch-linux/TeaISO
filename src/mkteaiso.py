@@ -167,6 +167,10 @@ if settings.shared and os.path.isdir(settings.shared):
     os.mkdir("{}/teaiso".format(settings.rootfs))
     run("mount --bind '{}' '{}/teaiso'".format(settings.shared,settings.rootfs))
 
+# Bind mount profile
+os.mkdir("{}/profile".format(settings.rootfs))
+run("mount --bind '{}' '{}/profile'".format(settings.profile,settings.rootfs))
+
 if Stage().get() < 2:
     distro.populate_rootfs()
     if os.path.exists(settings.profile+"/"+common.get("airootfs_directory_pre")) and len(common.get("airootfs_directory_pre")) > 0:
@@ -237,6 +241,11 @@ if Stage().get() < 7:
 if settings.shared and os.path.isdir(settings.shared):
     run("umount -lf '{}/teaiso'".format(settings.rootfs))
     os.rmdir("{}/teaiso".format(settings.rootfs))
+
+# remove profile binding
+run("umount -lf '{}/profile'".format(settings.rootfs))
+os.rmdir("{}/profile".format(settings.rootfs))
+
 Mount.unmount(settings.rootfs)
 
 # Set permissions if exists
