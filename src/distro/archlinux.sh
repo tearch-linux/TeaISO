@@ -43,6 +43,10 @@ install_packages(){
     else
         run_in_chroot pacman -Sy ${packages[@]}
     fi
+    if [[ -f "$rootfs"/profile/packages ]] ; then
+        run_in_chroot pacman -U /profile/packages/* --noconfirm
+    fi
+
 }
 
 make_pkglist() {
