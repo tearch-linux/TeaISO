@@ -169,7 +169,7 @@ if settings.shared and os.path.isdir(settings.shared):
 
 # Bind mount profile
 os.mkdir("{}/profile".format(settings.rootfs))
-run("mount --bind '{}' '{}/profile'".format(settings.profile,settings.rootfs))
+run("mount -o ro --bind '{}' '{}/profile'".format(settings.profile,settings.rootfs))
 
 if Stage().get() < 2:
     distro.populate_rootfs()
