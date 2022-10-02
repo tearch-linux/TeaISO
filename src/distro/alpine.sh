@@ -83,7 +83,7 @@ generate_isowork(){
 
 install_packages(){
     run_in_chroot apk add ${packages[@]}
-    if [[ -f "$rootfs"/profile/packages ]] ; then
+    if [[ -d "$rootfs"/profile/packages ]] ; then
         run_in_chroot apk add --allow-untrusted /profile/packages/*
     fi
 }

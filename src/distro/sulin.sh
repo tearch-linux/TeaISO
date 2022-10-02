@@ -16,7 +16,7 @@ populate_rootfs(){
 
 install_packages(){
     run_in_chroot inary it -y ${packages[@]}
-    if [[ -f "$rootfs"/profile/packages ]] ; then
+    if [[ -d "$rootfs"/profile/packages ]] ; then
         run_in_chroot inary it /profile/packages/*.inary
     fi
 }
