@@ -1,6 +1,6 @@
 from utils import *
 import sys
-import os
+import os, platform
 import settings
 import common
 import distro
@@ -121,7 +121,7 @@ distro.set("interactive", interactive)
 gpg_key and distro.set("gpg", gpg_key)
 
 distro.set("name", common.get("name"))
-distro.set("arch", common.get("arch"))
+distro.set("arch", platform.uname().machine)
 distro.set("grub_cfg", common.get("grub_cfg"))
 
 distro.set("distro", common.get("distro"))
