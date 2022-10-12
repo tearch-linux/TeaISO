@@ -1,4 +1,4 @@
-import os
+import os, platform
 import time
 from utils import out, err, inf, colorize, run
 from colors import *
@@ -28,7 +28,7 @@ def show(contents, packages):
         contents["application_id"]))
     inf("\t{}: {}".format(
         colorize("ISO publisher", bold), contents["publisher"]))
-    inf("\t{}: {}".format(colorize("Architecture", bold), contents["arch"]))
+    inf("\t{}: {}".format(colorize("Architecture", bold), platform.uname().machine))
     inf("\t{}: {}".format(colorize("Packages", bold), packages))
     inf("\t{}: {}".format(colorize("Build date", bold), time.time()))
     inf("\t{}: {}".format(colorize("ISO name", bold), contents["iso_name"]))
