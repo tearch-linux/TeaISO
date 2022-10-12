@@ -1,8 +1,10 @@
 build:
 	make -C lib build
-test:
+
+test: build
 	make -C lib test
-install:
+
+install: build
 	mkdir -p $(DESTDIR)/usr/lib/teaiso || true
 	mkdir -p $(DESTDIR)/usr/bin/teaiso || true
 	make -C lib install DESTDIR=`realpath $(DESTDIR)`
@@ -13,6 +15,7 @@ install:
 
 clean:
 	make -C lib clean
-uninstall:
+
+uninstall: clean
 	rm -rfv $(DESTDIR)/usr/bin/mkteaiso
 	rm -rfv $(DESTDIR)/usr/lib/teaiso/
