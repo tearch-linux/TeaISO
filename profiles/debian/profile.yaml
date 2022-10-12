@@ -6,7 +6,6 @@ label: DEBIAN_TEAISO
 application_id: Debian Linux Live/Rescue Media
 airootfs_directory: airootfs
 #iso_merge: iso_merge
-arch: x86_64
 grub_cfg: grub.cfg
 packages:
  - packages.x86_64

@@ -5,7 +5,6 @@ label: FEDORA_TEAISO
 application_id: Fedora Live/Rescue Media
 airootfs_directory: airootfs
 #iso_merge: iso_merge
-arch: x86_64
 compression: squashfs||-comp gzip
 grub_cfg: grub.cfg
 packages:
