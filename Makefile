@@ -1,5 +1,6 @@
 build:
 	make -C lib build
+	touch build
 
 test: build
 	make -C lib test
@@ -15,6 +16,7 @@ install: build
 
 clean:
 	make -C lib clean
+	rm -f build
 
 uninstall: clean
 	rm -rfv $(DESTDIR)/usr/bin/mkteaiso
