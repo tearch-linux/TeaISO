@@ -1,5 +1,5 @@
 import yaml
-import os
+import os, platform
 from datetime import date
 from utils import err, warn, versiontuple
 profile = None
@@ -34,7 +34,7 @@ def parse_profile(profile_dir="/usr/lib/teaiso/profile/archlinux", teaiso="/usr/
     contents["grub_cfg"] = os.path.realpath(
         profile_dir + "/" + contents["grub_cfg"])
     contents["iso_name"] = contents["name"] + "-" + \
-        date.today().strftime("%d-%m-%Y") + "-" + contents["arch"] + ".iso"
+        date.today().strftime("%d-%m-%Y") + "-" + platform.uname().machine + ".iso"
 
     profile = contents
     validation = validate_profile(profile)
@@ -47,7 +47,7 @@ def parse_profile(profile_dir="/usr/lib/teaiso/profile/archlinux", teaiso="/usr/
 
 def validate_profile(profile):
     required_keys = ['name', 'publisher', 'label',
-                     'application_id', 'arch', 'grub_cfg', 'packages', 'distro']
+                     'application_id', 'grub_cfg', 'packages', 'distro']
 
     for key in required_keys:
         if key not in profile:
