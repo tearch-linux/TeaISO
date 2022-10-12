@@ -22,7 +22,7 @@ libteaiso.inf.argtypes = [c_char_p]
 libteaiso.is_root.restype = c_int
 simulation = False
 
-VERSION = "2.0.1"
+VERSION = "2.2.0"
 
 error_event = None
 
