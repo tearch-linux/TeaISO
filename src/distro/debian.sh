@@ -19,7 +19,7 @@ tools_init(){
 }
 
 create_rootfs(){
-    if ! run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude="usr-is-merged,usrmerge" --extractor=ar ${variant:+--variant=$variant} "$codename" "$rootfs" "$repository" ; then
+    if ! run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude="usrmerge" --extractor=ar ${variant:+--variant=$variant} "$codename" "$rootfs" "$repository" ; then
         cat "$rootfs"/debootstrap/debootstrap.log
         exit 1
     fi
@@ -28,6 +28,9 @@ create_rootfs(){
     if [[ "" != "${keyring_package}" ]] ; then
         run_in_chroot apt install ${keyring_package} -yq
     fi
+    install "${teaiso}"/misc/usrparse.sh "$rootfs"/tmp/usrparse.sh
+    run_in_chroot bash /tmp/usrparse.sh
+    rm -f "$rootfs"/tmp/usrparse.sh
 }
 
 populate_rootfs(){
