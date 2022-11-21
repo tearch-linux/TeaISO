@@ -18,7 +18,6 @@ create_rootfs(){
     fi
     install "${teaiso}"/misc/usrparse.sh "$rootfs"/tmp/usrparse.sh
     run_in_chroot bash /tmp/usrparse.sh
-    rm -f "$rootfs"/tmp/usrparse.sh
 }
 
 populate_rootfs(){

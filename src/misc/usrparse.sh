@@ -13,4 +13,4 @@ for dir in lib bin sbin lib32 lib64 libx32 ; do
         [[ ! -d "/usr/$line" ]] && /busybox mv /usr/$line $line
     done
 done
-depmod -a
+/busybox rm -f  /busybox
