@@ -7,6 +7,9 @@ create_rootfs(){
     if [[ "$codename" == "latest" ]] ; then
         codename=$(wget -O - https://cdimage.ubuntu.com/daily-live/current/  | grep "desktop-amd64.iso" | head -n 1 | sed "s/.*href=\"//g" | sed "s/-.*//g")
     fi
+    if [[ ! -e /usr/share/debootstrap/scripts/${codename} ]] ; then
+        ln -s sid /usr/share/debootstrap/scripts/${codename}
+    fi
     if ! run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude="usrmerge" --extractor=ar "$codename" "$rootfs" "$repository" ; then
         cat $rootfs/debootstrap/debootstrap.log
         exit 1

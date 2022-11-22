@@ -19,6 +19,9 @@ tools_init(){
 }
 
 create_rootfs(){
+    if [[ ! -e /usr/share/debootstrap/scripts/${codename} ]] ; then
+        ln -s sid /usr/share/debootstrap/scripts/${codename}
+    fi
     if ! run debootstrap --arch=$(get_arch $arch) --no-check-gpg --no-merged-usr --exclude="usrmerge" --extractor=ar ${variant:+--variant=$variant} "$codename" "$rootfs" "$repository" ; then
         cat "$rootfs"/debootstrap/debootstrap.log
         exit 1
