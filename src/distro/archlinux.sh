@@ -39,9 +39,9 @@ populate_rootfs(){
 
 install_packages(){
     if ! ${interactive}; then
-        run_in_chroot pacman -Sy ${packages[@]} --noconfirm
+        run_in_chroot pacman -Syyu ${packages[@]} --noconfirm
     else
-        run_in_chroot pacman -Sy ${packages[@]}
+        run_in_chroot pacman -Syyu ${packages[@]}
     fi
     if [[ -d "$rootfs"/profile/packages ]] ; then
         run_in_chroot pacman -U /profile/packages/* --noconfirm

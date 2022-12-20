@@ -183,6 +183,6 @@ class Mount:
         
 
     def unmount(rootfs):
-        for dir in ["dev/pts", "dev", "sys", "proc", "run"]:
+        for dir in ["dev/pts", "dev", "sys", "proc", "run", "profile"]:
             while 0 == run("umount -lf -R /{}/{}".format(rootfs, dir), vital=False):
                 True

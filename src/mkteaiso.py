@@ -168,7 +168,8 @@ if settings.shared and os.path.isdir(settings.shared):
     run("mount --bind '{}' '{}/teaiso'".format(settings.shared,settings.rootfs))
 
 # Bind mount profile
-os.mkdir("{}/profile".format(settings.rootfs))
+if not os.path.isdir("{}/profile".format(settings.rootfs)):
+    os.mkdir("{}/profile".format(settings.rootfs))
 run("mount -o ro --bind '{}' '{}/profile'".format(settings.profile,settings.rootfs))
 
 if Stage().get() < 2:
