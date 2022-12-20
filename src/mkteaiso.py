@@ -265,6 +265,8 @@ if Stage().get() < 8:
 
 # Generate ISO
 if Stage().get() < 9:
+    with open("{}/etc/machine-id".format(settings.rootfs),"w") as f:
+        f.write("")
     distro.clear_rootfs()
     os.chdir(settings.workdir)
     for i in common.get("customize_isowork_pre", []):

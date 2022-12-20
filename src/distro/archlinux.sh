@@ -89,6 +89,6 @@ clear_rootfs(){
     find "${rootfs}/var/log" -type f -delete || true
     find "${rootfs}/var/tmp" -mindepth 1 -delete || true
     find "${rootfs}" \( -name '*.pacnew' -o -name '*.pacsave' -o -name '*.pacorig' \) -delete || true
-
-    echo "" > "$rootfs/etc/machine-id" || true
+    rm -f "${rootfs}"/boot/initramfs-linux.* || true
+    rm -f "${workdir}"/boot/initramfs-linux-fallback.img || true
 }
