@@ -263,21 +263,25 @@ if Stage().get() < 8:
 
     Stage().set(8)
 
-# Generate ISO
+# Generate IsoWork
 if Stage().get() < 9:
     with open("{}/etc/machine-id".format(settings.rootfs),"w") as f:
         f.write("")
-    distro.clear_rootfs()
     os.chdir(settings.workdir)
     for i in common.get("customize_isowork_pre", []):
         run(i)
     os.chdir(settings.teaiso)
-    common.create_squashfs(settings)
     common.create_isowork(settings)
+    distro.clear_rootfs()
+    common.create_squashfs(settings)
     os.chdir(settings.workdir)
     for i in common.get("customize_isowork", []):
         run(i)
     os.chdir(settings.teaiso)
     distro.generate_isowork()
     Stage().set(9)
-common.create_iso(settings)
+
+# Generate Iso
+if Stage().get() < 10:
+    common.create_iso(settings)
+    Stage().set(10)
