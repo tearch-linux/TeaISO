@@ -36,11 +36,9 @@ create_rootfs(){
         install "${teaiso}"/misc/usrparse.sh "$rootfs"/tmp/usrparse.sh
         run_in_chroot bash /tmp/usrparse.sh
     fi
-    if [[ "$recommends" != "true" ]] ; then
-        #### Disable recommends by default
-        echo 'APT::Install-Recommends "0";' > "$rootfs"/etc/apt/apt.conf.d/01norecommend
-        echo 'APT::Install-Suggests "0";' >> "$rootfs"/etc/apt/apt.conf.d/01norecommend
-    fi
+    #### Disable recommends by default
+    echo 'APT::Install-Recommends "0";' > "$rootfs"/etc/apt/apt.conf.d/01norecommend
+    echo 'APT::Install-Suggests "0";' >> "$rootfs"/etc/apt/apt.conf.d/01norecommend
 }
 
 populate_rootfs(){
