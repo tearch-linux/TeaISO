@@ -266,7 +266,7 @@ if Stage().get() < 8:
 # Generate IsoWork
 if Stage().get() < 9:
     with open("{}/etc/machine-id".format(settings.rootfs),"w") as f:
-        f.write("")
+        f.write(getoutput("dd if=/dev/urandom count=1 |& md5sum - | cut -f1 -d" ""))
     os.chdir(settings.workdir)
     for i in common.get("customize_isowork_pre", []):
         run(i)
