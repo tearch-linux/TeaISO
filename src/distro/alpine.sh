@@ -54,6 +54,7 @@ customize_airootfs(){
 
 clear_rootfs(){
     rm -rf $rootfs/var/cache/apk/* || true
+    rm -rf $rootfs/etc/machine-id || true
     find "$rootfs/var/log/" -type f | xargs rm -f  || true
 }
 
