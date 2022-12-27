@@ -99,6 +99,5 @@ clear_rootfs(){
     run_in_chroot apt clean
     run_in_chroot apt autoremove --purge -y
     rm -rf "$rootfs"/var/lib/apt/lists || true
-    rm -f "$rootfs"/boot/initrd.img-* || true
     find "$rootfs/var/log/" -type f | xargs rm -f  || true
 }
