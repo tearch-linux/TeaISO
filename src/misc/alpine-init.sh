@@ -4,9 +4,11 @@ mount -t devtmpfs devtmpfs /dev
 mount -t sysfs sysfs /sys
 mount -t proc proc /proc
 mount -t tmpfs tmpfs /run
+
 depmod -a
 find /lib/modules/$(uname -r) -type f | grep -v debug | sed "s/.*\//modprobe /g;s/\..*//g" | sh 2>/dev/null
 mdev -s
+
 live_mount(){
     mkdir -p /alpine/a # upper
     mkdir -p /alpine/b # workdir
@@ -71,4 +73,5 @@ mount --move /run /new_root/run
 if [ "$init" == "" ] ; then
     init=/sbin/init
 fi
+echo -e "live\nlive\n" | chroot /new_root adduser user || true
 exec switch_root /new_root $init "$@"
