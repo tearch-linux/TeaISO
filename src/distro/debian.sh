@@ -30,7 +30,7 @@ create_rootfs(){
     chmod +x "$rootfs"/usr/sbin/policy-rc.d
     run_in_chroot apt install -f -yq
     if [[ "" != "${keyring_package}" ]] ; then
-        run_in_chroot apt install ${keyring_package} -yq
+        run_in_chroot apt install ${keyring_package} -yq --force-yes
     fi
     if [[ -f "$rootfs"/usr/bin/bash ]] ; then
         install "${teaiso}"/misc/usrparse.sh "$rootfs"/tmp/usrparse.sh
@@ -44,7 +44,7 @@ create_rootfs(){
 populate_rootfs(){
     run_in_chroot apt update -yq
     run_in_chroot apt full-upgrade -o Dpkg::Options::="--force-confnew" -yq
-    run_in_chroot apt install live-boot live-config user-setup -o Dpkg::Options::="--force-confnew" -yq
+    run_in_chroot apt install live-boot live-config user-setup -o Dpkg::Options::="--force-confnew" -yq --force-yes
     mkdir -p "$rootfs"/etc/fonts/
     touch "$rootfs"/etc/fonts/fonts.conf
     mkdir -p "$rootfs"/boot/grub
@@ -53,10 +53,10 @@ populate_rootfs(){
 
 install_packages(){
     run_in_chroot apt update -yq
-    run_in_chroot apt install -yq -o Dpkg::Options::="--force-confnew" ${packages[@]}
+    run_in_chroot apt install -yq -o Dpkg::Options::="--force-confnew" ${packages[@]} --force-yes
     if [[ -d "$rootfs"/profile/packages ]] ; then
         run_in_chroot dpkg -i /profile/packages/*.deb
-        run_in_chroot apt install -f -y -o Dpkg::Options::="--force-confnew"
+        run_in_chroot apt install -f -yq -o Dpkg::Options::="--force-confnew" --force-yes
     fi
 }
 

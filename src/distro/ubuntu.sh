@@ -16,9 +16,9 @@ create_rootfs(){
     fi
     echo -e "#!/bin/sh\nexit 101" > "$rootfs"/usr/sbin/policy-rc.d
     chmod +x "$rootfs"/usr/sbin/policy-rc.d
-    run_in_chroot apt install -f -yq
+    run_in_chroot apt install -f -yq --force-yes
     if [[ "" != "${keyring_package}" ]] ; then
-        run_in_chroot apt install ${keyring_package} -yq
+        run_in_chroot apt install ${keyring_package} -yq --force-yes
     fi
     if [[ -f "$rootfs"/usr/bin/bash ]] ; then
         install "${teaiso}"/misc/usrparse.sh "$rootfs"/tmp/usrparse.sh
@@ -32,7 +32,7 @@ create_rootfs(){
 populate_rootfs(){
     run_in_chroot apt update -yq
     run_in_chroot apt full-upgrade -o Dpkg::Options::="--force-confnew" -yq
-    run_in_chroot apt install casper -o Dpkg::Options::="--force-confnew" -yq
+    run_in_chroot apt install casper -o Dpkg::Options::="--force-confnew" -yq --force-yes
     mkdir -p "$rootfs"/etc/fonts/
     touch "$rootfs"/etc/fonts/fonts.conf
     mkdir -p "$rootfs"/boot/grub
