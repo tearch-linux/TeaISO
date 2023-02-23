@@ -144,7 +144,7 @@ distro.set("repository", common.get("repository"))  # for debian
 
 def error_event():
     if settings.shared and os.path.isdir(settings.shared):
-        run("umount -lf '{}/teaiso'".format(settings.rootfs))
+        run("umount -lf '{}/teaiso'  || true".format(settings.rootfs))
         os.rmdir("{}/teaiso".format(settings.rootfs))
     Mount.unmount(settings.rootfs)
     
@@ -240,11 +240,11 @@ if Stage().get() < 7:
     Stage().set(7)
 
 if settings.shared and os.path.isdir(settings.shared):
-    run("umount -lf '{}/teaiso'".format(settings.rootfs))
+    run("umount -lf '{}/teaiso' || true".format(settings.rootfs))
     os.rmdir("{}/teaiso".format(settings.rootfs))
 
 # remove profile binding
-run("umount -lf '{}/profile'".format(settings.rootfs))
+run("umount -lf '{}/profile'  || true".format(settings.rootfs))
 os.rmdir("{}/profile".format(settings.rootfs))
 
 Mount.unmount(settings.rootfs)
