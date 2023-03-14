@@ -14,7 +14,7 @@ create_rootfs(){
 
 populate_rootfs(){
     run_in_chroot ymp repo --update --ignore-gpg --allow-oem
-    run_in_chroot ymp install linux live-boot --ignore-gpg --allow-oem --no-emerge
+    run_in_chroot ymp install linux live-boot openrc --ignore-gpg --allow-oem --no-emerge
 }
 
 install_packages(){
@@ -55,4 +55,5 @@ clear_rootfs(){
     mount -t proc proc "$rootfs"/proc
     run_in_chroot ymp clean
     umount -lf -R "$rootfs"/proc
+    find "$rootfs/var/log/" -type f | xargs rm -f  || true
 }
