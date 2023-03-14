@@ -25,7 +25,7 @@ install_packages(){
 
 make_pkglist() {
     run_in_chroot ymp list --installed >  ${workdir}/packages.list
-
+}
 generate_isowork(){
     if [[ -f "$grub_cfg" ]]; then
         cat $grub_cfg > isowork/boot/grub/grub.cfg
@@ -37,13 +37,14 @@ generate_isowork(){
         mv filesystem.squashfs isowork/live/
         cd isowork/live; sha512sum filesystem.squashfs > filesystem.sha512
         cd "${workdir}"
+    fi
     ls isowork/boot/ | grep "vmlinuz" | while read line ; do
         echo "menuentry $(distro_name) --class turkman {" >> isowork/boot/grub/grub.cfg
         echo "  linux /boot/$line boot=live ${cmdline}" >> isowork/boot/grub/grub.cfg
         echo "  initrd /boot/$(echo $line | sed s/vmlinuz/initrd.img/g)" >> isowork/boot/grub/grub.cfg
         echo "}" >> isowork/boot/grub/grub.cfg
     done
-    
+}
 customize_airootfs(){
     for kernel in $(ls "$rootfs"/lib/modules/) ; do
         run_in_chroot update-initramfs -u -k $kernel
@@ -51,5 +52,5 @@ customize_airootfs(){
 }
 
 clear_rootfs(){
-    return
+    run_in_chroot ymp clean
 }
