@@ -7,7 +7,7 @@ tools_init(){
 }
 
 create_rootfs(){
-    ympstrap "$rootfs"
+    ympstrap "$rootfs" bash
     mkdir -p "$rootfs/"{dev,sys,proc,run,tmp,etc,boot}
     touch "$rootfs/etc/shadow"
 }
