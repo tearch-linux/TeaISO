@@ -52,5 +52,7 @@ customize_airootfs(){
 }
 
 clear_rootfs(){
+    mount -t proc proc "$rootfs"/proc
     run_in_chroot ymp clean
+    umount -lf -R "$rootfs"/proc
 }
