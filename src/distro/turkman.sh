@@ -17,7 +17,7 @@ populate_rootfs(){
     run_in_chroot ymp install linux live-boot openrc --ignore-gpg --allow-oem --no-emerge
     ln -s openrc-init "$rootfs"/sbin/init || true
     for i in {1..7} ; do
-        ln -s agetty "$rootfs"etc/init.d/agetty.tty$i || true
+        ln -s agetty "$rootfs"/etc/init.d/agetty.tty$i || true
         run_in_chroot  rc-update add agetty.tty$i
     done
 }
