@@ -2,6 +2,7 @@ name: ubuntu
 distro: ubuntu
 codename: latest
 publisher: Ubuntu Linux <https://ubuntu.com>
+repository: http://archive.ubuntu.com/ubuntu
 label: UBUNTU_TEAISO
 application_id: Ubuntu Linux Live/Rescue Media
 airootfs_directory: airootfs
