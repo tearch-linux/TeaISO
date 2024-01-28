@@ -32,9 +32,10 @@ create_rootfs(){
     if [[ "" != "${keyring_package}" ]] ; then
         run_in_chroot apt install ${keyring_package} -yq --force-yes
     fi
-    if [[ -f "$rootfs"/usr/bin/bash ]] ; then
-        install "${teaiso}"/misc/usrparse.sh "$rootfs"/tmp/usrparse.sh
-        run_in_chroot bash /tmp/usrparse.sh
+    ### debian non-usrmerge broken
+    #if [[ -f "$rootfs"/usr/bin/bash ]] ; then
+    #    install "${teaiso}"/misc/usrparse.sh "$rootfs"/tmp/usrparse.sh
+    #    run_in_chroot bash /tmp/usrparse.sh
     fi
     #### Disable recommends by default
     echo 'APT::Install-Recommends "0";' > "$rootfs"/etc/apt/apt.conf.d/01norecommend
