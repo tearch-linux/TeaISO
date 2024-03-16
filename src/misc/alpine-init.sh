@@ -73,5 +73,6 @@ mount --move /run /new_root/run
 if [ "$init" == "" ] ; then
     init=/sbin/init
 fi
+export PATH=/bin:/usr/bin:/sbin:/usr/sbin
 echo -e "live\nlive\n" | chroot /new_root adduser user || true
 exec switch_root /new_root $init "$@"
