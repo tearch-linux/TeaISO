@@ -49,12 +49,16 @@ customize_airootfs(){
                 echo "Kernel missing!"
         exit 1
     fi
+    # does not include firmware in live initrd
+    mv "$rootfs"/lib/firmware "$rootfs"/lib/firmware.bak || true
     run_in_chroot mkinitfs -i /usr/share/mkinitfs/initramfs-init-live -c /etc/mkinitfs/mkinitfs-live.conf -o /boot/initramfs-live "$kernel"
+    mv "$rootfs"/lib/firmware.bak "$rootfs"/lib/firmware || true
 }
 
 clear_rootfs(){
     rm -rf $rootfs/var/cache/apk/* || true
     rm -rf $rootfs/etc/machine-id || true
+    rm -rf $rootfs/boot/initramfs-* || true
     find "$rootfs/var/log/" -type f | xargs rm -f  || true
 }
 
